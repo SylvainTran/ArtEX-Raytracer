@@ -38,20 +38,28 @@ namespace TAPP {
     
     void RenderModel::load_geometry(){
         
-        
-        std::string path =  "assets/sp.obj";
-        Load(m_obj, path.c_str());
         std::vector<float> vertices, normals;
+        //
+        
+        if(m_obj.vertex.size()!=m_obj.normal.size()){
+            cout<<"Error normal vs vertices! "<<m_obj.vertex.size()<<" "<<m_obj.normal.size()<<endl;
+            return;
+        }
+        
         for(int i=0;i<m_obj.vertex.size();++i){
             for(int j=0;j<3;++j){
                 vertices.push_back(m_obj.vertex[i][j]);
                 normals.push_back(m_obj.normal[i][j]);
+               // vertices[3*i+j] = m_obj.vertex[i][j];
+               // normals[3*i+j] = m_obj.normal[i][j];
             }
         }
         
-        cout<<"Mesh has: "<<vertices.size()/3<<": vertices!"<<endl;
+    //    cout<<"Mesh has: "<<vertices.size()/3<<": vertices!"<<endl;
         
         std::vector<unsigned int> indices;
+      //  unsigned int* indices = new unsigned int[m_obj.faces.size()*3];
+        
         for(int i=0;i<m_obj.faces.size();++i){
             if(m_obj.faces[i].size()!=3){
                 cout<<"Error: not a triangular mesh!"<<endl;
@@ -59,26 +67,30 @@ namespace TAPP {
             }
             for(int j=0;j<3;++j){
                 indices.push_back(m_obj.faces[i][j]);
+           //     indices[3*i+j] = m_obj.faces[i][j];
             }
         }
         
-        cout<<"Mesh has: "<<indices.size()/3<<": faces!"<<endl;
+    //    cout<<"Mesh has: "<<indices.size()/3<<": faces!"<<endl;
 
         
         // 0 - create the vertex array object
         glGenVertexArrays(1, &m_VAO);
         glBindVertexArray(m_VAO);
         
+        
+        cout<<"Szies: "<<sizeof(vertices)<<" "<<sizeof(normals)<<" "<<sizeof(indices)<<" "<<sizeof(unsigned int)<<" "<<sizeof(float)<<endl;
+        
         // create the vertex buffer object -- first entry in the renderer
         glGenBuffers(1, &m_VBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float), &vertices[0], GL_STATIC_DRAW);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),(void*)0);
         glEnableVertexAttribArray(0);
         
         glGenBuffers(1, &m_NBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_NBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(normals), &normals[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, normals.size()*sizeof(float), &normals[0], GL_STATIC_DRAW);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(1);
         
@@ -86,11 +98,11 @@ namespace TAPP {
         // element array buffer
         glGenBuffers(1, &m_EBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
 
-       // glBindBuffer(GL_ARRAY_BUFFER, 0);
-        //glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
     }
 
 
@@ -99,27 +111,33 @@ namespace TAPP {
     void RenderModel::init(){
         is_error();
         
+        
+        cout<<"Load geomertry!"<<endl;
+        
+        // need to generate new normals because sometimes I might have different normals and this is a problem when rendering
+        m_obj.Triangulate();
+        m_obj.GenerateNormals(1);
         load_geometry();
+    
+        cout<<"Load shaders!"<<endl;
+
         // Create and compile our GLSL program from the shaders
         string vsh1 = "assets/Phong.vertexshader.glsl";
         string fsh1 = "assets/Phong.fragmentshader.glsl";
-        
-        programID = LoadShaders( vsh1.c_str(), fsh1.c_str());
-       
-        
+
+        programPhong = LoadShaders( vsh1.c_str(), fsh1.c_str());
        
         if(is_error(true)){
             cout<<"Err 00"<<endl;
         }
         
-       
+       // load uniforms
        
         // Get a handle for our "MVP" uniform
-        MatrixID = glGetUniformLocation(programID, "MVP");
-        ViewMatrixID = glGetUniformLocation(programID, "V");
-        ModelMatrixID = glGetUniformLocation(programID, "M");
-        LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
-        dcID = glGetUniformLocation(programID, "diffuse_color");
+        shaderMVP = glGetUniformLocation(programPhong, "MVP");
+        shaderV = glGetUniformLocation(programPhong, "V");
+        shaderLight = glGetUniformLocation(programPhong, "LightPosition_worldspace");
+        shaderDiffuse = glGetUniformLocation(programPhong, "diffuse_color");
         
         
         if(is_error()){
@@ -159,8 +177,18 @@ void RenderModel::render(){
             cout<<"Err B1"<<endl;
         }
         
+         //glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+         glEnable(GL_DEPTH_TEST);
+      
+        if(is_error()){
+            cout<<"Err B1_2"<<endl;
+        }
+        
+        glBindVertexArray(m_VAO);
+         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+        
         // Get a handle for our "LightPosition" uniform
-        glUseProgram(programID);
+        glUseProgram(programPhong);
         
     //    cout<<"render"<<endl;
         
@@ -168,14 +196,18 @@ void RenderModel::render(){
             cout<<"Err B2"<<endl;
         }
         
-        glm::mat4 mm(1.0f);
+        
         glm::mat4 MVP = m_ProjMatrix * m_ViewMatrix;
+
         
 #if 0
         std::cout<<"X "<<endl;
-        for (int i = 0; i<4; ++i)
-            for (int j = 0; j<4; ++j)
+        for (int i = 0; i<4; ++i){
+            for (int j = 0; j<4; ++j){
                 std::cout << m_ProjMatrix[i][j] << " ";
+          //      std::cout <<   m_ViewMatrix[i][j]<<" ";
+            }
+        }
         std::cout << std::endl;
 #endif
         
@@ -183,39 +215,32 @@ void RenderModel::render(){
             cout<<"Err B3"<<endl;
         }
         
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-        glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &m_ViewMatrix[0][0]);
-        glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &mm[0][0]);
-        
-        glm::vec3 lightPos = glm::vec3(4, 4, 4);
-        //	glm::vec3 lightPos = glm::vec3(0,0,0);
-        
-        
-        if(is_error()){
-            cout<<"Err B4"<<endl;
-        }
-        
-        glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+        glUniformMatrix4fv(shaderMVP, 1, GL_FALSE, &MVP[0][0]);
+        glUniformMatrix4fv(shaderV, 1, GL_FALSE, &m_ViewMatrix[0][0]);
+        glm::vec3 lightPos = glm::vec3(0,0,0);
+        glUniform3f(shaderLight, lightPos.x, lightPos.y, lightPos.z);
         
         glm::vec3 dc = glm::vec3(1, 0, 0);
         if(mode==1)
             dc=glm::vec3(0, 0, 1);
         
-        
-        glUniform3f(dcID, dc.x, dc.y, dc.z);
-        
-      
-       
+        glUniform3f(shaderDiffuse, dc.x, dc.y, dc.z);
+    
         if(is_error()){
             cout<<"Err 3"<<endl;
         }
-       
         
-       // glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-       // glEnable(GL_DEPTH_TEST);
-        glBindVertexArray(m_VAO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+        if(mode==1){
+            glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+        } else {
+            glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+        }
+    
+        glDrawElements(GL_TRIANGLES, m_obj.faces.size()*3, GL_UNSIGNED_INT, 0);
+        
+        if(is_error()){
+            cout<<"Err 343"<<endl;
+        }
         
     }
     void RenderModel::render_pick_select(PickDataback& ) { // to see if we selected this object

@@ -6,5 +6,5 @@ Building:
 2) cd build
 3) cmake ../
 4) make
-5) ./lab02s
+5) ./capsule02
 

@@ -1,6 +1,6 @@
 # CMake entry point
 cmake_minimum_required (VERSION 3.8)
-project(lab03s)
+project(capsule03)
 
 set(CMAKE_CXX_STANDARD 11) #optional to use c++11
 

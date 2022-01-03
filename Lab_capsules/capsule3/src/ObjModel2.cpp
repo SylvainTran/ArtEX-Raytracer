@@ -123,31 +123,32 @@ int ObjModel::AbsFacetIndex(){
 
 
 int ObjModel::GenerateNormals(int bAlways){
-  
-  if(!bAlways && QNormals())
-    return 1;
-
-  vector<int> nf;
-  
-  for(int i=0;i<vertex.size();i++){
-    normal.push_back(TVector(0, 0, 0));
-    nf.push_back(0);
-  }
-
-  for(int i=0;i<faces.size();i++)
-    for(int j=0;j<faces[i].size();j++){
-      normal[faces[i][j]] =  normal[faces[i][j]] + fnormal[i];
-      nf[faces[i][j]]+=1;
+    
+    if(!bAlways && QNormals())
+        return 1;
+    
+    vector<int> nf;
+    
+    normal.clear();
+    for(int i=0;i<vertex.size();i++){
+        normal.push_back(TVector(0, 0, 0));
+        nf.push_back(0);
     }
-
-  for(int i=0;i<normal.size();i++){
-    double f = 1.0 / (double) nf[i];
-    normal[i] = f *  normal[i];
-    normal[i].normalize();
-  }
-  
-  nfaces = faces;
-  return 0;
+    
+    for(int i=0;i<faces.size();i++)
+        for(int j=0;j<faces[i].size();j++){
+            normal[faces[i][j]] =  normal[faces[i][j]] + fnormal[i];
+            nf[faces[i][j]]+=1;
+        }
+    
+    for(int i=0;i<normal.size();i++){
+        double f = 1.0 / (double) nf[i];
+        normal[i] = f *  normal[i];
+        normal[i].normalize();
+    }
+    
+    nfaces = faces;
+    return 0;
 }
 
 

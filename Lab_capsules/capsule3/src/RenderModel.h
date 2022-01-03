@@ -25,15 +25,26 @@ namespace TAPP {
         :RUIObject(){
         
     }
+        
+        RenderModel(std::string filename)
+        :RUIObject(){
+        
+            Load(m_obj, filename.c_str());
+        }
+        
     
         
         // Uniform variables
         
-        GLuint MatrixID;
-        GLuint ViewMatrixID;
-        GLuint ModelMatrixID;
-        GLuint LightID;
-        GLuint dcID;//diffuse color
+        GLuint shaderMVP;
+        GLuint shaderV;
+        GLuint shaderLight;
+        GLuint shaderDiffuse;//diffuse color
+        
+        // shader program
+        GLuint programPhong;
+        GLuint programWire;
+        void load_shader();
         
         
        // Geometric data buffers
@@ -52,9 +63,7 @@ namespace TAPP {
         
         void load_geometry();
         
-        // shader program
-        GLuint programID;
-        void load_shader();
+        
         
         ObjModel m_obj;
         

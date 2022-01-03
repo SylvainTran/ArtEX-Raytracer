@@ -14,11 +14,15 @@ std::string global_path;
 
 int main(int argc, char* argv[]){
 
+    if(argc!=2){
+        cout<<"Usage: "<<argv[0]<<" objname.obj"<<endl;
+        return -1;
+    }
     
     int w = 1024;
     int h = 768;
     
-    std::string name = "SphereApp";
+    std::string name = "OGL Viewer";
     
     if(!gapp.initialize(w, h, name)){
         cout<<"Unable to initialize!"<<endl;
@@ -28,7 +32,7 @@ int main(int argc, char* argv[]){
     Virtual3DLayer* view = new Virtual3DLayer(w, h);
     gapp.m_window.m_layers.push_back(view);
     
-    RenderModel* sp = new RenderModel();
+    RenderModel* sp = new RenderModel(argv[1]);
    
     
     
