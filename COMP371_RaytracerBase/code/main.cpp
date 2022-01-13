@@ -1,5 +1,13 @@
-
-
+////////////////////////
+/**
+ * 
+ * Author: Sylvain Tran
+ * Program Description: The driver for the raytracer.
+ * Date Created: Tue, Jan. 11th, 2022
+ * Date Last Updated: Tue, Jan. 11th, 2022
+ * 
+ */
+////////////////////////
 #ifdef COURSE_SOLUTION
 #include "src/RayTracer.h"
 #endif
@@ -8,47 +16,41 @@
 #include "src/RayTracer.h"
 #endif
 
-
 #include <iostream>
 #include <string>
-#include <Eigen/Core>
-#include <Eigen/Dense>
+#include <memory>
 
 #include "external/json.hpp"
 #include "external/simpleppm.h"
 
-
+// My code
+#include "src/GraphicsEngine.h"
 using namespace std;
 
 int test_eigen();
 int test_save_ppm();
 int test_json(nlohmann::json& j);
-    
+
+void runDummyRaytracer() {
+    cout<<"Invalid number of arguments"<<endl;
+    cout<<"Usage: ./raytracer [scene] "<<endl;
+    cout<<"Run sanity checks"<<endl;    
+    test_eigen();
+    test_save_ppm();
+};
+
 int main(int argc, char* argv[])
 {
     if(argc!=2){
-        cout<<"Invalid number of arguments"<<endl;
-        cout<<"Usage: ./raytracer [scene] "<<endl;
-        cout<<"Run sanity checks"<<endl;
+        runDummyRaytracer();
         
-        test_eigen();
-        test_save_ppm();
-        
-    } else {
-        
-        cout<<"Scene: "<<argv[1]<<endl;
-        
-        std::ifstream t(argv[1]);
-        if(!t){
-            cout<<"File "<<argv[1]<<" does not exist!"<<endl;
+    } else {        
+        GraphicsEngine gE;
+        nlohmann::json j = gE.validateSceneJSONData(argv[1]);
+        if(j == NULL) {
+            cout<<"validateSceneJSONData has returned false: one of the tests failed."<<endl;
             return -1;
         }
-        
-        std::stringstream buffer;
-        buffer << t.rdbuf();
-        
-        nlohmann::json j = nlohmann::json::parse(buffer.str());
-        cout<<"Parsed successfuly"<<endl;
         
 #ifdef COURSE_SOLUTION
         cout<<"Running course solution"<<endl;
@@ -71,14 +73,9 @@ int main(int argc, char* argv[])
         } else {
             cout<<"Could not load file!"<<endl;
         }
+#endif 
 #endif
-        
-        
-#endif
-    }
-  
-    
-    
+    }    
     return 0;
 }
 

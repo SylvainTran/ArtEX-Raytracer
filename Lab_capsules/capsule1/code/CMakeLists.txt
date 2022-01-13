@@ -11,6 +11,8 @@ set(CMAKE_PREFIX_PATH
     /opt/local # Macports
 )
 
+set(CMAKE_MODULE_PATH /usr/local/Cellar/cmake/3.22.1/share/cmake/)
+
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED
