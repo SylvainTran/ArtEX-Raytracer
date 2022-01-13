@@ -14,6 +14,7 @@
 //#include "debug.h"
 
 using namespace std;
+using namespace T3D;
 
 
 void ObjModel::add_spherical_coordinates(double radius, double width, double height){
@@ -144,7 +145,7 @@ int ObjModel::GenerateNormals(int bAlways){
     for(int i=0;i<normal.size();i++){
         double f = 1.0 / (double) nf[i];
         normal[i] = f *  normal[i];
-        normal[i].normalize();
+        normal[i] = normalize(normal[i]);
     }
     
     nfaces = faces;
@@ -159,10 +160,12 @@ TVector ObjModel::ComputeFaceNormals(int face){
 
   TVector t1 = (ret[1] - ret[0]);
   TVector t2 = (ret[2] - ret[0]);
-  t1.normalize();
-  t2.normalize();
+  t1 = normalize(t1);
+  t2 = normalize(t2);
+    TVector r = normalize(t1^t2);
 
-  return t1*t2;
+    
+  return r;
 }
 
 
@@ -453,7 +456,7 @@ void ObjModel::reverse_smart(){
 	continue;
       
       TVector d = vertex[index] - vertex[i];
-      if(d.normalize(0)<1.0e-5){
+      if(d.norm()<1.0e-5){
 	marker[i] = 1;
 	mp[i] = gindex;
       }// if

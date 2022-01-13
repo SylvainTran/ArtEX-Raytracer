@@ -92,7 +92,7 @@ namespace T3D{
         C s = v.size();
         
         if(s<1e-10)
-            return s;
+            return ret;
         
         s = ((C)1) / s;
         for(int i=0;i<N;i++)
@@ -250,6 +250,9 @@ namespace T3D{
     
     typedef TTuple<double, 3> TPoint3d;
     typedef TTuple<double, 3> TVector3d;
+
+typedef TTuple<double, 3> TPoint;
+typedef TTuple<double, 3> TVector;
     
     typedef TTuple<double, 2> TPoint2d;
     typedef TTuple<double, 2> TVector2d;

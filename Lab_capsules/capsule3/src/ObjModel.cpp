@@ -8,6 +8,7 @@
 
 
 using namespace std;
+using namespace T3D;
 
 ObjModel::ObjModel(){
 }
