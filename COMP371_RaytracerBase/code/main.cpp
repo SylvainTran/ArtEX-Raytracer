@@ -16,15 +16,21 @@
 #include "src/RayTracer.h"
 #endif
 
+// Standard
 #include <iostream>
 #include <string>
 #include <memory>
+using std::cout;
+using std::endl;
 
+// External
 #include "external/json.hpp"
 #include "external/simpleppm.h"
 
 // My code
 #include "src/GraphicsEngine.h"
+#include "src/Mesh.h"
+#include "src/Sphere.h"
 using namespace std;
 
 int test_eigen();
@@ -46,10 +52,14 @@ int main(int argc, char* argv[])
         
     } else {        
         GraphicsEngine gE;
-        nlohmann::json j = gE.validateSceneJSONData(argv[1]);
+        nlohmann::json j = gE.validateSceneJSONData(argv[1]);        
         if(j == NULL) {
             cout<<"validateSceneJSONData has returned false: one of the tests failed."<<endl;
             return -1;
+        } else {
+            // A few tests
+            cout<<(Sphere*)gE.getGeometry(0)<<endl;
+            (*gE.getGeometry(0)).info();            
         }
         
 #ifdef COURSE_SOLUTION
@@ -61,8 +71,11 @@ int main(int argc, char* argv[])
         
 #ifdef STUDENT_SOLUTION
         cout<<"Running studnt solution"<<endl;
-        RayTracer rt(j);
-        rt.run();
+        RayTracer rt = RayTracer(j);
+        gE.setActiveRayTracer(rt);
+        gE.getActiveRayTracer().run();
+        // This doesn't work on its own yet:
+        // rt.run();
 #else
         // GIven code - a bunch of test functions to showcase the funcitonality
         test_eigen();

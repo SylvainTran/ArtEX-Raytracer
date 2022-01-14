@@ -1,23 +1,19 @@
 #pragma once
 
-// Includes
-#include <iostream>
-using std::cout;
-using std::endl;
-using std::vector;
-#include <string>
-
-// External Utilities
+// External
 #include <Eigen/Core>
 #include <Eigen/Dense>
-#include "../external/json.hpp"
+
+// My code
+class json;
+class GraphicsEngine;
 
 class JSONSceneParser {
 public:
     /**
      * Constructors and destructors. 
      **/
-    JSONSceneParser(nlohmann::json& j);
+    JSONSceneParser(GraphicsEngine* g, nlohmann::json& j);
     ~JSONSceneParser();
     // TODO: Assignment and copy constructors
     // TODO: Operator overloads
@@ -46,4 +42,8 @@ private:
      *  The scene's data. 
      **/
     nlohmann::json sceneJSONData;
+    /**
+     *  Reference to the graphics engine. 
+     **/
+    GraphicsEngine* _g;
 };

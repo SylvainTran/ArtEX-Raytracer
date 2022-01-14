@@ -1,18 +1,10 @@
 #pragma once
-
-// Standard Library includes
-#include <iostream>
-using std::cout;
-using std::endl;
-#include <string>
-#include <memory>
-
-// External Utilities
-#include "../external/json.hpp"
+#include "iostream"
 
 // RayTracer and JSON scene parser
 #include "RayTracer.h"
-#include "JSONSceneParser.h"
+class JSONSceneParser;
+class Mesh;
 
 class GraphicsEngine {
     /**
@@ -35,13 +27,30 @@ public:
      *  Validates the scene json data.
      **/
     nlohmann::json validateSceneJSONData(const char* argv);
+    /**
+     * Sets/gets a new active raytracer.
+     **/
+    void setActiveRayTracer(RayTracer& rt);
+    RayTracer getActiveRayTracer();
+    /**
+     * Adds a new mesh to the list of meshes to render.
+     **/
+    void addGeometry(Mesh* s);
+    /**
+     * Gets the mesh in the list of meshes to render at index.
+     **/
+    Mesh* getGeometry(int index);
 private:
     /**
-     *  The unique ptr to the raytracer.
+     *  The raytracer.
      **/
-    std::unique_ptr<RayTracer> rt;
+    RayTracer rt;
     /**
      *  Reference to a JSONSceneParser
      **/
-    std::unique_ptr<JSONSceneParser> jsp;    
+    std::unique_ptr<JSONSceneParser> jsp; 
+    /**
+     *  List of geometry (as meshes) to render in the scene.
+     **/
+    std::vector<Mesh*> geometryRenderList;   
 };

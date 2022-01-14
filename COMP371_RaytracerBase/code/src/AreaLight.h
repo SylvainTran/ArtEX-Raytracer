@@ -1,0 +1,4 @@
+class AreaLight {
+	AreaLight();
+	~AreaLight();
+};

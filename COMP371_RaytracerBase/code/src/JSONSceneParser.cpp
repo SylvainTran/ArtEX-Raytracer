@@ -1,10 +1,24 @@
+// Standard
+#include <iostream>
+#include <string>
+#include <memory>
+using std::cout;
+using std::endl;
+#include <vector>
+using std::vector;
+
 // External Utilities
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include "../external/json.hpp"
-#include "JSONSceneParser.h"
 
-JSONSceneParser::JSONSceneParser(nlohmann::json& j) : sceneJSONData(j) {
+// My classes
+#include "GraphicsEngine.h"
+#include "JSONSceneParser.h"
+#include "RayTracer.h"
+#include "Sphere.h"
+
+JSONSceneParser::JSONSceneParser(GraphicsEngine* _g, nlohmann::json& j) : _g(_g), sceneJSONData(j) {
 
 };
 JSONSceneParser::~JSONSceneParser() {
@@ -40,16 +54,22 @@ bool JSONSceneParser::test_parse_geometry() {
         return false;
       }
       
-      if(type=="sphere"){
+      if(type=="sphere") {
         cout<<"Sphere: "<<endl;
-        Eigen::Vector3f centre(0,0,0);
+        Eigen::Vector3f centre(0,0,0);  
+        // This makes sure this persists in the game engine, but with weak_ptr
+        // TODO: request the engine to allocate for a new geometry (shared_ptr), return it here and then use a copy constructor here or too complicated?      
+        auto newSphere = std::make_shared<Sphere>();
+
         vector<float> input = (*(sceneJSONData["geometry"].begin()))["centre"];
         copyInputVector3f(3, centre, input);
         cout<<"Centre:\n"<<centre<<endl;
+        newSphere->centre = centre;
         float radius;
         try {
           radius = (*(sceneJSONData["geometry"].begin()))["radius"];
           cout<<"Radius: "<<radius<<endl;
+          newSphere->radius = radius;
         } catch(nlohmann::detail::type_error typeError) {
           std::cerr<<"Type error: Geometry radius must be a number! Aborting..."<<endl;
           return false;
@@ -57,6 +77,10 @@ bool JSONSceneParser::test_parse_geometry() {
           std::cerr<<"Caught an unhandled error!"<<endl;
           return false;
         }
+        cout<<"Sphere info:"<<endl;
+        cout<<newSphere->centre<<endl;        
+        cout<<newSphere->radius<<endl;
+        _g->addGeometry(newSphere.get());        
       }
       if(type=="rectangle"){
         cout<<"rectangle: "<<endl;
@@ -80,8 +104,7 @@ bool JSONSceneParser::test_parse_lights() {
   int lc = 0;
   
   // use iterators to read-in array types
-  for (auto itr = sceneJSONData["light"].begin(); itr!= sceneJSONData["light"].end(); itr++){
-      
+  for (auto itr = sceneJSONData["light"].begin(); itr!= sceneJSONData["light"].end(); itr++) {      
       std::string type;
       if(itr->contains("type")){
           type = (*itr)["type"];
