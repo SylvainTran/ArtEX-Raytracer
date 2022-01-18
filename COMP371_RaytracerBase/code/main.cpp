@@ -28,9 +28,6 @@ using std::endl;
 #include "external/simpleppm.h"
 
 // My code
-#include "src/GraphicsEngine.h"
-#include "src/Mesh.h"
-#include "src/Sphere.h"
 using namespace std;
 
 int test_eigen();
@@ -49,19 +46,18 @@ int main(int argc, char* argv[])
 {
     if(argc!=2){
         runDummyRaytracer();
-        
-    } else {        
-        GraphicsEngine gE;
-        nlohmann::json j = gE.validateSceneJSONData(argv[1]);        
-        if(j == NULL) {
-            cout<<"validateSceneJSONData has returned false: one of the tests failed."<<endl;
-            return -1;
-        } else {
-            // A few tests
-            cout<<(Sphere*)gE.getGeometry(0)<<endl;
-            (*gE.getGeometry(0)).info();            
+    } else {
+        std::ifstream t(argv[1]);
+        if(!t) {
+          cout<<"File "<<argv[1]<<" does not exist!"<<endl; 
+          return -1;
         }
-        
+
+        std::stringstream buffer;
+        buffer<<t.rdbuf();
+        nlohmann::json j = nlohmann::json::parse(buffer.str());
+        cout<<"Parsed successfully"<<endl;
+
 #ifdef COURSE_SOLUTION
         cout<<"Running course solution"<<endl;
         RT371::RayTracer<RT371::Kernelf> rt(j);
@@ -72,10 +68,7 @@ int main(int argc, char* argv[])
 #ifdef STUDENT_SOLUTION
         cout<<"Running studnt solution"<<endl;
         RayTracer rt = RayTracer(j);
-        gE.setActiveRayTracer(rt);
-        gE.getActiveRayTracer().run();
-        // This doesn't work on its own yet:
-        // rt.run();
+        rt.run();
 #else
         // GIven code - a bunch of test functions to showcase the funcitonality
         test_eigen();
@@ -86,9 +79,12 @@ int main(int argc, char* argv[])
         } else {
             cout<<"Could not load file!"<<endl;
         }
-#endif 
 #endif
-    }    
+
+
+
+#endif
+    }
     return 0;
 }
 

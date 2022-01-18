@@ -11,37 +11,28 @@ using std::vector;
 #include "../external/json.hpp"
 
 // My code
+#include "RayTracer.h"
 #include "GraphicsEngine.h"
 #include "JSONSceneParser.h"
-#include "RayTracer.h"
 #include "Mesh.h"
 
 GraphicsEngine::GraphicsEngine() {
-    // auto newRayTracer = RayTracerFactory();
-    // rt = std::move(newRayTracer);
+
 };
 GraphicsEngine::~GraphicsEngine() {};
 std::unique_ptr<RayTracer> GraphicsEngine::RayTracerFactory() {
     return std::make_unique<RayTracer>();
 };
-nlohmann::json GraphicsEngine::validateSceneJSONData(const char* argv) {
-    cout<<"Scene: "<<argv[1]<<endl;    
-    std::ifstream t(argv);
-    if(!t){
-        cout<<"File "<<argv[1]<<" does not exist!"<<endl;
-        return -1;
-    }    
-    std::stringstream buffer;
-    buffer << t.rdbuf();   
-    cout<<"Parsed successfuly"<<endl;
-    nlohmann::json j = nlohmann::json::parse(buffer.str());
-    // Run tests
-   	JSONSceneParser jsp = JSONSceneParser(this, j);
-    if(!jsp.test_parse_geometry() || !jsp.test_parse_lights() || !jsp.test_parse_output()) {
-        cout<<"One of the tests failed. Aborting..."<<endl;
-        return NULL;
+bool GraphicsEngine::validateSceneJSONData(nlohmann::json j) {
+    this->jsp = new JSONSceneParser(this, j);
+    if(!jsp->test_parse_geometry() || !jsp->test_parse_lights() || !jsp->test_parse_output()) {
+      cout<<"One of the tests failed. Aborting..."<<endl;
+      return false;
+    } else {
+      cout<<"parsing geometry!!!!"<<endl;
+      jsp->parse_geometry(this);
     }
-    return j;
+    return true;
 };
 void GraphicsEngine::setActiveRayTracer(RayTracer& rt) {
     this->rt = rt;
@@ -51,8 +42,8 @@ RayTracer GraphicsEngine::getActiveRayTracer() {
 };
 void GraphicsEngine::addGeometry(Mesh* s) {
     // this->geometryRenderList.push_back(s);
-    // TODO: notify observers (multiple renderers?)
-    this->rt.geometryRenderList.push_back(s);
+    // TODO: notify observers (UI editor? multiple renderers?)
+    this->geometryRenderList.push_back(s);
     std::cout<<"Added geometry to render list!"<<std::endl;
 };
 Mesh* GraphicsEngine::getGeometry(int index) {

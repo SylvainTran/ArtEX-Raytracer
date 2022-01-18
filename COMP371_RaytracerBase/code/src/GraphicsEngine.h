@@ -26,7 +26,7 @@ public:
     /**
      *  Validates the scene json data.
      **/
-    nlohmann::json validateSceneJSONData(const char* argv);
+    bool validateSceneJSONData(nlohmann::json j);
     /**
      * Sets/gets a new active raytracer.
      **/
@@ -40,7 +40,6 @@ public:
      * Gets the mesh in the list of meshes to render at index.
      **/
     Mesh* getGeometry(int index);
-private:
     /**
      *  The raytracer.
      **/
@@ -48,7 +47,7 @@ private:
     /**
      *  Reference to a JSONSceneParser
      **/
-    std::unique_ptr<JSONSceneParser> jsp; 
+    JSONSceneParser* jsp; 
     /**
      *  List of geometry (as meshes) to render in the scene.
      **/

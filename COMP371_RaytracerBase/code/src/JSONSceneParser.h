@@ -4,8 +4,6 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
-// My code
-class json;
 class GraphicsEngine;
 
 class JSONSceneParser {
@@ -15,12 +13,18 @@ public:
      **/
     JSONSceneParser(GraphicsEngine* g, nlohmann::json& j);
     ~JSONSceneParser();
-    // TODO: Assignment and copy constructors
+    // Assignment and copy constructors
+    JSONSceneParser(JSONSceneParser& other);
+    JSONSceneParser& operator=(JSONSceneParser& other);
     // TODO: Operator overloads
     /**
-     *  Tests the geometry. 
+     *  Tests the geometry.
      **/
     bool test_parse_geometry();
+    /**
+     *  Adds the geometry to the list in GraphicsEngine.
+     **/
+    void parse_geometry(GraphicsEngine* gE);
     /**
      *  Tests the lights. 
      **/

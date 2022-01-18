@@ -13,6 +13,8 @@
 #include <string>
 #include <memory>
 #include <vector>
+using std::cout;
+using std::endl;
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
@@ -21,9 +23,13 @@
 #include "../external/simpleppm.h"
 
 // My code
-#include "Mesh.h"
 
-struct RayTracer {
+class GraphicsEngine;
+#include "Mesh.h"
+#include "Sphere.h"
+
+class RayTracer {
+  public:
     RayTracer();
     RayTracer(nlohmann::json& j);
     // Simple move constructor
@@ -36,4 +42,7 @@ struct RayTracer {
      *  List of geometry (as meshes) to render in the scene.
      **/
     std::vector<Mesh*> geometryRenderList; 
+  private:
+    nlohmann::json j;
+    GraphicsEngine* gE;
 };

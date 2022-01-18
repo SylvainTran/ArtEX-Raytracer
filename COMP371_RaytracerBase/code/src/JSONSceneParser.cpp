@@ -13,16 +13,27 @@ using std::vector;
 #include "../external/json.hpp"
 
 // My classes
-#include "GraphicsEngine.h"
 #include "JSONSceneParser.h"
-#include "RayTracer.h"
-#include "Sphere.h"
+#include "GraphicsEngine.h"
 
 JSONSceneParser::JSONSceneParser(GraphicsEngine* _g, nlohmann::json& j) : _g(_g), sceneJSONData(j) {
 
 };
 JSONSceneParser::~JSONSceneParser() {
 
+};
+JSONSceneParser::JSONSceneParser(JSONSceneParser& other) {
+  this->_g = other._g;
+  this->sceneJSONData = other.sceneJSONData;
+};
+JSONSceneParser& JSONSceneParser::operator=(JSONSceneParser& other) {
+  if(&other == this) {
+    return other;
+  } else {
+    this->_g = other._g;
+    this->sceneJSONData = other.sceneJSONData;
+    return *this;
+  }
 };
 void JSONSceneParser::copyInputVector3f(int parameterLen, Eigen::Vector3f& output, std::vector<float> input) {
    for (int i = 0; i < parameterLen; i++){
@@ -39,6 +50,26 @@ void JSONSceneParser::copyRectangleCorners(Eigen::Vector3f& P1, Eigen::Vector3f&
   cout<<"P2:\n"<<P2<<endl;
   cout<<"P3:\n"<<P3<<endl;
   cout<<"P4:\n"<<P4<<endl;      
+};
+void JSONSceneParser::parse_geometry(GraphicsEngine* gE) {
+  for (auto itr = sceneJSONData["geometry"].begin(); itr!=sceneJSONData["geometry"].end();itr++) {
+     std::string type;
+     if(itr->contains("type")) {
+      type = (*itr)["type"];
+     } 
+
+    if(type=="sphere") {
+        Eigen::Vector3f centre(0,0,0);
+        auto newSphere = std::make_shared<Sphere>();
+        vector<float> input = (*(sceneJSONData["geometry"].begin()))["centre"];
+        copyInputVector3f(3, centre, input);
+        newSphere->centre = centre;
+        float radius;
+        radius = (*(sceneJSONData["geometry"].begin()))["radius"];
+        newSphere->radius = radius;
+        gE->addGeometry(newSphere.get());
+      }
+   }
 };
 bool JSONSceneParser::test_parse_geometry() {
   cout<<"Geometry: "<<endl;
@@ -80,7 +111,6 @@ bool JSONSceneParser::test_parse_geometry() {
         cout<<"Sphere info:"<<endl;
         cout<<newSphere->centre<<endl;        
         cout<<newSphere->radius<<endl;
-        _g->addGeometry(newSphere.get());        
       }
       if(type=="rectangle"){
         cout<<"rectangle: "<<endl;
