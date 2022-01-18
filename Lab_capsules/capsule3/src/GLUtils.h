@@ -3,12 +3,7 @@
 #define TG2LUTILS_HPP
 
 #include <GL/glew.h>
-#ifdef RUNONMAC
-#include <OpenGL/gl.h>
-#else
 
-#include <GL/gl.h>
-#endif
 
 namespace TAPP {
 

@@ -5,12 +5,6 @@
 #include "RUIObject.h"
 #include <vector>
 #include <GL/glew.h>
-#ifdef RUNONMAC
-#include <OpenGL/gl.h>
-#else
-
-#include <GL/gl.h>
-#endif
 #include <string>
 
 
