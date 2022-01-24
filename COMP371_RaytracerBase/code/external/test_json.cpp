@@ -36,11 +36,11 @@ bool test_parse_geometry(json& j){
             cout<<"Sphere: "<<endl;
             Eigen::Vector3f centre(0,0,0);
             int i = 0;
-            for (auto itr2 =(*itr)["center"].begin(); itr2!= (*itr)["center"].end(); itr2++){
+            for (auto itr2 =(*itr)["centre"].begin(); itr2!= (*itr)["centre"].end(); itr2++){
                 if(i<3){
                     centre[i++] = (*itr2).get<float>();
                 } else {
-                    cout<<"Warning: Too many entries in center"<<endl;
+                    cout<<"Warning: Too many entries in centre"<<endl;
                 }
             }
             cout<<"Centre: "<<centre<<endl;
@@ -73,11 +73,11 @@ bool test_parse_lights(json& j){
             cout<<"Point based light: "<<endl;
             Eigen::Vector3f centre(0,0,0);
             int i = 0;
-            for (auto itr2 =(*itr)["center"].begin(); itr2!= (*itr)["center"].end(); itr2++){
+            for (auto itr2 =(*itr)["centre"].begin(); itr2!= (*itr)["centre"].end(); itr2++){
                 if(i<3){
                     centre[i++] = (*itr2).get<float>();
                 } else {
-                    cout<<"Warning: Too many entries in center"<<endl;
+                    cout<<"Warning: Too many entries in centre"<<endl;
                 }
             }
             cout<<"Centre: "<<centre<<endl;
@@ -114,22 +114,22 @@ bool test_parse_output(json& j){
             if(i<2){
                 size[i++] = (*itr2).get<float>();
             } else {
-                cout<<"Warning: Too many entries in center"<<endl;
+                cout<<"Warning: Too many entries in size"<<endl;
             }
         }
         
         Eigen::Vector3f lookat(0,0,0), up(0,0,0), centre(0,0,0);
         
          i = 0;
-        for (auto itr2 =(*itr)["center"].begin(); itr2!= (*itr)["center"].end(); itr2++){
+        for (auto itr2 =(*itr)["centre"].begin(); itr2!= (*itr)["centre"].end(); itr2++){
             if(i<3){
                 centre[i++] = (*itr2).get<float>();
             } else {
-                cout<<"Warning: Too many entries in center"<<endl;
+                cout<<"Warning: Too many entries in centre"<<endl;
             }
         }
         
-        // Similarly to the center array you need to read the lookat and up
+        // Similarly to the centre array you need to read the lookat and up
         //Maybe create a separate functiomn to read arrays - ythey are pretty common
         
         
