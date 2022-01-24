@@ -12,6 +12,7 @@ using std::vector;
 
 // My code
 #include "RayTracer.h"
+#include "Camera.h"
 #include "GraphicsEngine.h"
 #include "JSONSceneParser.h"
 #include "Mesh.h"
@@ -29,8 +30,10 @@ bool GraphicsEngine::validateSceneJSONData(nlohmann::json j) {
       cout<<"One of the tests failed. Aborting..."<<endl;
       return false;
     } else {
-      cout<<"parsing geometry!!!!"<<endl;
+      cout<<"parsing geometry!"<<endl;
       jsp->parse_geometry(this);
+      cout<<"parsing output (camera, etc.)!"<<endl;
+      jsp->parse_output(this);
     }
     return true;
 };

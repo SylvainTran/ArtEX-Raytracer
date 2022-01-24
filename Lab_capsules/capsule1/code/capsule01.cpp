@@ -38,15 +38,15 @@ void debug_gl(int place){
 const char* getVertexShaderSource()
 {
     return
-    "#version 330 core  \n"
-        "layout (location = 0) in vec2 aPos;\n"
+    "#version 330 core  \n" // Versiospecifier then Layout specifier 
+        "layout (location = 0) in vec2 aPos;\n" // Layout specifier
         ""
         "uniform mat2 rotMatrix = mat2(1.0);\n"  // default value for view matrix (identity)
-        "\n"
+        "\n" // What is "uniform"?
         "void main()\n"
         "{\n"
-        "   gl_Position = vec4(aPos, 0, 1);\n"
-        "\n"
+        "   gl_Position = vec4(aPos, 0, 1);\n" // output variable setting
+        "\n" // gl_Position is in the ummm OpenGL server?
         "}\n";
 }
 
@@ -55,11 +55,11 @@ const char* getFragmentShaderSource()
 {
     return
     "#version 330 core  \n"
-        "out vec3 FragColor;"
+        "out vec3 FragColor;" // out variable
         ""
         "void main()"
         "{"
-        "   FragColor = vec3(1, 1, 0);"
+        "   FragColor = vec3(1, 1, 0);" // init out variable in the main program
         "}";
 }
 

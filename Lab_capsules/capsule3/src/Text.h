@@ -1,6 +1,7 @@
 #ifndef TEXT_H
 #define TEXT_H
 
+#define RUNONMAC
 
 #include "RUIObject.h"
 #include <vector>

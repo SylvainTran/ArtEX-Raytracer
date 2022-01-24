@@ -15,6 +15,7 @@ using std::vector;
 // My classes
 #include "JSONSceneParser.h"
 #include "GraphicsEngine.h"
+#include "Camera.h"
 
 JSONSceneParser::JSONSceneParser(GraphicsEngine* _g, nlohmann::json& j) : _g(_g), sceneJSONData(j) {
 
@@ -70,6 +71,32 @@ void JSONSceneParser::parse_geometry(GraphicsEngine* gE) {
         gE->addGeometry(newSphere.get());
       }
    }
+};
+void JSONSceneParser::parse_output(GraphicsEngine* gE) {
+  for (auto itr = sceneJSONData["output"].begin(); itr!= sceneJSONData["output"].end(); itr++){      
+    std::string filename;
+    Eigen::Vector3f size(0,0,0), lookat(0,0,0), up(0,0,0), centre(0,0,0);     
+    vector<float> centreInput = (*itr)["centre"];
+    vector<float> sizeInput = (*itr)["size"];
+    vector<float> lookAtInput = (*itr)["lookat"];
+    vector<float> upInput = (*itr)["up"];
+    copyInputVector3f(3, centre, centreInput);
+    copyInputVector3f(3, lookat, lookAtInput);     
+    copyInputVector3f(3, up, upInput);            
+    copyInputVector3f(2, size, sizeInput);      
+    float fov;
+    fov = (*itr)["fov"].get<float>();
+    // Set parameters in camera
+    auto newCamera = std::make_shared<Camera>();
+    newCamera->fov = fov;
+    newCamera->centre = centre;
+    newCamera->lookat = lookat;
+    newCamera->up = up;
+    newCamera->size = size;
+    gE->cameraList.push_back(newCamera.get());
+  }
+  // Sets the first camera as the default active camera in the scene
+  gE->activeSceneCamera = gE->cameraList[0];
 };
 bool JSONSceneParser::test_parse_geometry() {
   cout<<"Geometry: "<<endl;
@@ -204,7 +231,6 @@ bool JSONSceneParser::test_parse_output() {
         return false;
       }
       cout<<"B"<<endl;
-      
       cout<<"Filename: "<<filename<<endl;
       cout<<"Size:\n"<<size<<endl;
       cout<<"Camera centre:\n"<<centre<<endl;

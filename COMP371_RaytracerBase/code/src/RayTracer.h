@@ -10,6 +10,7 @@
  */
 ////////////////////////
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <memory>
 #include <vector>
@@ -25,6 +26,8 @@ using std::endl;
 // My code
 
 class GraphicsEngine;
+#include "HitRecord.h"
+#include "Ray.h"
 #include "Mesh.h"
 #include "Sphere.h"
 
@@ -37,11 +40,16 @@ class RayTracer {
     // Simple assignment operator, TODO: move ass. operator
     RayTracer& operator=(RayTracer& other);
     ~RayTracer();  
+    HitRecord* groupRaycastHit(Ray* ray, float t0, float t1);
+    // Eigen::Vector3f groupRaycastHit(Ray* ray, float t0, float t1);
     void run();
     /**
      *  List of geometry (as meshes) to render in the scene.
      **/
-    std::vector<Mesh*> geometryRenderList; 
+    std::vector<Mesh*> geometryRenderList;
+    int save_ppm(std::string file_name, const std::vector<float>& buffer, int dimx, int dimy);
+    // void write_color(std::ofstream& ofs, Eigen::Vector3f color);
+    void write_color(std::ofstream& ofs, HitRecord& hit);
   private:
     nlohmann::json j;
     GraphicsEngine* gE;

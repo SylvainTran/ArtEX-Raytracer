@@ -3,6 +3,7 @@
 
 // RayTracer and JSON scene parser
 #include "RayTracer.h"
+#include "Camera.h"
 class JSONSceneParser;
 class Mesh;
 
@@ -52,4 +53,12 @@ public:
      *  List of geometry (as meshes) to render in the scene.
      **/
     std::vector<Mesh*> geometryRenderList;   
+    /**
+     *  Camera(s)
+     **/
+    std::vector<Camera*> cameraList;
+    /**
+     *  Currently active camera in the scene window.
+     **/
+    Camera* activeSceneCamera;
 };

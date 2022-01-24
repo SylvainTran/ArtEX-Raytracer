@@ -26,6 +26,10 @@ public:
      **/
     void parse_geometry(GraphicsEngine* gE);
     /**
+     *  Adds the output (camera parameters etc.) in the GraphicsEngine.
+     **/
+    void parse_output(GraphicsEngine* gE);
+    /**
      *  Tests the lights. 
      **/
     bool test_parse_lights();

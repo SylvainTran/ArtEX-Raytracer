@@ -2,11 +2,12 @@
 #ifndef TG2LUTILS_HPP
 #define TG2LUTILS_HPP
 
+#define RUNONMAC
+
 #include <GL/glew.h>
 #ifdef RUNONMAC
 #include <OpenGL/gl.h>
 #else
-
 #include <GL/gl.h>
 #endif
 

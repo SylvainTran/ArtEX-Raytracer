@@ -11,6 +11,8 @@ set(CMAKE_PREFIX_PATH
     /opt/local # Macports
 )
 
+set(RUNONMAC 1)
+
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED
