@@ -123,13 +123,13 @@ namespace TAPP {
         cout<<"Load shaders!"<<endl;
 
         // Create and compile our GLSL program from the shaders
-        string vsh1 = "assets/Phong.vertexshader.glsl";
-        string fsh1 = "assets/Phong.fragmentshader.glsl";
+        string vsh1 = "../assets/Phong.vertexshader.glsl";
+        string fsh1 = "../assets/Phong.fragmentshader.glsl";
 
         programPhong = LoadShaders( vsh1.c_str(), fsh1.c_str());
         
-         vsh1 = "assets/Line.vertexshader.glsl";
-         fsh1 = "assets/Line.fragmentshader.glsl";
+         vsh1 = "../assets/Line.vertexshader.glsl";
+         fsh1 = "../assets/Line.fragmentshader.glsl";
 
         programWire = LoadShaders( vsh1.c_str(), fsh1.c_str());
        

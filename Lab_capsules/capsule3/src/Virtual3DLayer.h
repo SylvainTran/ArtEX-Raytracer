@@ -5,17 +5,8 @@
 
 #include "TOGWLayer.h"
 #include "RUIObject.h"
-
-
 #include "TCamera.h"
 
-// opengl stuff
-#ifdef RUNONMAC
-//#include <OpenGL/gl.h>
-#else
-
-//#include <GL/gl.h>
-#endif
 
 namespace TAPP {
 

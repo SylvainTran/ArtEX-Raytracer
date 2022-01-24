@@ -191,21 +191,7 @@ int main(int argc, char*argv[])
     
     // Compile and link shaders here ...
     int shaderProgram = compileAndLinkShaders(getVertexShaderSource(), getFragmentShaderSource());
-    
-    
-    
-    char infoLog[1024];
-    int success;
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if(!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-       
-    } else {
-        cout<<"Shadfer success"<<endl;
-    }
-    
-    debug_gl(0);
-    
+
 
     unsigned int VAO, EBO, VBO;
     createRenderingData(VAO, VBO, EBO);

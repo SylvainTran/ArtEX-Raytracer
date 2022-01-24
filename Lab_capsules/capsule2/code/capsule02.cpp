@@ -43,7 +43,6 @@ const char* getVertexShaderSource()
     "layout (location = 1) in vec3 col;\n"
     "out vec3 vertexColor;\n"
         ""
-        "uniform mat2 rotMatrix = mat2(1.0);\n"  // default value for view matrix (identity)
         "\n"
         "void main()\n"
         "{\n"
@@ -291,6 +290,7 @@ int main(int argc, char*argv[])
     
     
     // Compile and link shaders here ...
+    //int shaderProgram = compileAndLinkShaders(getVertexShaderSource(), getFragmentShaderSource());
     int shaderProgram = compileAndLinkShaders(getVertexShaderSource2(), getFragmentShaderSource2());
     
     
