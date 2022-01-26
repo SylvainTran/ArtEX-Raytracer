@@ -41,16 +41,16 @@ void JSONSceneParser::copyInputVector3f(int parameterLen, Eigen::Vector3f& outpu
      output[i] = input[i];
    }
 };
-void JSONSceneParser::copyRectangleCorners(Eigen::Vector3f& P1, Eigen::Vector3f& P2, Eigen::Vector3f& P3, Eigen::Vector3f& P4, vector<float> p1_input, vector<float> p2_input, vector<float> p3_input, vector<float> p4_input) {                       
+void JSONSceneParser::copyRectangleCorners(Eigen::Vector3f& P1, Eigen::Vector3f& P2, Eigen::Vector3f& P3, Eigen::Vector3f& P4, vector<float> p1_input, vector<float> p2_input, vector<float> p3_input, vector<float> p4_input) {
   copyInputVector3f(3, P1, p1_input);
   copyInputVector3f(3, P2, p2_input);
   copyInputVector3f(3, P3, p3_input);
-  copyInputVector3f(3, P4, p4_input);                        
+  copyInputVector3f(3, P4, p4_input);
   cout<<"Corners:\n"<<endl;
   cout<<"P1:\n"<<P1<<endl;
   cout<<"P2:\n"<<P2<<endl;
   cout<<"P3:\n"<<P3<<endl;
-  cout<<"P4:\n"<<P4<<endl;      
+  cout<<"P4:\n"<<P4<<endl;
 };
 void JSONSceneParser::parse_geometry(GraphicsEngine* gE) {
   for (auto itr = sceneJSONData["geometry"].begin(); itr!=sceneJSONData["geometry"].end();itr++) {

@@ -5,9 +5,9 @@
 #include "Ray.h"
 #include "HitRecord.h"
 
-struct Mesh {
-	Mesh();
-	~Mesh();
+struct Surface {
+	Surface();
+	~Surface();
 	Eigen::Vector3f centre;
 	virtual void info();
   virtual HitRecord* hit(Ray& r, float t0, float t1);

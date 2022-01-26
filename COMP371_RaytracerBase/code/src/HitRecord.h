@@ -2,10 +2,10 @@
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
-class Mesh;
+class Surface;
 
 struct HitRecord {
-  Mesh* m;
+  Surface* m;
   float t;
   Eigen::Vector3f n;
   Eigen::Vector3f color;
@@ -18,10 +18,10 @@ struct HitRecord {
     this->n = Eigen::Vector3f(0,0,0);
     this->color = Eigen::Vector3f(0,0,0);
   };
-  HitRecord(Mesh* m, float t, Eigen::Vector3f n, Eigen::Vector3f c) {
+  HitRecord(Surface* m, float t, Eigen::Vector3f n, Eigen::Vector3f c) {
     this->m = m;
     this->t = t;
-    this->n = n;
+   this->n = n;
     this->color = c;
   };
   ~HitRecord() {

@@ -17,6 +17,8 @@ using std::ofstream;
 #include "RayTracer.h"
 #include "GraphicsEngine.h"
 
+std::ofstream ofs;
+
 RayTracer::RayTracer() {
 
 };
@@ -41,6 +43,7 @@ HitRecord* RayTracer::groupRaycastHit(Ray* ray, float t0, float t1) {
     HitRecord* rec = m->hit(*ray, t0, t1);
     if(rec == NULL) {
       closestHit->color = colorNoHit;
+      closestHit->t = INFINITY;
     }
     else {
       closestHit = rec;
@@ -53,16 +56,15 @@ HitRecord* RayTracer::groupRaycastHit(Ray* ray, float t0, float t1) {
   // return color;
   return closestHit;
 };
-// Computes the size of a pixel
-float computePixelSizeDelta(float fov, float height) {
-  // we don't assume that height = width, so we need to use the ratio (width/height) too
-  // 2*tan(fov/2)/height * ratio = 1 vertical unit
-  // 2*tan(fov/2)/width = 1 horizontal unit
-  return 2*tan(fov/2*(M_PI / 180.0))/height;
+// Computes the size of a pixel according to horizontal and vertical fov
+float computePixelSizeDeltaHorizontal(float horizontal_fov, float height) {
+  // 2*tan(fov/2)/width = 1 horizontal unit assuming square pixels (the ratio is already adjusted)
+  return 2*tan(horizontal_fov/2*(M_PI/180.0))/height;
 };
-int RayTracer::save_ppm(std::string file_name, const std::vector<float>& buffer, int dimx, int dimy) {
-    ofstream ofs(file_name, std::ios_base::out | std::ios_base::binary);
-    ofs << "P6" << endl << dimx << ' ' << dimy << endl << "255" << endl;
+float computePixelSizeVertical(float vertical_fov, float height) {
+  return 2*tan(vertical_fov/2*(M_PI/180.0))/height;
+};
+int RayTracer::save_ppm(const std::vector<float>& buffer, int dimx, int dimy) {
     for (unsigned int j = 0; j < dimy; j++) {
       std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
       for (unsigned int i = 0; i < dimx; i++) {
@@ -90,7 +92,7 @@ void RayTracer::run() {
       cout<<"Invalid scene! Aborting..."<<endl;
       return;
     }
-   this->geometryRenderList = this->gE->geometryRenderList;
+    this->geometryRenderList = this->gE->geometryRenderList;
     if (this->geometryRenderList.size() == 0) {
         cout<<"no geometry to render!"<<endl;
         return;
@@ -100,56 +102,62 @@ void RayTracer::run() {
     // 1.1 Get the camera from the gE... shoot the ray from it
     float dimx = this->gE->activeSceneCamera->size(0);
     float dimy = this->gE->activeSceneCamera->size(1);
-    float ratio = dimx/dimy;
+    float aspect_ratio = dimx/dimy;
+    float fov = this->gE->activeSceneCamera->fov;
+    float horizontal_fov = fov;
+    float vertical_fov =  2*atan2(tan((horizontal_fov/2)*M_PI/180),aspect_ratio) * 180/M_PI; //vertical FOV in degrees
+    float scale_v = tan((vertical_fov/2)*M_PI/180); // takes in the vertical fov instead of the fov directly (that one is only good for the horizontal fov)
+    float scale_h = tan(horizontal_fov/2*M_PI/180);
+    cout<<"horizontal_fov: "<<horizontal_fov<<endl;
+    cout<<"vertical_fov: "<<vertical_fov<<endl;
+    cout<<"scale_v: "<<scale_v<<endl;
+    cout<<"scale_h: "<<scale_h<<endl;
+    
     float MAX_RAY_DISTANCE = 1000;
     Ray* R;
+    ofs.open("test_result6.ppm", std::ios_base::out | std::ios_base::binary);
+    ofs << "P6" << endl << dimx << ' ' << dimy << endl << "255" << endl;
+    
     // INITIAL POSITIONS
-    float delta = computePixelSizeDelta(this->gE->activeSceneCamera->fov, dimy);
+    float delta = computePixelSizeDeltaHorizontal(horizontal_fov, dimy);
+    float delta2 = computePixelSizeVertical(vertical_fov, dimy);
     cout<<"size of a pixel: "<<delta<<endl;
+    cout<<"size vertically: "<<delta2<<endl;
+    //exit(0);
     Eigen::Vector3f o = this->gE->activeSceneCamera->centre;
     cout<<"O: "<<o<<endl;
     Eigen::Vector3f dir = this->gE->activeSceneCamera->lookat;
     Eigen::Vector3f up = this->gE->activeSceneCamera->up;
-    Eigen::Vector3f right = up.cross(dir);
+    Eigen::Vector3f left = -1*(up.cross(dir)); // flip by -1 because dir is looking down the -z axis, and we're counting counterclockwise (right-handed system)
     cout<<"Dir: "<<dir<<endl;
     cout<<"Up: "<<up<<endl;
-    cout<<"Right: "<<right<<endl;
+    cout<<"Left: "<<left<<endl;
+    // exit(0);
 
     // POINTS ON THE PROJECTION PLANE
     // These are normalized coordinates (between -1 to 1)
     Eigen::Vector3f A = o + (1)*dir;
     cout<<"A CENTER: "<<A<<endl;
-    Eigen::Vector3f BA = A + up * (tan((this->gE->activeSceneCamera->fov/2)*M_PI/180)) * ratio; // Then it will be the index j, since max(j) = height in pixels, each j => j/max ratio to scale
+    Eigen::Vector3f BA = A + up * (delta*(dimy/2));
     cout<<"BA (TOP_CENTER): "<<BA<<endl;
-    Eigen::Vector3f CB = BA - right * (delta*dimx/2) ; // Then it will be index i since max(i) = width in pixels
+    Eigen::Vector3f CB = BA - left * (delta*(dimx/2));
     cout<<"TOP_LEFT: "<<CB<<endl;
     cout<<"DIMX: "<<dimx<<endl;
     cout<<"DIMY: "<<dimy<<endl;
     std::vector<float> buffer = std::vector<float>(3*dimx*dimy);
-    
+    // exit(1);
     // 1.2 Loop for every pixel, generate a new Ray for the pixel
     for(int j = dimy-1; j >= 0; j--) {
       for(int i = 0; i < dimx; i++) {
         // Update the ray R's coordinates at P(i,j) -> note that the ray space is not equal to the raster image pixel space
-        Eigen::Vector3f rayDirIJ = CB + (j*delta+delta/2)*right - (i*delta+delta/2)*up;
-        HitRecord* rayColor = groupRaycastHit(new Ray(o, (rayDirIJ-o)), 0, MAX_RAY_DISTANCE);
+        Eigen::Vector3f rayDirIJ = CB + (i*delta+delta/2)*left - (j*delta+delta/2)*up;
+        HitRecord* rayColor = groupRaycastHit(new Ray(o, (rayDirIJ-o)), -1, MAX_RAY_DISTANCE);
         buffer[3*j*dimx+3*i+0] = rayColor->color(0);
         buffer[3*j*dimx+3*i+1] = rayColor->color(1);
         buffer[3*j*dimx+3*i+2] = rayColor->color(2);
-
         // QUESTION FOR OFFICE HOURS: I DONT NEED TO EVAL THE RAY POINT TO COLOR IT. JUST THE RAY DIR? PROVIDED BY I J DIMX DIMY ALREADY IT SEEMS
         // Pixel position i,j in the raster image VS. ray pixel center?
       }
     }
-    save_ppm("test_scene1_result3.ppm", buffer, dimx, dimy);
+    save_ppm(buffer, dimx, dimy);
 };
-
-//<- Graveyard ->
-
-//Eigen::Vector3f lower_left_corner = o - Eigen::Vector3f(dimx/2, dimy/2, 0) - Eigen::Vector3f(0, 0, -1);
-//auto u = double(i) / (dimx-1);
-//auto v = double(j) / (dimy-1);
-
-//cout<<"RAY TO COLOR : "<<(rayDirIJ-o)<<endl;
-// 1.3 Call the hit() method, which will loop for each Surface s in geometryRenderList and check for hits
-// HitRecord* rayColor = groupRaycastHit(new Ray(o, (lower_left_corner + u*right + v*up - o)), 0, MAX_RAY_DISTANCE);

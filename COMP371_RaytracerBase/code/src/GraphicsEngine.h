@@ -5,7 +5,7 @@
 #include "RayTracer.h"
 #include "Camera.h"
 class JSONSceneParser;
-class Mesh;
+class Surface;
 
 class GraphicsEngine {
     /**
@@ -36,11 +36,11 @@ public:
     /**
      * Adds a new mesh to the list of meshes to render.
      **/
-    void addGeometry(Mesh* s);
+    void addGeometry(Surface* s);
     /**
      * Gets the mesh in the list of meshes to render at index.
      **/
-    Mesh* getGeometry(int index);
+    Surface* getGeometry(int index);
     /**
      *  The raytracer.
      **/
@@ -50,9 +50,9 @@ public:
      **/
     JSONSceneParser* jsp; 
     /**
-     *  List of geometry (as meshes) to render in the scene.
+     *  List of geometry (as surfaces) to render in the scene.
      **/
-    std::vector<Mesh*> geometryRenderList;   
+    std::vector<Surface*> geometryRenderList;   
     /**
      *  Camera(s)
      **/

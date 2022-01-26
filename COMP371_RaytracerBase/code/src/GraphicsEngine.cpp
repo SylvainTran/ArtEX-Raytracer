@@ -15,7 +15,7 @@ using std::vector;
 #include "Camera.h"
 #include "GraphicsEngine.h"
 #include "JSONSceneParser.h"
-#include "Mesh.h"
+#include "Surface.h"
 
 GraphicsEngine::GraphicsEngine() {
 
@@ -43,13 +43,13 @@ void GraphicsEngine::setActiveRayTracer(RayTracer& rt) {
 RayTracer GraphicsEngine::getActiveRayTracer() {
     return this->rt;
 };
-void GraphicsEngine::addGeometry(Mesh* s) {
+void GraphicsEngine::addGeometry(Surface* s) {
     // this->geometryRenderList.push_back(s);
     // TODO: notify observers (UI editor? multiple renderers?)
     this->geometryRenderList.push_back(s);
     std::cout<<"Added geometry to render list!"<<std::endl;
 };
-Mesh* GraphicsEngine::getGeometry(int index) {
+Surface* GraphicsEngine::getGeometry(int index) {
     //return this->geometryRenderList[index];
     return this->rt.geometryRenderList[index];
 };

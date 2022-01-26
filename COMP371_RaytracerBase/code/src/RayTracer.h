@@ -28,7 +28,7 @@ using std::endl;
 class GraphicsEngine;
 #include "HitRecord.h"
 #include "Ray.h"
-#include "Mesh.h"
+#include "Surface.h"
 #include "Sphere.h"
 
 class RayTracer {
@@ -46,8 +46,8 @@ class RayTracer {
     /**
      *  List of geometry (as meshes) to render in the scene.
      **/
-    std::vector<Mesh*> geometryRenderList;
-    int save_ppm(std::string file_name, const std::vector<float>& buffer, int dimx, int dimy);
+    std::vector<Surface*> geometryRenderList;
+    int save_ppm(const std::vector<float>& buffer, int dimx, int dimy);
     // void write_color(std::ofstream& ofs, Eigen::Vector3f color);
     void write_color(std::ofstream& ofs, HitRecord& hit);
   private:

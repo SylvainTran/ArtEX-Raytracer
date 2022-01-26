@@ -1,14 +1,15 @@
 #pragma once
 #include <iostream>
+// External
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
 // My code
-#include "Mesh.h"
+#include "Surface.h"
 #include "Ray.h"
 #include "HitRecord.h"
 
-struct Sphere : public Mesh {
+struct Sphere : public Surface {
 	Sphere();
 	Sphere(Eigen::Vector3f centre);
 	~Sphere();
