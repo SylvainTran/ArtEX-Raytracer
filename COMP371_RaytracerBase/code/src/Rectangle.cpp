@@ -10,11 +10,10 @@ Rectangle::Rectangle(std::vector<Eigen::Vector3f> pointList) {
 
 };
 */
-/**
-Rectangle(Triangle* triangle1, Triangle* triangle2) {
-
+Rectangle::Rectangle(Triangle* triangle1, Triangle* triangle2) {
+  this->triangle1 = triangle1;
+  this->triangle2 = triangle2;
 };
-*/
 Rectangle::~Rectangle() {
 
 };

@@ -1,4 +1,4 @@
-# Install script for directory: /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3
+# Install script for directory: /Users/sylvaintran/-c371labs/capsule3
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/sylvaintran/-c371labs/capsule3/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

@@ -1,5 +1,5 @@
 CMakeFiles/capsule03.dir/src/Text.cpp.o: \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/Text.cpp \
+  /Users/sylvaintran/-c371labs/capsule3/src/Text.cpp \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/iostream \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__config \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/usr/include/pthread.h \
@@ -225,8 +225,8 @@ CMakeFiles/capsule03.dir/src/Text.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__bsd_locale_defaults.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/bitset \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__bit_reference \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/Text.h \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/RUIObject.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/Text.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/RUIObject.h \
   /usr/local/include/glm/glm.hpp \
   /usr/local/include/glm/detail/_fixes.hpp \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/cmath \
@@ -493,12 +493,12 @@ CMakeFiles/capsule03.dir/src/Text.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/System/Library/Frameworks/OpenGL.framework/Headers/OpenGLAvailability.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/usr/include/os/availability.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/System/Library/Frameworks/OpenGL.framework/Headers/gl.h \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/GLUtils.h \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/ObjModel.h \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TKernel/TTuple.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/GLUtils.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/ObjModel.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/TKernel/TTuple.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/fstream \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/filesystem \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/stack \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/deque \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/iomanip \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/ObjParser.h
+  /Users/sylvaintran/-c371labs/capsule3/src/ObjParser.h

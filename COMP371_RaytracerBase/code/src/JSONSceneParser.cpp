@@ -16,6 +16,7 @@ using std::vector;
 #include "JSONSceneParser.h"
 #include "GraphicsEngine.h"
 #include "Camera.h"
+#include "Rectangle.h"
 
 JSONSceneParser::JSONSceneParser(GraphicsEngine* _g, nlohmann::json& j) : _g(_g), sceneJSONData(j) {
 
@@ -60,17 +61,33 @@ void JSONSceneParser::parse_geometry(GraphicsEngine* gE) {
      } 
 
     if(type=="sphere") {
-        Eigen::Vector3f centre(0,0,0);
-        auto newSphere = std::make_shared<Sphere>();
-        vector<float> input = (*(sceneJSONData["geometry"].begin()))["centre"];
-        copyInputVector3f(3, centre, input);
-        newSphere->centre = centre;
-        float radius;
-        radius = (*(sceneJSONData["geometry"].begin()))["radius"];
-        newSphere->radius = radius;
-        gE->addGeometry(newSphere.get());
-      }
-   }
+      Eigen::Vector3f centre(0,0,0);
+      auto newSphere = std::make_shared<Sphere>();
+      vector<float> input = (*(sceneJSONData["geometry"].begin()))["centre"];
+      copyInputVector3f(3, centre, input);
+      newSphere->centre = centre;
+      float radius;
+      radius = (*(sceneJSONData["geometry"].begin()))["radius"];
+      newSphere->radius = radius;
+      gE->addGeometry(newSphere.get());
+    }
+     
+    if(type=="rectangle") {
+      Eigen::Vector3f P1(0,0,0);
+      Eigen::Vector3f P2(0,0,0);
+      Eigen::Vector3f P3(0,0,0);
+      Eigen::Vector3f P4(0,0,0);
+      vector<float> p1_input = (*itr)["P1"];
+      vector<float> p2_input = (*itr)["P2"];
+      vector<float> p3_input = (*itr)["P3"];
+      vector<float> p4_input = (*itr)["P4"];
+      copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);
+      auto triangle1 = std::make_shared<Triangle>(P1,P2,P3);
+      auto triangle2 = std::make_shared<Triangle>(P1,P3,P4);
+      auto newRectangle = std::make_shared<Rectangle>(triangle1.get(), triangle2.get());
+      gE->addGeometry(newRectangle.get());
+    }
+  }
 };
 void JSONSceneParser::parse_output(GraphicsEngine* gE) {
   for (auto itr = sceneJSONData["output"].begin(); itr!= sceneJSONData["output"].end(); itr++){      
@@ -136,7 +153,7 @@ bool JSONSceneParser::test_parse_geometry() {
           return false;
         }
         cout<<"Sphere info:"<<endl;
-        cout<<newSphere->centre<<endl;        
+        cout<<newSphere->centre<<endl;
         cout<<newSphere->radius<<endl;
       }
       if(type=="rectangle"){
@@ -144,12 +161,16 @@ bool JSONSceneParser::test_parse_geometry() {
         Eigen::Vector3f P1(0,0,0);
         Eigen::Vector3f P2(0,0,0);
         Eigen::Vector3f P3(0,0,0);
-        Eigen::Vector3f P4(0,0,0);                        
+        Eigen::Vector3f P4(0,0,0);
         vector<float> p1_input = (*itr)["P1"];
         vector<float> p2_input = (*itr)["P2"];
         vector<float> p3_input = (*itr)["P3"];
-        vector<float> p4_input = (*itr)["P4"];                        
-        copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);                       
+        vector<float> p4_input = (*itr)["P4"];
+        copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);
+        cout<<"P1 : "<<P1<<endl;
+        cout<<"P2 : "<<P2<<endl;
+        cout<<"P3 : "<<P3<<endl;
+        cout<<"P4 : "<<P4<<endl;
       }
       ++gc;
   }

@@ -1,5 +1,5 @@
 CMakeFiles/capsule03.dir/src/main.cpp.o: \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/main.cpp \
+  /Users/sylvaintran/-c371labs/capsule3/src/main.cpp \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/iostream \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__config \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/usr/include/pthread.h \
@@ -225,7 +225,7 @@ CMakeFiles/capsule03.dir/src/main.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__bsd_locale_defaults.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/bitset \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__bit_reference \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TOGLApp.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/TOGLApp.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/vector \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__split_buffer \
   /usr/local/include/GL/glew.h \
@@ -234,10 +234,10 @@ CMakeFiles/capsule03.dir/src/main.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/usr/include/os/availability.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/System/Library/Frameworks/OpenGL.framework/Headers/gl.h \
   /usr/local/include/GLFW/glfw3.h \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TOGLWindow.h \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TOGWLayer.h \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/Virtual3DLayer.h \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/RUIObject.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/TOGLWindow.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/TOGWLayer.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/Virtual3DLayer.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/RUIObject.h \
   /usr/local/include/glm/glm.hpp \
   /usr/local/include/glm/detail/_fixes.hpp \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/cmath \
@@ -497,16 +497,16 @@ CMakeFiles/capsule03.dir/src/main.cpp.o: \
   /usr/local/include/glm/gtx/../gtx/vector_query.hpp \
   /usr/local/include/glm/gtx/vector_query.inl \
   /usr/local/include/glm/gtx/intersect.inl \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TCamera.h \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall.h \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall360.h \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall360google.h \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/RenderModel.h \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/ObjModel.h \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TKernel/TTuple.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/TCamera.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall360.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall360google.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/RenderModel.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/ObjModel.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/TKernel/TTuple.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/fstream \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/filesystem \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/stack \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/deque \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/iomanip \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/Text.h
+  /Users/sylvaintran/-c371labs/capsule3/src/Text.h

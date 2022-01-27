@@ -85,7 +85,7 @@ void RayTracer::write_color(ofstream& ofs, HitRecord& pixel_color) {
   ofs << (char) r << ' '
       << (char) g << ' '
       << (char) b <<'\n';
-}
+};
 void RayTracer::run() {
     cout<<"Running raytracer!"<<endl;
     if (!this->gE->validateSceneJSONData(this->j)) {

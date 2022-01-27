@@ -10,5 +10,5 @@ out vec3 color;
 uniform vec3 diffuse_color;
 
 void main(){
-	color = diffuse_color;
+  color = diffuse_color;
 }

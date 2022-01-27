@@ -1,6 +1,6 @@
 CMakeFiles/capsule03.dir/src/GLUtils.cpp.o: \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/GLUtils.cpp \
-  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/GLUtils.h \
+  /Users/sylvaintran/-c371labs/capsule3/src/GLUtils.cpp \
+  /Users/sylvaintran/-c371labs/capsule3/src/GLUtils.h \
   /usr/local/include/GL/glew.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/stddef.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__config \

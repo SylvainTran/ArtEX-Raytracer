@@ -20,8 +20,10 @@ struct Triangle : Surface {
   Triangle(Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3);
   ~Triangle();
   /**TODO: Copy and assignment constructors**/
-  /**Check for hit**/
+  /**Check for hit the PLANE!**/
   HitRecord* hit(Ray& r, float t0, float t1) override;
+  /**Hit is inside the triangle**/
+  bool hitInside();
   /**Info to log**/ 
   void info() override;
   /**Operator overrides**/ 
