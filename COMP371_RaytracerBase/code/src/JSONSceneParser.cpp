@@ -73,6 +73,7 @@ void JSONSceneParser::parse_geometry(GraphicsEngine* gE) {
     }
      
     if(type=="rectangle") {
+      std::cout<<"Parsing a rectangle! "<<std::endl;
       Eigen::Vector3f P1(0,0,0);
       Eigen::Vector3f P2(0,0,0);
       Eigen::Vector3f P3(0,0,0);

@@ -21,11 +21,12 @@ struct Rectangle : public Surface {
 	~Rectangle();
   /**Builds the rectangle by putting the two triangles together**/
   void makeRectangle();
+  HitRecord* hit(Ray& r, float t0, float t1) override;
   /**Info to log**/ 
   void info() override;
   /**Operator overrides**/ 
-  friend std::ostream& operator<<(std::ostream& ios, Rectangle* rect) {
-    ios<<"Rectangle: triangle1="<<rect->triangle1<<"\ntriangle2="<<rect->triangle2<<std::endl;
+  friend std::ostream& operator<<(std::ostream& ios, Rectangle rect) {
+    ios<<"Rectangle: triangle1="<<rect.triangle1<<"\ntriangle2="<<rect.triangle2<<std::endl;
     return ios;
   };
 };

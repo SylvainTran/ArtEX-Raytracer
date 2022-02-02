@@ -19,12 +19,21 @@ struct Ray {
   };
   ~Ray() {
   };
+  Ray(Ray& other) {
+    o = other.o;
+    d = other.d;
+  };
+  Ray& operator=(Ray& other) {
+    o = other.o;
+    d = other.d;
+    return *this;
+  };
   // Returns a point at o+t(d)
   Eigen::Vector3f evaluate(float t) {
     return o+(t*d);
   };
   Eigen::Vector3f normalize() {
-    return this->d * (1/sqrt((d(0)*d(0)+d(1)*d(1)+d(2)*d(2))));
+    return d * (1/sqrt((d(0)*d(0)+d(1)*d(1)+d(2)*d(2))));
   };
   friend std::ostream& operator<<(std::ostream& out, Ray& ray) {
     out << "Ray origin: "<<ray.o<<"\nRay dir: "<<ray.d<<std::endl;

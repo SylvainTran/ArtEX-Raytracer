@@ -3,14 +3,12 @@ cmake_minimum_required(VERSION 3.8)
 project(raytracer) 
 
 #IMPORTANT COMPILING DIRECTIVES
-
 # 1
 # Enable this when you start working on your solution and you add the file RayTracer.h 
 # in the src folder; Without this file the code base will not compile therefore in your 
 # code this define is disabled
 # Also do not forget to create the src folder under code
 add_compile_options(-DSTUDENT_SOLUTION)
-
 
 # 2
 # This define is used by the teaching team to compile and run the official solution

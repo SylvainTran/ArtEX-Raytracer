@@ -21,10 +21,23 @@ struct HitRecord {
   HitRecord(Surface* m, float t, Eigen::Vector3f n, Eigen::Vector3f c) {
     this->m = m;
     this->t = t;
-   this->n = n;
+    this->n = n;
     this->color = c;
+  };
+  HitRecord(HitRecord& h) {
+    this->m = h.m;
+    t = h.t;
+    n = h.n;
+    color = h.color;
   };
   ~HitRecord() {
   
+  };
+  HitRecord& operator=(HitRecord& h) {
+    this->m = h.m;
+    t = h.t;
+    n = h.n;
+    color = h.color;
+    return *this;
   };
 };

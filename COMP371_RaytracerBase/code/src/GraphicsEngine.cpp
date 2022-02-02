@@ -16,6 +16,8 @@ using std::vector;
 #include "GraphicsEngine.h"
 #include "JSONSceneParser.h"
 #include "Surface.h"
+#include "Triangle.h"
+#include "Rectangle.h"
 
 GraphicsEngine::GraphicsEngine() {
 
@@ -48,6 +50,7 @@ void GraphicsEngine::addGeometry(Surface* s) {
     // TODO: notify observers (UI editor? multiple renderers?)
     this->geometryRenderList.push_back(s);
     std::cout<<"Added geometry to render list!"<<std::endl;
+    std::cout<<"Rectangle added: "<<(Rectangle*)s<<std::endl;
 };
 Surface* GraphicsEngine::getGeometry(int index) {
     //return this->geometryRenderList[index];

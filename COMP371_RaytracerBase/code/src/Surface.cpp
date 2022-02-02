@@ -12,7 +12,8 @@ void Surface::info() {
 	std::cout<<"Surface object :\nCentre: "<<centre<<std::endl;
 };
 HitRecord* Surface::hit(Ray& r, float t0, float t1) {
-  std::cout<<"HIT ON SURFACE!"<<std::endl;  
+  std::cout<<"HIT ON SURFACE!"<<std::endl;
+  return nullptr;
 };
 //bool Surface::hit(Ray r, float t0, float t1) {
 //  std::cout<<"HIT IN MESH!"<<std::endl;  

@@ -16,7 +16,8 @@ using std::ofstream;
 #include "HitRecord.h"
 #include "RayTracer.h"
 #include "GraphicsEngine.h"
-
+#include "Triangle.h"
+#include "Rectangle.h"
 std::ofstream ofs;
 
 RayTracer::RayTracer() {
@@ -34,14 +35,13 @@ RayTracer& RayTracer::operator=(RayTracer& other) {
     return *this;
 };
 // TODO: Create a GROUP class?
-HitRecord* RayTracer::groupRaycastHit(Ray* ray, float t0, float t1) {
+HitRecord* RayTracer::groupRaycastHit(Ray& ray, float t0, float t1) {
   static HitRecord* closestHit = new HitRecord(INFINITY); // TODO: I made this static but may want to use shared_ptr instead?
-  Eigen::Vector3f colorHit(0,1,0);
+  Eigen::Vector3f colorHit(1,0,0);
   Eigen::Vector3f colorNoHit(1,1,1);
-
   for(auto& m : this->geometryRenderList) {
-    HitRecord* rec = m->hit(*ray, t0, t1);
-    if(rec == NULL) {
+    HitRecord* rec = m->hit(ray, t0, t1);
+    if(rec == nullptr) {
       closestHit->color = colorNoHit;
       closestHit->t = INFINITY;
     }
@@ -141,22 +141,20 @@ void RayTracer::run() {
     Eigen::Vector3f BA = A + up * (delta*(dimy/2));
     cout<<"BA (TOP_CENTER): "<<BA<<endl;
     Eigen::Vector3f CB = BA - left * (delta*(dimx/2));
-    cout<<"TOP_LEFT: "<<CB<<endl;
+    cout<<"TOP_RIGHT: "<<CB<<endl;
     cout<<"DIMX: "<<dimx<<endl;
     cout<<"DIMY: "<<dimy<<endl;
     std::vector<float> buffer = std::vector<float>(3*dimx*dimy);
-    // exit(1);
     // 1.2 Loop for every pixel, generate a new Ray for the pixel
     for(int j = dimy-1; j >= 0; j--) {
       for(int i = 0; i < dimx; i++) {
         // Update the ray R's coordinates at P(i,j) -> note that the ray space is not equal to the raster image pixel space
         Eigen::Vector3f rayDirIJ = CB + (i*delta+delta/2)*left - (j*delta+delta/2)*up;
-        HitRecord* rayColor = groupRaycastHit(new Ray(o, (rayDirIJ-o)), -1, MAX_RAY_DISTANCE);
+        Ray* newRay = new Ray(o, (rayDirIJ-o));
+        HitRecord* rayColor = groupRaycastHit(*newRay, -1, MAX_RAY_DISTANCE);
         buffer[3*j*dimx+3*i+0] = rayColor->color(0);
         buffer[3*j*dimx+3*i+1] = rayColor->color(1);
         buffer[3*j*dimx+3*i+2] = rayColor->color(2);
-        // QUESTION FOR OFFICE HOURS: I DONT NEED TO EVAL THE RAY POINT TO COLOR IT. JUST THE RAY DIR? PROVIDED BY I J DIMX DIMY ALREADY IT SEEMS
-        // Pixel position i,j in the raster image VS. ray pixel center?
       }
     }
     save_ppm(buffer, dimx, dimy);
