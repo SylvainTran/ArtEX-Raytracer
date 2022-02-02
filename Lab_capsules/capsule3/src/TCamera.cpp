@@ -99,6 +99,9 @@ void  TCamera::setperspective(int width, int height, float fov, float aspect, fl
     
 	//proj = glm::perspective(fov, aspect, near, far);
     proj = glm::perspective(glm::radians(60.0), ratio, 0.01, 100.0);
+    
+    
+    
 //    proj = glm::perspective(60.0, ratio, 0.1, 100.0);
 }
 
