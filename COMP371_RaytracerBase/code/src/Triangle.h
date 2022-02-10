@@ -37,7 +37,7 @@ struct Triangle : public Surface {
   };
   /**Check for hit the PLANE!**/
   bool handleHitPlane(Ray& r, float t0, float t1);
-  HitRecord* hit(Ray& r, float t0, float t1) override;
+  bool hit(Ray& r, float t0, float t1, HitRecord& hitReturn) override;
   /**Hit is inside the triangle**/
   bool hitInside();
   /**Info to log**/ 

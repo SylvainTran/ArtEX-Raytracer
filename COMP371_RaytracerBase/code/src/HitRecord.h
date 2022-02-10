@@ -2,7 +2,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
-class Surface;
+#include "Surface.h"
 
 struct HitRecord {
   Surface* m;
@@ -12,6 +12,9 @@ struct HitRecord {
 
   // Constructors and destructors
   // The constructor used to indicate a miss, by setting t = +inf
+  HitRecord() : HitRecord(INFINITY) {
+  };
+
   HitRecord(float t) {
     this->t = t;
     this->m = nullptr;
@@ -31,7 +34,7 @@ struct HitRecord {
     color = h.color;
   };
   ~HitRecord() {
-  
+    //delete this->m;
   };
   HitRecord& operator=(HitRecord& h) {
     this->m = h.m;
@@ -39,5 +42,16 @@ struct HitRecord {
     n = h.n;
     color = h.color;
     return *this;
+  };
+  void setHitRecord(Surface* m, float t_hit, Eigen::Vector3f n, Eigen::Vector3f color) {
+    this->m = m;
+    this->t = t_hit;
+    this->n = n;
+    this->color = color;
+  };
+  void setHitRecord(Surface* m, float t_hit, Eigen::Vector3f n) {
+    this->m = m;
+    this->t = t_hit;
+    this->n = n;
   };
 };

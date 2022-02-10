@@ -35,26 +35,42 @@ RayTracer& RayTracer::operator=(RayTracer& other) {
     return *this;
 };
 // TODO: Create a GROUP class?
-HitRecord* RayTracer::groupRaycastHit(Ray& ray, float t0, float t1) {
-  static HitRecord* closestHit = new HitRecord(INFINITY); // TODO: I made this static but may want to use shared_ptr instead?
-  Eigen::Vector3f colorHit(1,0,0);
+bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitReturn) {
+  HitRecord* currentHit = new HitRecord(INFINITY);
+  HitRecord* closestHit = currentHit;
   Eigen::Vector3f colorNoHit(1,1,1);
-  for(auto& m : this->geometryRenderList) {
-    HitRecord* rec = m->hit(ray, t0, t1);
-    if(rec == nullptr) {
-      closestHit->color = colorNoHit;
-      closestHit->t = INFINITY;
+
+  float minT1 = t1;
+  bool hitSomethingAtAll = false;
+  
+  for(Surface* s : this->geometryRenderList) {
+    bool hitSomething = s->hit(ray, t0, t1, *currentHit);
+    if(hitSomething) {
+      
+      //cout<<"rec->t "<<currentHit->t<<endl;
+      if(currentHit->t <= INFINITY) {
+        //cout<<"rec->t is smaller than inf!"<<endl;
+        hitSomethingAtAll = true;
+        if(abs(currentHit->t) < abs(minT1)) {
+          //cout<<"rec->t"<<currentHit->t<<" is smaller than min T1: "<<minT1<<endl;
+          minT1 = currentHit->t;
+          //cout<<"old t1: "<<t1<<" new t1: "<<minT1<<endl;
+          t1 = minT1;
+          closestHit = currentHit;
+          //exit(0); 
+        }
+      }
     }
-    else {
-      closestHit = rec;
-      closestHit->color = colorHit;
-      t0 = closestHit->t;
-      cout<<"Hit at t0="<<t0<<endl;
-    }
-    // m->info();
+    currentHit->t = INFINITY;
   }
-  // return color;
-  return closestHit;
+  // Ray has not touched any geometry at all, then give bg color
+  if(!hitSomethingAtAll) {
+    hitReturn.color = colorNoHit;
+    return false;
+  } else {
+    hitReturn.color = closestHit->color;
+  }
+  return true;
 };
 // Computes the size of a pixel according to horizontal and vertical fov
 float computePixelSizeDeltaHorizontal(float horizontal_fov, float height) {
@@ -114,8 +130,7 @@ void RayTracer::run() {
     cout<<"scale_h: "<<scale_h<<endl;
     
     float MAX_RAY_DISTANCE = 1000;
-    Ray* R;
-    ofs.open("test_result6.ppm", std::ios_base::out | std::ios_base::binary);
+    ofs.open("test_result8.ppm", std::ios_base::out | std::ios_base::binary);
     ofs << "P6" << endl << dimx << ' ' << dimy << endl << "255" << endl;
     
     // INITIAL POSITIONS
@@ -136,26 +151,60 @@ void RayTracer::run() {
 
     // POINTS ON THE PROJECTION PLANE
     // These are normalized coordinates (between -1 to 1)
+    // Need perspective projection here to work normally
     Eigen::Vector3f A = o + (1)*dir;
     cout<<"A CENTER: "<<A<<endl;
-    Eigen::Vector3f BA = A + up * (delta*(dimy/2));
+    Eigen::Vector3f BA = A + (up * (delta*(dimy/2)));
     cout<<"BA (TOP_CENTER): "<<BA<<endl;
-    Eigen::Vector3f CB = BA - left * (delta*(dimx/2));
+    Eigen::Vector3f CB = BA - (left * (delta*(dimx/2)));
     cout<<"TOP_RIGHT: "<<CB<<endl;
     cout<<"DIMX: "<<dimx<<endl;
     cout<<"DIMY: "<<dimy<<endl;
     std::vector<float> buffer = std::vector<float>(3*dimx*dimy);
+    Ray currentRay;
+    Eigen::Vector3f rayDirIJ;
+    HitRecord* rayColor = new HitRecord(MAX_RAY_DISTANCE);
+    bool hitSomething; 
+    // Modelview representation
+    // left, up, lookat concatenated with c of camera
+    Eigen::Matrix<float,4,4> model_view {
+      {left(0),0,0,o(0)},
+      {0,up(1),0,o(1)},
+      {0,0,dir(2),o(2)},
+      {0,0,0,1}
+    };
+    //cout<<model_view<<endl;
+    model_view = model_view.inverse().eval();
+    //cout<<model_view<<endl;
+    // Note: eigen has solve() and determinant() functions!
+    // NDC
+    // a = aspect_ratio
+    // near_plane = n = parameter = 0.1;
+    float a = aspect_ratio;
+    float n = 0.1;
+    // far_plane = f = cot(theta/2);
+    float f = (1/tan(fov/2 * (M_PI/180.0f)));
+
+    Eigen::Matrix<float,4,4> projection_transform{
+      {f/a,0,0,0},
+      {0,f,0,0},
+      {0,0,(n+f)/(n-f),(2*(n*f))/(n-f)},
+      {0,0,-1,0}
+    };
+    // cout<<projection_transform<<endl;
+    // exit(0);
     // 1.2 Loop for every pixel, generate a new Ray for the pixel
     for(int j = dimy-1; j >= 0; j--) {
       for(int i = 0; i < dimx; i++) {
         // Update the ray R's coordinates at P(i,j) -> note that the ray space is not equal to the raster image pixel space
-        Eigen::Vector3f rayDirIJ = CB + (i*delta+delta/2)*left - (j*delta+delta/2)*up;
-        Ray* newRay = new Ray(o, (rayDirIJ-o));
-        HitRecord* rayColor = groupRaycastHit(*newRay, -1, MAX_RAY_DISTANCE);
+        rayDirIJ = CB + (i*delta+delta/2)*left - (j*delta+delta/2)*up;
+        currentRay.setRay(o, (rayDirIJ-o));
+        hitSomething = groupRaycastHit(currentRay, 0, MAX_RAY_DISTANCE, *rayColor);
         buffer[3*j*dimx+3*i+0] = rayColor->color(0);
         buffer[3*j*dimx+3*i+1] = rayColor->color(1);
         buffer[3*j*dimx+3*i+2] = rayColor->color(2);
       }
     }
     save_ppm(buffer, dimx, dimy);
+    delete rayColor;
 };

@@ -1,11 +1,12 @@
 #include "Triangle.h"
+#include "HitRecord.h"
 using namespace std;
 
 Triangle::Triangle(Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3) {
   this->p1 = p1;
   this->p2 = p2;
   this->p3 = p3;
-  this->color = Eigen::Vector3f(1,0,0);
+  this->color = Eigen::Vector3f(0,1,0);
 };
 Triangle::~Triangle() {
 
@@ -82,17 +83,19 @@ bool Triangle::handleHitPlane(Ray& r, float t0, float t1) {
   //exit(0);
   return hitInsideTriangle;
 };
-HitRecord* Triangle::hit(Ray& r, float t0, float t1) {
+bool Triangle::hit(Ray& r, float t0, float t1, HitRecord& hitReturn) {
  bool hit = handleHitPlane(r,t0,t1);
  if(!hit) {
-  return nullptr;
+  return false;
  }
  //std::cout<<"Hit: "<<hit<<std::endl;
  Eigen::Vector3f n = (p2-p1).cross(p3-p1);
  
  //std::cout<<"HIT TRIANGLE! "<<this<<std::endl;
- static HitRecord* hr = new HitRecord(this, this->t_hit, n, this->color);
- return hr;
+ //static HitRecord* hr = new HitRecord(this, this->t_hit, n, this->color);
+ //return hr;
+ hitReturn.setHitRecord(this, this->t_hit, n, this->color);
+ return true;
 };
 void Triangle::info() {
 

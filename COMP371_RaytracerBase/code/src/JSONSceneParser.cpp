@@ -55,21 +55,24 @@ void JSONSceneParser::copyRectangleCorners(Eigen::Vector3f& P1, Eigen::Vector3f&
 };
 void JSONSceneParser::parse_geometry(GraphicsEngine* gE) {
   for (auto itr = sceneJSONData["geometry"].begin(); itr!=sceneJSONData["geometry"].end();itr++) {
-     std::string type;
-     if(itr->contains("type")) {
-      type = (*itr)["type"];
-     } 
+    std::string type;
+    if(itr->contains("type")) {
+     type = (*itr)["type"];
+     cout<<"Type in json: "<<type<<endl;
+    } 
 
     if(type=="sphere") {
       Eigen::Vector3f centre(0,0,0);
-      auto newSphere = std::make_shared<Sphere>();
-      vector<float> input = (*(sceneJSONData["geometry"].begin()))["centre"];
+      Sphere* newSphere = new Sphere(); 
+      std::cout<<"*itr: "<<*(itr)<<endl;
+      vector<float> input = (*itr)["centre"];
       copyInputVector3f(3, centre, input);
       newSphere->centre = centre;
       float radius;
-      radius = (*(sceneJSONData["geometry"].begin()))["radius"];
+      radius = (*itr)["radius"];
       newSphere->radius = radius;
-      gE->addGeometry(newSphere.get());
+      gE->addGeometry(newSphere);
+      std::cout<<"I ADDED A SPHERE:"<<std::endl; 
     }
      
     if(type=="rectangle") {
@@ -83,10 +86,11 @@ void JSONSceneParser::parse_geometry(GraphicsEngine* gE) {
       vector<float> p3_input = (*itr)["P3"];
       vector<float> p4_input = (*itr)["P4"];
       copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);
-      auto triangle1 = std::make_shared<Triangle>(P1,P2,P3);
-      auto triangle2 = std::make_shared<Triangle>(P1,P3,P4);
-      auto newRectangle = std::make_shared<Rectangle>(triangle1.get(), triangle2.get());
-      gE->addGeometry(newRectangle.get());
+      Triangle* triangle1 = new Triangle(P1,P2,P3);
+      Triangle* triangle2 = new Triangle(P1,P3,P4);
+      Rectangle* newRectangle = new Rectangle(triangle1, triangle2);
+      gE->addGeometry(newRectangle);
+      cout<<"I A  DDED A RECT"<<endl;
     }
   }
 };
@@ -137,13 +141,13 @@ bool JSONSceneParser::test_parse_geometry() {
         // TODO: request the engine to allocate for a new geometry (shared_ptr), return it here and then use a copy constructor here or too complicated?      
         auto newSphere = std::make_shared<Sphere>();
 
-        vector<float> input = (*(sceneJSONData["geometry"].begin()))["centre"];
+        vector<float> input = (*itr)["centre"];
         copyInputVector3f(3, centre, input);
         cout<<"Centre:\n"<<centre<<endl;
         newSphere->centre = centre;
         float radius;
         try {
-          radius = (*(sceneJSONData["geometry"].begin()))["radius"];
+          radius = (*itr)["radius"];
           cout<<"Radius: "<<radius<<endl;
           newSphere->radius = radius;
         } catch(nlohmann::detail::type_error typeError) {

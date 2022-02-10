@@ -27,13 +27,16 @@ std::unique_ptr<RayTracer> GraphicsEngine::RayTracerFactory() {
     return std::make_unique<RayTracer>();
 };
 bool GraphicsEngine::validateSceneJSONData(nlohmann::json j) {
-    this->jsp = new JSONSceneParser(this, j);
-    if(!jsp->test_parse_geometry() || !jsp->test_parse_lights() || !jsp->test_parse_output()) {
+  this->geometryRenderList = vector<Surface*>();// stack allocation  
+  this->jsp = new JSONSceneParser(this, j);
+  if(!jsp->test_parse_geometry() || !jsp->test_parse_lights() || !jsp->test_parse_output()) {
       cout<<"One of the tests failed. Aborting..."<<endl;
       return false;
     } else {
       cout<<"parsing geometry!"<<endl;
+      cout<<"ALPHA"<<endl;
       jsp->parse_geometry(this);
+      cout<<"/ALPHA"<<endl;
       cout<<"parsing output (camera, etc.)!"<<endl;
       jsp->parse_output(this);
     }
@@ -46,11 +49,10 @@ RayTracer GraphicsEngine::getActiveRayTracer() {
     return this->rt;
 };
 void GraphicsEngine::addGeometry(Surface* s) {
-    // this->geometryRenderList.push_back(s);
-    // TODO: notify observers (UI editor? multiple renderers?)
     this->geometryRenderList.push_back(s);
     std::cout<<"Added geometry to render list!"<<std::endl;
-    std::cout<<"Rectangle added: "<<(Rectangle*)s<<std::endl;
+    s->info();
+    std::cout<<"New list size: "<<this->geometryRenderList.size()<<std::endl;
 };
 Surface* GraphicsEngine::getGeometry(int index) {
     //return this->geometryRenderList[index];

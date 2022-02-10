@@ -16,7 +16,7 @@ Sphere::Sphere(Eigen::Vector3f centre) : centre(centre) {
 Sphere::~Sphere() {
 	std::cout<<"Sphere destructor called!"<<std::endl;
 };
-HitRecord* Sphere::hit(Ray& r, float t0, float t1) {
+bool Sphere::hit(Ray& r, float t0, float t1, HitRecord& hitReturn) {
   // cout<<"In Sphere Hit!"<<endl;
   // cout<<"RAY COORDS: "<<r<<endl;
   
@@ -57,7 +57,7 @@ HitRecord* Sphere::hit(Ray& r, float t0, float t1) {
   
   if(discriminant<0) {
     //std::cout<<"Does not intersect!"<<std::endl;
-    return NULL;
+    return false;
   } else if (discriminant==0) {
     s_t1 = -B/A;
     closest = s_t1;
@@ -87,14 +87,16 @@ HitRecord* Sphere::hit(Ray& r, float t0, float t1) {
     }
   }
 
-  std::cout<<"evaluating point at t for this ray: "<<r.evaluate(closest)<<std::endl;
+  // std::cout<<"evaluating point at t for this ray: "<<r.evaluate(closest)<<std::endl;
   // exit(0);
   Eigen::Vector3f n = 2*(e+closest*d);
-  Eigen::Vector3f color(0,0,0);
-  static HitRecord* hr = new HitRecord(this, closest, n, color);
-  return hr; 
+  Eigen::Vector3f color(0,0,1);
+  //static HitRecord* hr = new HitRecord(this, closest, n, color);
+  //std::cout<<"t value exiting sphere: "<<hr->t<<std::endl;
+  //return hr; 
+  hitReturn.setHitRecord(this, closest, n, color);
+  return true;
 };
 void Sphere::info() {
-	std::cout<<"Sphere object :\n"<<std::endl;
-	std::cout<<this<<std::endl;
+	std::cout<<"Sphere object :\n"<<this<<std::endl;
 };

@@ -13,6 +13,12 @@ struct Ray {
    */
   Eigen::Vector3f d;
   // Constructors and destructor
+  Ray() {
+    Eigen::Vector3f origin(0,0,0);
+    Eigen::Vector3f dir(0,0,-1);
+    this->o = origin;
+    this->d = dir;
+  };
   Ray(Eigen::Vector3f o, Eigen::Vector3f d) {
     this->o = o;
     this->d = d;
@@ -27,6 +33,10 @@ struct Ray {
     o = other.o;
     d = other.d;
     return *this;
+  };
+  void setRay(Eigen::Vector3f o, Eigen::Vector3f d) {
+    this->o = o;
+    this->d = d;
   };
   // Returns a point at o+t(d)
   Eigen::Vector3f evaluate(float t) {

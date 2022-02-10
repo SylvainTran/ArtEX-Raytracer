@@ -21,7 +21,7 @@ struct Rectangle : public Surface {
 	~Rectangle();
   /**Builds the rectangle by putting the two triangles together**/
   void makeRectangle();
-  HitRecord* hit(Ray& r, float t0, float t1) override;
+  bool hit(Ray& r, float t0, float t1, HitRecord& hitReturn) override;
   /**Info to log**/ 
   void info() override;
   /**Operator overrides**/ 

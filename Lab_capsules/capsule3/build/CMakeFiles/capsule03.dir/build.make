@@ -44,10 +44,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /usr/local/Cellar/cmake/3.22.1/bin/cmake
+CMAKE_COMMAND = /usr/local/Cellar/cmake/3.22.2/bin/cmake
 
 # The command to remove a file.
-RM = /usr/local/Cellar/cmake/3.22.1/bin/cmake -E rm -f
+RM = /usr/local/Cellar/cmake/3.22.2/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -332,11 +332,11 @@ capsule03: CMakeFiles/capsule03.dir/src/Text.cpp.o
 capsule03: CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o
 capsule03: CMakeFiles/capsule03.dir/src/main.cpp.o
 capsule03: CMakeFiles/capsule03.dir/build.make
-capsule03: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/System/Library/Frameworks/OpenGL.framework/OpenGL.tbd
-capsule03: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/System/Library/Frameworks/OpenGL.framework/OpenGL.tbd
+capsule03: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/OpenGL.framework/OpenGL.tbd
+capsule03: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/OpenGL.framework/OpenGL.tbd
 capsule03: /usr/local/lib/libGLEW.2.2.0.dylib
 capsule03: /usr/local/lib/libglfw.3.3.dylib
-capsule03: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/System/Library/Frameworks/OpenGL.framework/OpenGL.tbd
+capsule03: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/OpenGL.framework/OpenGL.tbd
 capsule03: CMakeFiles/capsule03.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX executable capsule03"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/capsule03.dir/link.txt --verbose=$(VERBOSE)

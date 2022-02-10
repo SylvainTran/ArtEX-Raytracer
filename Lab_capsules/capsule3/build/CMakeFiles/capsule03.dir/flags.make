@@ -4,9 +4,9 @@
 # compile CXX with /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++
 CXX_DEFINES = -DGLEW_STATIC -DGLM_ENABLE_EXPERIMENTAL -DTW_NO_DIRECT3D -DTW_NO_LIB_PRAGMA -DTW_STATIC -DUSE_ZLIB_T -D_CRT_SECURE_NO_WARNINGS
 
-CXX_INCLUDES = -I/encs/pkg/glm-0.9.9.8/root/include -iframework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/System/Library/Frameworks -isystem /usr/local/include
+CXX_INCLUDES = -I/encs/pkg/glm-0.9.9.8/root/include -iframework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks -isystem /usr/local/include
 
-CXX_FLAGSx86_64 = -g -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.sdk/System/Library/Frameworks  -std=gnu++11
+CXX_FLAGSx86_64 = -g -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.sdk/System/Library/Frameworks  -std=gnu++11
 
-CXX_FLAGS = -g -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.sdk/System/Library/Frameworks  -std=gnu++11
+CXX_FLAGS = -g -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.sdk/System/Library/Frameworks  -std=gnu++11
 

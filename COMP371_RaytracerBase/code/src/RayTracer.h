@@ -40,7 +40,7 @@ class RayTracer {
     // Simple assignment operator, TODO: move ass. operator
     RayTracer& operator=(RayTracer& other);
     ~RayTracer();  
-    HitRecord* groupRaycastHit(Ray& ray, float t0, float t1);
+    bool groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitReturn);
     // Eigen::Vector3f groupRaycastHit(Ray* ray, float t0, float t1);
     void run();
     /**
