@@ -47,11 +47,6 @@ void JSONSceneParser::copyRectangleCorners(Eigen::Vector3f& P1, Eigen::Vector3f&
   copyInputVector3f(3, P2, p2_input);
   copyInputVector3f(3, P3, p3_input);
   copyInputVector3f(3, P4, p4_input);
-  cout<<"Corners:\n"<<endl;
-  cout<<"P1:\n"<<P1<<endl;
-  cout<<"P2:\n"<<P2<<endl;
-  cout<<"P3:\n"<<P3<<endl;
-  cout<<"P4:\n"<<P4<<endl;
 };
 void JSONSceneParser::parse_geometry(GraphicsEngine* gE) {
   for (auto itr = sceneJSONData["geometry"].begin(); itr!=sceneJSONData["geometry"].end();itr++) {
@@ -81,16 +76,28 @@ void JSONSceneParser::parse_geometry(GraphicsEngine* gE) {
       Eigen::Vector3f P2(0,0,0);
       Eigen::Vector3f P3(0,0,0);
       Eigen::Vector3f P4(0,0,0);
-      vector<float> p1_input = (*itr)["P1"];
-      vector<float> p2_input = (*itr)["P2"];
-      vector<float> p3_input = (*itr)["P3"];
-      vector<float> p4_input = (*itr)["P4"];
+      vector<float> p1_input;
+      if((*itr)["p1"] != NULL) {
+        p1_input = (*itr)["p1"].get<std::vector<float>>();
+      }
+      vector<float> p2_input;
+      if((*itr)["p2"] != NULL) {
+        p2_input = (*itr)["p2"].get<std::vector<float>>();
+      }
+      vector<float> p3_input;
+      if((*itr)["p3"] != NULL) {
+        p3_input = (*itr)["p3"].get<std::vector<float>>();
+      }
+      vector<float> p4_input; 
+      if((*itr)["p4"] != NULL) {
+        p4_input = (*itr)["p4"].get<std::vector<float>>();
+      }
       copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);
       Triangle* triangle1 = new Triangle(P1,P2,P3);
       Triangle* triangle2 = new Triangle(P1,P3,P4);
       Rectangle* newRectangle = new Rectangle(triangle1, triangle2);
       gE->addGeometry(newRectangle);
-      cout<<"I A  DDED A RECT"<<endl;
+      cout<<"I ADDED A RECT"<<endl;
     }
   }
 };
@@ -162,15 +169,28 @@ bool JSONSceneParser::test_parse_geometry() {
         cout<<newSphere->radius<<endl;
       }
       if(type=="rectangle"){
-        cout<<"rectangle: "<<endl;
+        std::cout<<"testing rectangle: "<<std::endl;
+        std::vector<float> p1_input, p2_input, p3_input, p4_input;
+        if((*itr)["p1"] != NULL) {
+          std::cout<<"P1 is null"<<std::endl;
+          p1_input = (*itr)["p1"].get<std::vector<float>>();
+        }
+        if((*itr)["p2"] != NULL) {
+          std::cout<<"P2 is null"<<std::endl;
+          p2_input = (*itr)["p2"].get<std::vector<float>>();
+        }
+        if((*itr)["p3"] != NULL) {
+          std::cout<<"P3 is null"<<std::endl;
+          p3_input = (*itr)["p3"].get<std::vector<float>>();
+        }
+        if((*itr)["p4"] != NULL) {
+          std::cout<<"P4 is null"<<std::endl;
+          p4_input = (*itr)["p4"].get<std::vector<float>>();
+        }
         Eigen::Vector3f P1(0,0,0);
         Eigen::Vector3f P2(0,0,0);
         Eigen::Vector3f P3(0,0,0);
         Eigen::Vector3f P4(0,0,0);
-        vector<float> p1_input = (*itr)["P1"];
-        vector<float> p2_input = (*itr)["P2"];
-        vector<float> p3_input = (*itr)["P3"];
-        vector<float> p4_input = (*itr)["P4"];
         copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);
         cout<<"P1 : "<<P1<<endl;
         cout<<"P2 : "<<P2<<endl;
