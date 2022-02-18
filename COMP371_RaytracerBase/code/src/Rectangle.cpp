@@ -5,7 +5,6 @@
 using namespace std;
 
 Rectangle::Rectangle(Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, Eigen::Vector3f p4) {
-
 };
 Rectangle::Rectangle(Triangle* triangle1, Triangle* triangle2) {
   this->triangle1 = new Triangle(*triangle1);

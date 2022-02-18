@@ -30,6 +30,7 @@ class GraphicsEngine;
 #include "Ray.h"
 #include "Surface.h"
 #include "Sphere.h"
+#include "Light.h"
 
 class RayTracer {
   public:
@@ -47,9 +48,14 @@ class RayTracer {
      *  List of geometry (as meshes) to render in the scene.
      **/
     std::vector<Surface*> geometryRenderList;
+    /**
+     *  List of lights to render in the scene.
+     **/
+    std::vector<Light*> lights;
     int save_ppm(const std::vector<float>& buffer, int dimx, int dimy);
     // void write_color(std::ofstream& ofs, Eigen::Vector3f color);
     void write_color(std::ofstream& ofs, HitRecord& hit);
+    Eigen::Vector3f clampVectorXf(Eigen::Vector3f value, float min, float max);
   private:
     nlohmann::json j;
     GraphicsEngine* gE;

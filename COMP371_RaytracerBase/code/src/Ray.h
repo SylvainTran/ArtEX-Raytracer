@@ -42,9 +42,9 @@ struct Ray {
   Eigen::Vector3f evaluate(float t) {
     return o+(t*d);
   };
-  Eigen::Vector3f normalize() {
-    return d * (1/sqrt((d(0)*d(0)+d(1)*d(1)+d(2)*d(2))));
-  };
+  //Eigen::Vector3f normalize() {
+    //return d * (1/sqrt((d(0)*d(0)+d(1)*d(1)+d(2)*d(2))));
+  //};
   friend std::ostream& operator<<(std::ostream& out, Ray& ray) {
     out << "Ray origin: "<<ray.o<<"\nRay dir: "<<ray.d<<std::endl;
     return out;

@@ -89,8 +89,11 @@ bool Sphere::hit(Ray& r, float t0, float t1, HitRecord& hitReturn) {
 
   // std::cout<<"evaluating point at t for this ray: "<<r.evaluate(closest)<<std::endl;
   // exit(0);
-  Eigen::Vector3f n = 2*(e+closest*d);
-  Eigen::Vector3f color(0,0,1);
+  //Eigen::Vector3f n = 2*(e+closest*d);
+  //Eigen::Vector3f n = -1*oc;
+  Eigen::Vector3f n = oc;
+  Eigen::Vector3f color = this->mat->ac; // what should this be ? And set it here? Diffuse color for now?
+
   //static HitRecord* hr = new HitRecord(this, closest, n, color);
   //std::cout<<"t value exiting sphere: "<<hr->t<<std::endl;
   //return hr; 

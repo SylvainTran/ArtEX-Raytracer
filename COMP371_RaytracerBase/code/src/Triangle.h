@@ -3,6 +3,7 @@
 
 // My code
 #include "Surface.h"
+#include "Material.h"
 
 // External
 #include <Eigen/Core>
@@ -17,12 +18,14 @@ struct Triangle : public Surface {
   float t_hit; // the t of intersection if applicable
   Eigen::Vector3f normal_v;
   Eigen::Vector3f color;
+  Material mat;
+
   /**The centre of the triangle**/
   //Eigen::Vector3f centre;
   /**Constructors and destructor**/
   Triangle(Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3);
   ~Triangle();
-  Triangle(Triangle& other) {
+  Triangle(Triangle& other) : mat(other.mat) {
     p1 = other.p1;
     p2 = other.p2;
     p3 = other.p3;
@@ -33,6 +36,7 @@ struct Triangle : public Surface {
     p2 = other.p2;
     p3 = other.p3;
     color = other.color;
+    mat = other.mat;
     return *this;
   };
   /**Check for hit the PLANE!**/

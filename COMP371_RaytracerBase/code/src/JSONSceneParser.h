@@ -30,6 +30,10 @@ public:
      **/
     void parse_output(GraphicsEngine* gE);
     /**
+     *  Adds the lights to the list in GraphicsEngine.
+     **/
+    void parse_lights(GraphicsEngine* gE);
+    /**
      *  Tests the lights. 
      **/
     bool test_parse_lights();

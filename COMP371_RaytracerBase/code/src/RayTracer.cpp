@@ -34,19 +34,53 @@ RayTracer& RayTracer::operator=(RayTracer& other) {
     // TODO: std::move() on other.members for this members'
     return *this;
 };
+
+Eigen::Vector3f RayTracer::clampVectorXf(Eigen::Vector3f value, float min, float max) {
+  Eigen::Vector3f clamped;
+  if(value(0) < min) {
+    clamped(0) = min;
+  } else if(value(0) > max) {
+    clamped(0) = max;
+  } else {
+    clamped(0) = value(0);
+  }
+
+  if(value(1) < min) {
+    clamped(1) = min;
+  }
+  if(value(1) > max) {
+    clamped(1) = max;
+  } else {
+    clamped(1) = value(1);
+  }
+
+  if(value(2) < min) {
+    clamped(2) = min;
+  }
+  if(value(2) > max) {
+    clamped(2) = max;
+  } else {
+    clamped(2) = value(2);
+  }
+  return clamped;
+};
 // TODO: Create a GROUP class?
 bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitReturn) {
   HitRecord* currentHit = new HitRecord(INFINITY);
   HitRecord* closestHit = currentHit;
-  Eigen::Vector3f colorNoHit(1,1,1);
+  Eigen::Vector3f colorNoHit(1,1,1); // TODO bkc from JSON instead
 
   float minT1 = t1;
   bool hitSomethingAtAll = false;
+
+  // Ambient light
+  float ka;
+  Eigen::Vector3f ai, ac;
+  ai = this->gE->ambientIntensity;
   
   for(Surface* s : this->geometryRenderList) {
     bool hitSomething = s->hit(ray, t0, t1, *currentHit);
     if(hitSomething) {
-      
       //cout<<"rec->t "<<currentHit->t<<endl;
       if(currentHit->t <= INFINITY) {
         //cout<<"rec->t is smaller than inf!"<<endl;
@@ -57,7 +91,22 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
           //cout<<"old t1: "<<t1<<" new t1: "<<minT1<<endl;
           t1 = minT1;
           closestHit = currentHit;
-          //exit(0); 
+          // Lights
+          ka = closestHit->m->mat->ka; // Ambient coefficient
+          ac = closestHit->m->mat->ac; // Ambient color
+          Vector3f aL = ka * ac.cwiseProduct(ai);
+          Eigen::Vector3f light_sum(0,0,0);
+          Eigen::Vector3f lightOutput = aL;
+          
+          for(Light* l : lights) {
+            light_sum += l->illuminate(ray, *closestHit);
+          }
+          light_sum += aL;
+          lightOutput = clampVectorXf(light_sum, 0.0, 1.0);
+          cout<<"Light sum:"<<light_sum<<endl;
+          cout<<"Light output:\n"<<lightOutput<<endl;
+          closestHit->color = lightOutput;
+          //exit(0);
         }
       }
     }
@@ -65,7 +114,7 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
   }
   // Ray has not touched any geometry at all, then give bg color
   if(!hitSomethingAtAll) {
-    hitReturn.color = colorNoHit;
+    hitReturn.color = colorNoHit; // set to background color instead TODO
     return false;
   } else {
     hitReturn.color = closestHit->color;
@@ -113,6 +162,8 @@ void RayTracer::run() {
         cout<<"no geometry to render!"<<endl;
         return;
     }
+    this->lights = this->gE->lights;
+    cout<<"N lights: "<<this->lights[0]<<endl;
     // 1. RAY GENERATION
     // For each pixel, create a ray (l) from the camera's origin to the center of the pixel
     // 1.1 Get the camera from the gE... shoot the ray from it

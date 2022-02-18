@@ -8,6 +8,7 @@
 // My code
 #include "Surface.h"
 #include "Triangle.h"
+#include "Material.h"
 
 struct Rectangle : public Surface {
   /**A rectangle in this model is made of two triangles**/

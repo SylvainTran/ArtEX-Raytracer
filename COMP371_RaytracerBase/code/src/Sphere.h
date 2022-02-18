@@ -8,14 +8,18 @@
 #include "Surface.h"
 #include "Ray.h"
 #include "HitRecord.h"
+#include "Material.h"
 
 struct Sphere : public Surface {
 	Sphere();
 	Sphere(Eigen::Vector3f centre);
 	~Sphere();
-	Eigen::Vector3f centre;
+	Sphere(Sphere& sphere);
+  Sphere& operator=(Sphere& sphere);
+  Eigen::Vector3f centre;
 	float radius;
-	void info() override;
+
+  void info() override;
 	// bool hit(Ray& r, float t0, float t1) override;
   bool hit(Ray& r, float t0, float t1, HitRecord& hitReturn) override;
   friend std::ostream& operator<<(std::ostream& ios, Sphere* s) {

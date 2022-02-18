@@ -18,6 +18,7 @@ using std::vector;
 #include "Surface.h"
 #include "Triangle.h"
 #include "Rectangle.h"
+#include "Light.h"
 
 GraphicsEngine::GraphicsEngine() {
 
@@ -28,6 +29,7 @@ std::unique_ptr<RayTracer> GraphicsEngine::RayTracerFactory() {
 };
 bool GraphicsEngine::validateSceneJSONData(nlohmann::json j) {
   this->geometryRenderList = vector<Surface*>();// stack allocation  
+  this->lights = vector<Light*>();
   this->jsp = new JSONSceneParser(this, j);
   if(!jsp->test_parse_geometry() || !jsp->test_parse_lights() || !jsp->test_parse_output()) {
       cout<<"One of the tests failed. Aborting..."<<endl;
@@ -37,6 +39,9 @@ bool GraphicsEngine::validateSceneJSONData(nlohmann::json j) {
       cout<<"ALPHA"<<endl;
       jsp->parse_geometry(this);
       cout<<"/ALPHA"<<endl;
+      cout<<"BETA"<<endl;
+      jsp->parse_lights(this);
+      cout<<"/BETA"<<endl;
       cout<<"parsing output (camera, etc.)!"<<endl;
       jsp->parse_output(this);
     }
@@ -53,6 +58,9 @@ void GraphicsEngine::addGeometry(Surface* s) {
     std::cout<<"Added geometry to render list!"<<std::endl;
     s->info();
     std::cout<<"New list size: "<<this->geometryRenderList.size()<<std::endl;
+};
+void GraphicsEngine::addLight(Light* l) {
+    this->lights.push_back(l);
 };
 Surface* GraphicsEngine::getGeometry(int index) {
     //return this->geometryRenderList[index];

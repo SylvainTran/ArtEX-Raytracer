@@ -1,9 +1,11 @@
 #pragma once
 #include "iostream"
+#include <Eigen/Core>
 
 // RayTracer and JSON scene parser
 #include "RayTracer.h"
 #include "Camera.h"
+#include "Light.h"
 class JSONSceneParser;
 class Surface;
 
@@ -40,6 +42,7 @@ public:
     /**
      * Gets the mesh in the list of meshes to render at index.
      **/
+    void addLight(Light* l);
     Surface* getGeometry(int index);
     /**
      *  The raytracer.
@@ -58,7 +61,15 @@ public:
      **/
     std::vector<Camera*> cameraList;
     /**
+     *  List of lights to render in the scene.
+     **/
+    std::vector<Light*> lights;
+    /**
      *  Currently active camera in the scene window.
      **/
     Camera* activeSceneCamera;
+    /**
+     * Ambient intensity of the current scene.
+     **/
+    Eigen::Vector3f ambientIntensity;
 };
