@@ -55,7 +55,6 @@ bool Rectangle::hit(Ray& r, float t0, float t1, HitRecord& hitReturn) {
  }
  //std::cout<<"HIT RECT: "<<std::endl;
  //exit(0);
- //static HitRecord* hr = new HitRecord(this, t_hit, normal_v, color);
  hitReturn.setHitRecord(this, t_hit, normal_v);
  //return hr;
  return true;

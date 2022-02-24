@@ -19,6 +19,8 @@ using std::ofstream;
 #include "Triangle.h"
 #include "Rectangle.h"
 std::ofstream ofs;
+using Eigen::Vector3f;
+using Eigen::Vector4f;
 
 RayTracer::RayTracer() {
 
@@ -34,7 +36,12 @@ RayTracer& RayTracer::operator=(RayTracer& other) {
     // TODO: std::move() on other.members for this members'
     return *this;
 };
-
+float degToRad(float deg) {
+    return deg * (M_PI/180);
+};
+float radToDeg(float rad) {
+    return rad * (180/M_PI);
+};
 Eigen::Vector3f RayTracer::clampVectorXf(Eigen::Vector3f value, float min, float max) {
   Eigen::Vector3f clamped;
   if(value(0) < min) {
@@ -64,7 +71,14 @@ Eigen::Vector3f RayTracer::clampVectorXf(Eigen::Vector3f value, float min, float
   }
   return clamped;
 };
-// TODO: Create a GROUP class?
+double integrate(int N) {
+  double x, sum = 0.0f;
+  for(int i = 0; i < N; i++) {
+    x = drand48();
+    sum += exp(sin(3*x*x));
+  };
+  return sum/double(N);
+};
 bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitReturn) {
   HitRecord* currentHit = new HitRecord(INFINITY);
   HitRecord* closestHit = currentHit;
@@ -82,7 +96,6 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
     bool hitSomething = s->hit(ray, t0, t1, *currentHit);
     if(hitSomething) {
       //cout<<"rec->t "<<currentHit->t<<endl;
-      if(currentHit->t <= INFINITY) {
         //cout<<"rec->t is smaller than inf!"<<endl;
         hitSomethingAtAll = true;
         if(abs(currentHit->t) < abs(minT1)) {
@@ -92,25 +105,45 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
           t1 = minT1;
           closestHit = currentHit;
           // Lights
-          ka = closestHit->m->mat->ka; // Ambient coefficient
-          ac = closestHit->m->mat->ac; // Ambient color
-          Vector3f aL = ka * ac.cwiseProduct(ai);
           Eigen::Vector3f light_sum(0,0,0);
-          Eigen::Vector3f lightOutput = aL;
-          
-          for(Light* l : lights) {
-            light_sum += l->illuminate(ray, *closestHit);
+          Eigen::Vector3f lightOutput;
+          bool local_illum = true;
+          double light_sum_glob;
+
+          if(local_illum) {
+
+            ka = closestHit->m->mat->ka; // Ambient coefficient
+            ac = closestHit->m->mat->ac; // Ambient color
+            Vector3f aL = ka * ac.cwiseProduct(ai);
+
+            for(Light* l : lights) {
+              light_sum = l->illuminate(ray, *closestHit);
+            }
+            light_sum += aL;
+            lightOutput = clampVectorXf(light_sum, 0.0, 1.0);
+            closestHit->color = lightOutput;
+          } else {
+            // Global illum
+            // Generate random points
+            // Build rays from these to the surface
+            // Accumulate light colors under certain
+            // constraints (i.e., max 5 bounces, etc.)
+            // Apply rejection zone
+            // Return ray to the eye...
+            light_sum_glob = integrate(1000);
+            cout<<"glob illum: "<<light_sum_glob<<endl;
+            Eigen::Vector3f lcol(0,0,1);
+            closestHit->color = clampVectorXf(light_sum_glob*lcol, 0.0, 1.0);
+            // Antialiasing
+            // Shoot more rays and take average
           }
-          light_sum += aL;
-          lightOutput = clampVectorXf(light_sum, 0.0, 1.0);
+          //lightOutput = light_sum;
           cout<<"Light sum:"<<light_sum<<endl;
           cout<<"Light output:\n"<<lightOutput<<endl;
-          closestHit->color = lightOutput;
           //exit(0);
         }
-      }
     }
-    currentHit->t = INFINITY;
+    //currentHit->t = INFINITY;
   }
   // Ray has not touched any geometry at all, then give bg color
   if(!hitSomethingAtAll) {
@@ -124,10 +157,10 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
 // Computes the size of a pixel according to horizontal and vertical fov
 float computePixelSizeDeltaHorizontal(float horizontal_fov, float height) {
   // 2*tan(fov/2)/width = 1 horizontal unit assuming square pixels (the ratio is already adjusted)
-  return 2*tan(horizontal_fov/2*(M_PI/180.0))/height;
+  return 2*tan(degToRad(horizontal_fov/2))/height;
 };
 float computePixelSizeVertical(float vertical_fov, float height) {
-  return 2*tan(vertical_fov/2*(M_PI/180.0))/height;
+  return 2*tan(degToRad(vertical_fov/2))/height;
 };
 int RayTracer::save_ppm(const std::vector<float>& buffer, int dimx, int dimy) {
     for (unsigned int j = 0; j < dimy; j++) {
@@ -165,16 +198,14 @@ void RayTracer::run() {
     this->lights = this->gE->lights;
     cout<<"N lights: "<<this->lights[0]<<endl;
     // 1. RAY GENERATION
-    // For each pixel, create a ray (l) from the camera's origin to the center of the pixel
-    // 1.1 Get the camera from the gE... shoot the ray from it
     float dimx = this->gE->activeSceneCamera->size(0);
     float dimy = this->gE->activeSceneCamera->size(1);
-    float aspect_ratio = dimx/dimy;
     float fov = this->gE->activeSceneCamera->fov;
+    float aspect_ratio = dimx/dimy;
     float horizontal_fov = fov;
-    float vertical_fov =  2*atan2(tan((horizontal_fov/2)*M_PI/180),aspect_ratio) * 180/M_PI; //vertical FOV in degrees
-    float scale_v = tan((vertical_fov/2)*M_PI/180); // takes in the vertical fov instead of the fov directly (that one is only good for the horizontal fov)
-    float scale_h = tan(horizontal_fov/2*M_PI/180);
+    float vertical_fov =  radToDeg(2*atan2(tan(degToRad(horizontal_fov/2)), aspect_ratio)); //vertical FOV in degrees
+    float scale_v = tan(degToRad(vertical_fov/2)); // takes in the vertical fov instead of the fov directly (that one is only good for the horizontal fov)
+    float scale_h = tan(degToRad(horizontal_fov/2));
     cout<<"horizontal_fov: "<<horizontal_fov<<endl;
     cout<<"vertical_fov: "<<vertical_fov<<endl;
     cout<<"scale_v: "<<scale_v<<endl;
@@ -190,67 +221,81 @@ void RayTracer::run() {
     cout<<"size of a pixel: "<<delta<<endl;
     cout<<"size vertically: "<<delta2<<endl;
     //exit(0);
-    Eigen::Vector3f o = this->gE->activeSceneCamera->centre;
-    cout<<"O: "<<o<<endl;
-    Eigen::Vector3f dir = this->gE->activeSceneCamera->lookat;
-    Eigen::Vector3f up = this->gE->activeSceneCamera->up;
-    Eigen::Vector3f left = -1*(up.cross(dir)); // flip by -1 because dir is looking down the -z axis, and we're counting counterclockwise (right-handed system)
-    cout<<"Dir: "<<dir<<endl;
-    cout<<"Up: "<<up<<endl;
-    cout<<"Left: "<<left<<endl;
-    // exit(0);
-
-    // POINTS ON THE PROJECTION PLANE
-    // These are normalized coordinates (between -1 to 1)
-    // Need perspective projection here to work normally
-    Eigen::Vector3f A = o + (1)*dir;
-    cout<<"A CENTER: "<<A<<endl;
-    Eigen::Vector3f BA = A + (up * (delta*(dimy/2)));
-    cout<<"BA (TOP_CENTER): "<<BA<<endl;
-    Eigen::Vector3f CB = BA - (left * (delta*(dimx/2)));
-    cout<<"TOP_RIGHT: "<<CB<<endl;
-    cout<<"DIMX: "<<dimx<<endl;
-    cout<<"DIMY: "<<dimy<<endl;
-    std::vector<float> buffer = std::vector<float>(3*dimx*dimy);
-    Ray currentRay;
-    Eigen::Vector3f rayDirIJ;
-    HitRecord* rayColor = new HitRecord(MAX_RAY_DISTANCE);
-    bool hitSomething; 
+    
+    // Build the view camera's axes
+    Vector3f cam_position = this->gE->activeSceneCamera->centre;
+    Vector3f cam_forward = this->gE->activeSceneCamera->lookat; // already neg: -z
+    Vector3f cam_up = this->gE->activeSceneCamera->up;
+    Vector3f cam_left = cam_forward.cross(cam_up);
+    cam_up = cam_forward.cross(cam_left); // Actual up
+    cam_up *= -1; // flip it up
+    
+    // Use view matrix lookat
+    cout<<"cam_position: "<<cam_position<<endl;
+    cout<<"cam_forward (dir): "<<cam_forward<<endl;
+    cout<<"cam_up: "<<cam_up<<endl;
+    cout<<"cam_left: "<<cam_left<<endl;
+    
     // Modelview representation
-    // left, up, lookat concatenated with c of camera
-    Eigen::Matrix<float,4,4> model_view {
-      {left(0),0,0,o(0)},
-      {0,up(1),0,o(1)},
-      {0,0,dir(2),o(2)},
-      {0,0,0,1}
+    /* Uses the lookat view matrix */
+    Eigen::Matrix<float,4,4> view_matrix {
+        cam_left(0), cam_left(1), cam_left(2), -1*cam_left.dot(cam_position),
+        cam_up(0), cam_up(1), cam_up(2), -1*cam_up.dot(cam_position),
+        cam_forward(0), cam_forward(1), cam_forward(2), -1*cam_forward.dot(cam_position),
+        0, 0, 0, 1
     };
-    //cout<<model_view<<endl;
-    model_view = model_view.inverse().eval();
-    //cout<<model_view<<endl;
-    // Note: eigen has solve() and determinant() functions!
-    // NDC
-    // a = aspect_ratio
-    // near_plane = n = parameter = 0.1;
+    
     float a = aspect_ratio;
     float n = 0.1;
-    // far_plane = f = cot(theta/2);
-    float f = (1/tan(fov/2 * (M_PI/180.0f)));
+    float f = (1/tan(degToRad(fov/2)));
 
-    Eigen::Matrix<float,4,4> projection_transform{
+    Eigen::Matrix<float,4,4> projection {
       {f/a,0,0,0},
       {0,f,0,0},
       {0,0,(n+f)/(n-f),(2*(n*f))/(n-f)},
       {0,0,-1,0}
     };
-    // cout<<projection_transform<<endl;
+
+    // POINTS ON THE PROJECTION PLANE
+    // These are normalized coordinates (between -1 to 1)
+    // Need perspective projection here to work normally
+    Vector3f A = cam_position + (1)*cam_forward;
+    Vector3f BA = A + (cam_up * (delta*(dimy/2)));
+    Vector3f CB = BA - (cam_left * (delta*(dimx/2)));
+
+    cout<<"BA (TOP_CENTER): "<<BA<<endl;
+    cout<<"A CENTER: "<<A<<endl;
+    cout<<"TOP_RIGHT: "<<CB<<endl;
+    cout<<"DIMX: "<<dimx<<endl;
+    cout<<"DIMY: "<<dimy<<endl;
+
+    // Output buffer
+    std::vector<float> buffer = std::vector<float>(3*dimx*dimy);
+    // Raycasting parameters
+    Ray currentRay;
+    Vector3f ray_nds;
+    HitRecord* rayColor = new HitRecord(MAX_RAY_DISTANCE);
+    bool hitSomething;
+    
     // exit(0);
     // 1.2 Loop for every pixel, generate a new Ray for the pixel
     for(int j = dimy-1; j >= 0; j--) {
       for(int i = 0; i < dimx; i++) {
-        // Update the ray R's coordinates at P(i,j) -> note that the ray space is not equal to the raster image pixel space
-        rayDirIJ = CB + (i*delta+delta/2)*left - (j*delta+delta/2)*up;
-        currentRay.setRay(o, (rayDirIJ-o));
+        // Screen space to NDC projection
+        // ------------------------------
+        ray_nds = CB + (i*delta+delta/2)*cam_left - (j*delta+delta/2)*cam_up;
+        Vector4f ray_nds_4f(ray_nds(0),ray_nds(1),ray_nds(2), 1);
+        Vector4f ray_eye = projection.inverse() * ray_nds_4f;
+ 
+        // Modelview/Eye to World
+        // ----------
+        Eigen::Matrix<float,4,4> ray_world = view_matrix.inverse().normalized() * ray_eye;
+        Vector3f ray_world3f(ray_world(0,0), ray_world(1,1), ray_world(2,2));
+        currentRay.setRay(cam_position, ray_world3f);
+          
+        //exit(0);
         hitSomething = groupRaycastHit(currentRay, 0, MAX_RAY_DISTANCE, *rayColor);
+        // Buffer out
         buffer[3*j*dimx+3*i+0] = rayColor->color(0);
         buffer[3*j*dimx+3*i+1] = rayColor->color(1);
         buffer[3*j*dimx+3*i+2] = rayColor->color(2);

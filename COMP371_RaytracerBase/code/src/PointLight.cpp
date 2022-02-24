@@ -45,39 +45,47 @@ Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
     dc = hrec.m->mat->dc; // Diffuse color
     sc = hrec.m->mat->sc; // Specular color
     pc = hrec.m->mat->pc; // Phong coefficient
-  } else {
-    kd = 1.0f;
   }
   // LIGHT AND VIEW RAY INPUTS
   // ---------------------
   Eigen::Vector3f x = ray.evaluate(hrec.t);
+  //cout<<"p: "<<p<<"x: "<<x<<endl;
   Vector3f light_ray = (p-x); // Light Ray: Ray from point x to PointLight
-  Vector3f l_norm = light_ray.normalized();
   Vector3f n = hrec.n;
-  Vector3f n_norm = n.normalized();
+  n = n.normalized();
   // ANGLES AND RAYS
   // ----
-  Vector3f viewing_ray = -1*(ray.d).normalized();
-  float cos_theta = clamp(n_norm.dot(l_norm), 0, 1);
-  Vector3f reflection_ray = (((2*n_norm) * cos_theta) - l_norm);
-  float cos_alpha = clamp(reflection_ray.dot(viewing_ray), 0, 1);
-  float specular_max = max(0, cos_alpha);
-  float diffuse_max = max(0, cos_theta);
-  float distance = l_norm.norm() * l_norm.norm();
-  float attenuation_factor = 1 / distance; // Not used for now
-  //Vector3f k = hrec.m->mat->evaluate(l,-1*(ray.d/(ray.d.norm())),n_norm);
-  // --------------------------------------------------------
-  // I(lambda) = I(ambient lambda)*k(ambient) + f(att)*I(intensity power lambda)[k diffuse * (dot_product theta) + k specular * (dot_product alpha) ]
-  // LOCAL ILLUMINATION (BLINN-PHONG)
-  // --------------------------------
-  float specular = 0;
-  if(diffuse_max > 0) {
-    specular = pow(specular_max, pc);
-  }
+  Vector3f viewing_ray = -1*(ray.d);
+  viewing_ray = viewing_ray.normalized();
+  float cos_alpha, specular, specular_max, diffuse_max, distance, attenuation_factor;
+  float cos_theta = max(n.dot(light_ray), 0.0);
   Vector3f lightColor(1,1,1);
-  Vector3f diffuseColor = kd*(dc * lightColor.transpose())*diffuse_max;
-  diffuseColor = diffuseColor.cwiseProduct(id);
-  Vector3f specularColor = ks*(sc.cwiseProduct(lightColor))*specular;
-  specularColor = specularColor.cwiseProduct(is);
+  diffuse_max = 0;
+  specular = 0;
+
+  if(cos_theta > 0.0) {
+    Vector3f reflection_ray = (2*n)*(cos_theta) - light_ray;
+    // BLINN VERSION
+    Vector3f half = viewing_ray + light_ray;
+    half = half.normalized();
+    //cos_alpha = n.dot(half);
+    // PHONG VERSION 
+    cos_alpha = reflection_ray.dot(viewing_ray);
+    specular_max = max(0, cos_alpha);
+    diffuse_max = max(0, cos_theta);
+    distance = light_ray.norm() * light_ray.norm();
+    attenuation_factor = 1 / distance; // Not used for now
+    // LOCAL ILLUMINATION (BLINN-PHONG)
+    // --------------------------------
+    if(diffuse_max > 0) {
+      specular = pow(specular_max, pc);
+    }
+  }
+  //Vector3f diffuseColor = kd*(dc.cwiseProduct(lightColor))*diffuse_max;
+  Vector3f diffuseColor = dc * diffuse_max;
+  //diffuseColor = diffuseColor.cwiseProduct(id);
+  //Vector3f specularColor = ks*(sc.cwiseProduct(lightColor))*specular;
+  Vector3f specularColor = sc * specular;
+  //specularColor = specularColor.cwiseProduct(is);
   return diffuseColor + specularColor;
 };
