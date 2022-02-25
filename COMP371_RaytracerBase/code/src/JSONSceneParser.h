@@ -4,14 +4,16 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
-class GraphicsEngine;
+class RayTracer;
+#include <vector>
+using std::vector;
 
 class JSONSceneParser {
 public:
     /**
      * Constructors and destructors. 
      **/
-    JSONSceneParser(GraphicsEngine* g, nlohmann::json& j);
+    JSONSceneParser(nlohmann::json& j);
     ~JSONSceneParser();
     // Assignment and copy constructors
     JSONSceneParser(JSONSceneParser& other);
@@ -22,17 +24,17 @@ public:
      **/
     bool test_parse_geometry();
     /**
-     *  Adds the geometry to the list in GraphicsEngine.
+     *  Adds the geometry to the list in RayTracer.
      **/
-    void parse_geometry(GraphicsEngine* gE);
+    void parse_geometry(RayTracer* rt);
     /**
-     *  Adds the output (camera parameters etc.) in the GraphicsEngine.
+     *  Adds the output (camera parameters etc.) in the RayTracer.
      **/
-    void parse_output(GraphicsEngine* gE);
+    void parse_output(RayTracer* rt);
     /**
-     *  Adds the lights to the list in GraphicsEngine.
+     *  Adds the lights to the list in RayTracer.
      **/
-    void parse_lights(GraphicsEngine* gE);
+    void parse_lights(RayTracer* rt);
     /**
      *  Tests the lights. 
      **/
@@ -54,8 +56,4 @@ private:
      *  The scene's data. 
      **/
     nlohmann::json sceneJSONData;
-    /**
-     *  Reference to the graphics engine. 
-     **/
-    GraphicsEngine* _g;
 };

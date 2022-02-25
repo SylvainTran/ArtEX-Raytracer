@@ -23,28 +23,13 @@ using std::vector;
 GraphicsEngine::GraphicsEngine() {
 
 };
-GraphicsEngine::~GraphicsEngine() {};
+GraphicsEngine::~GraphicsEngine() {
+
+};
 std::unique_ptr<RayTracer> GraphicsEngine::RayTracerFactory() {
     return std::make_unique<RayTracer>();
 };
 bool GraphicsEngine::validateSceneJSONData(nlohmann::json j) {
-  this->geometryRenderList = vector<Surface*>();// stack allocation  
-  this->lights = vector<Light*>();
-  this->jsp = new JSONSceneParser(this, j);
-  if(!jsp->test_parse_geometry() || !jsp->test_parse_lights() || !jsp->test_parse_output()) {
-      cout<<"One of the tests failed. Aborting..."<<endl;
-      return false;
-    } else {
-      cout<<"parsing geometry!"<<endl;
-      cout<<"ALPHA"<<endl;
-      jsp->parse_geometry(this);
-      cout<<"/ALPHA"<<endl;
-      cout<<"BETA"<<endl;
-      jsp->parse_lights(this);
-      cout<<"/BETA"<<endl;
-      cout<<"parsing output (camera, etc.)!"<<endl;
-      jsp->parse_output(this);
-    }
     return true;
 };
 void GraphicsEngine::setActiveRayTracer(RayTracer& rt) {

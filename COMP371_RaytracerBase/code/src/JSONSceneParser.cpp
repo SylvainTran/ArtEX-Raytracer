@@ -15,26 +15,24 @@ using json = nlohmann::json;
 
 // My classes
 #include "JSONSceneParser.h"
-#include "GraphicsEngine.h"
+#include "RayTracer.h"
 #include "Camera.h"
 #include "Rectangle.h"
 #include "PointLight.h"
 
-JSONSceneParser::JSONSceneParser(GraphicsEngine* _g, nlohmann::json& j) : _g(_g), sceneJSONData(j) {
+JSONSceneParser::JSONSceneParser(nlohmann::json& j) : sceneJSONData(j) {
 
 };
 JSONSceneParser::~JSONSceneParser() {
 
 };
 JSONSceneParser::JSONSceneParser(JSONSceneParser& other) {
-  this->_g = other._g;
   this->sceneJSONData = other.sceneJSONData;
 };
 JSONSceneParser& JSONSceneParser::operator=(JSONSceneParser& other) {
   if(&other == this) {
     return other;
   } else {
-    this->_g = other._g;
     this->sceneJSONData = other.sceneJSONData;
     return *this;
   }
@@ -50,7 +48,7 @@ void JSONSceneParser::copyRectangleCorners(Eigen::Vector3f& P1, Eigen::Vector3f&
   copyInputVector3f(3, P3, p3_input);
   copyInputVector3f(3, P4, p4_input);
 };
-void JSONSceneParser::parse_geometry(GraphicsEngine* gE) {
+void JSONSceneParser::parse_geometry(RayTracer* gE) {
   for (auto itr = sceneJSONData["geometry"].begin(); itr!=sceneJSONData["geometry"].end();itr++) {
     std::string type;
     if(itr->contains("type")) {
@@ -141,7 +139,7 @@ void JSONSceneParser::parse_geometry(GraphicsEngine* gE) {
     gE->addGeometry(surface);
   }
 };
-void JSONSceneParser::parse_output(GraphicsEngine* gE) {
+void JSONSceneParser::parse_output(RayTracer* gE) {
   for (auto itr = sceneJSONData["output"].begin(); itr!= sceneJSONData["output"].end(); itr++){      
     std::string filename;
     Eigen::Vector3f size(0,0,0), lookat(0,0,0), up(0,0,0), centre(0,0,0), ai(0,0,0);
@@ -292,7 +290,7 @@ bool JSONSceneParser::test_parse_geometry() {
   cout<<"We have: "<<gc<<" objects!"<<endl;
   return true;
 };
-void JSONSceneParser::parse_lights(GraphicsEngine* gE) {
+void JSONSceneParser::parse_lights(RayTracer* gE) {
   cout<<"Light: "<<endl;
   int lc = 0;
 

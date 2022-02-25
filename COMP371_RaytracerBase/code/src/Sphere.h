@@ -11,19 +11,19 @@
 #include "Material.h"
 
 struct Sphere : public Surface {
-	Sphere();
-	Sphere(Eigen::Vector3f centre);
-	~Sphere();
-	Sphere(Sphere& sphere);
-  Sphere& operator=(Sphere& sphere);
-  Eigen::Vector3f centre;
-	float radius;
+    Sphere();
+    Sphere(Eigen::Vector3f centre);
+    ~Sphere();
+    Sphere(Sphere& sphere);
+    Sphere& operator=(Sphere& sphere);
+    Eigen::Vector3f centre;
+    float radius;
 
-  void info() override;
-	// bool hit(Ray& r, float t0, float t1) override;
-  bool hit(Ray& r, float t0, float t1, HitRecord& hitReturn) override;
-  friend std::ostream& operator<<(std::ostream& ios, Sphere* s) {
-	  ios<<"Sphere : centre="<<s->centre<<"\n, radius="<<s->radius<<std::endl;
-	  return ios;
-  };
+    void info() override;
+    // bool hit(Ray& r, float t0, float t1) override;
+    bool hit(Ray& r, float t0, float t1, HitRecord& hitReturn) override;
+    friend std::ostream& operator<<(std::ostream& ios, Sphere* s) {
+      ios<<"Sphere : centre="<<s->centre<<"\n, radius="<<s->radius<<std::endl;
+      return ios;
+    };
 };

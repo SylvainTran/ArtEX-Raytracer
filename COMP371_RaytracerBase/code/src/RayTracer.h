@@ -31,6 +31,7 @@ class GraphicsEngine;
 #include "Surface.h"
 #include "Sphere.h"
 #include "Light.h"
+#include "Camera.h"
 
 class RayTracer {
   public:
@@ -43,6 +44,7 @@ class RayTracer {
     ~RayTracer();  
     bool groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitReturn);
     // Eigen::Vector3f groupRaycastHit(Ray* ray, float t0, float t1);
+    bool validateSceneJSONData();
     void run();
     /**
      *  List of geometry (as meshes) to render in the scene.
@@ -53,10 +55,28 @@ class RayTracer {
      **/
     std::vector<Light*> lights;
     int save_ppm(const std::vector<float>& buffer, int dimx, int dimy);
-    // void write_color(std::ofstream& ofs, Eigen::Vector3f color);
-    void write_color(std::ofstream& ofs, HitRecord& hit);
     Eigen::Vector3f clampVectorXf(Eigen::Vector3f value, float min, float max);
+    /**
+     * Adds a new mesh to the list of meshes to render.
+     **/
+    void addGeometry(Surface* s);
+    /**
+     * Gets the mesh in the list of meshes to render at index.
+     **/
+    void addLight(Light* l);
+    Surface* getGeometry(int index);
+    /**
+     *  Camera(s)
+     **/
+    std::vector<Camera*> cameraList;
+    /**
+     *  Currently active camera in the scene window.
+     **/
+    Camera* activeSceneCamera;
+    /**
+     * Ambient intensity of the current scene.
+     **/
+    Eigen::Vector3f ambientIntensity;
   private:
     nlohmann::json j;
-    GraphicsEngine* gE;
 };
