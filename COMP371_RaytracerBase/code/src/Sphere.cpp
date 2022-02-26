@@ -32,6 +32,7 @@ bool Sphere::hit(Ray& r, float t0, float t1, HitRecord& hitReturn) {
     s_t1 = (-1*(d.dot(e-c)) - sqrt(discriminant)) / (d.dot(d));
     closest = s_t1;
     //cout<<"closest (smallest abs) t: "<<closest<<endl;
+    // TODO take back hit if inside sphere
   }
   // NORMAL
   // ------

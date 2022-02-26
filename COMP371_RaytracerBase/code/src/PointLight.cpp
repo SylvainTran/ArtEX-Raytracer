@@ -70,9 +70,10 @@ Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
 
     // LOCAL ILLUMINATION (BLINN-PHONG)
     // --------------------------------
-    cos_theta = max(n.dot(light_ray), 0.0);
+    // cos_theta = max(n.dot(light_ray), 0.0);
+    cos_theta = max(n.dot(light_ray), 0);
     shininess = 0.0;
-    
+
     // BLINN VERSION
     // -------------
     Vector3f half = viewing_ray + light_ray;
@@ -98,7 +99,7 @@ Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
     Vector3f lightColor(1,1,1);
     Vector3f diffuseColor = (kd * dc * cos_theta).cwiseProduct(id).cwiseProduct(lightColor);
     Vector3f specularColor = (ks * sc * shininess).cwiseProduct(is).cwiseProduct(lightColor);
-    
+   
     // NORMALS DEBUG
     // -------------
     // return n;

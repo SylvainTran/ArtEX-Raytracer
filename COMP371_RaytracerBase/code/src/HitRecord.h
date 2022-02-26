@@ -3,6 +3,9 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include "Surface.h"
+#include <iostream>
+using std::cout;
+using std::endl;
 
 struct HitRecord {
   Surface* m;
@@ -49,9 +52,16 @@ struct HitRecord {
     this->n = n;
     this->color = color;
   };
-  void setHitRecord(Surface* m, float t_hit, Eigen::Vector3f n) {
+  void setHitRecord(Surface* m, float t_hit, Eigen::Vector3f& n) {
     this->m = m;
     this->t = t_hit;
+    this->n = n;
+  };
+  void setHitRecord(Surface* m, float t_hit) {
+    this->m = m;
+    this->t = t_hit;
+  };
+  void setNormal(Eigen::Vector3f& n) {
     this->n = n;
   };
 };

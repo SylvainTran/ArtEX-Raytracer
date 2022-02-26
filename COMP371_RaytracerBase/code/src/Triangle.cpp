@@ -88,10 +88,11 @@ bool Triangle::hit(Ray& r, float t0, float t1, HitRecord& hitReturn) {
  if(!hit) {
   return false;
  }
- //std::cout<<"Hit: "<<hit<<std::endl;
+ // NORMAL
+ // ------
  Eigen::Vector3f n = (p2-p1).cross(p3-p1);
- 
- //std::cout<<"HIT TRIANGLE! "<<this<<std::endl;
+ n = n.normalized();
+ normal_v = n;
  hitReturn.setHitRecord(this, this->t_hit, n, this->color);
  return true;
 };

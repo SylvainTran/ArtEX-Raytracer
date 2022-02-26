@@ -121,6 +121,20 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
     float minT1 = t1; // The minimum closest hit to viewer
     bool hitSomethingAtAll = false; // Should return bkg color if no hit
 
+    // LOCAL VS. GLOBAL
+    // ----------------
+    // USE LOCAL ILLUMINATION FLAG
+    // ---------------------------
+    bool local_illum = true;
+    
+    // GLOBAL
+    // ------
+    double light_sum_glob = 0.0;
+
+    // OPTIONS
+    // ------
+    bool antialiasing = false;
+
     // AMBIENT LIGHT
     // -------------
     float ka;
@@ -147,12 +161,10 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
                 // ----------------
                 Eigen::Vector3f light_sum(0,0,0); // THE LIGHT SUM
                 Eigen::Vector3f lightOutput; // THE FINAL OUTPUT
-                // USE LOCAL ILLUMINATION FLAG
-                // ---------------------------
-                bool local_illum = true;
+                
                 // GLOBAL ILLUMINATION ACCUMULATOR
                 // -------------------------------
-                double light_sum_glob = 0.0;
+                light_sum_glob = 0.0;
                 
                 // LOCAL ILLUMINATION
                 // ------------------
@@ -173,7 +185,6 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
                     // -----
                     lightOutput = clampVectorXf(light_sum, 0.0, 1.0);
                     // LOCAL ILLUMINATION OUTPUT COLOR
-                    
                     // DIFFUSE OR SPECULAR DEBUG
                     // -------------------------
                     closestHit->color = lightOutput;
@@ -201,12 +212,13 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
                     Eigen::Vector3f lcol(0,0,1);
                     closestHit->color = clampVectorXf(light_sum_glob*lcol, 0.0, 1.0);
                 }
-                // ANTIALIASING OPTION
-                // -------------------
-                // Shoot more rays and take average
-                // cout<<"Light sum:"<<light_sum<<endl;
-                // cout<<"Light output:\n"<<lightOutput<<endl;
-                //exit(0);
+                if (antialiasing) {
+                  // ANTIALIASING OPTION
+                  // -------------------
+                  // Shoot more rays and take average
+                }
+                //cout<<"Light sum:"<<light_sum<<endl;
+                //cout<<"Light output:\n"<<lightOutput<<endl;
             }
         }
     }
