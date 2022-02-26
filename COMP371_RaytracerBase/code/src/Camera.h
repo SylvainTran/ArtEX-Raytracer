@@ -9,6 +9,8 @@ struct Camera {
   Eigen::Vector3f lookat;
   Eigen::Vector3f up;
   Eigen::Vector3f size;
+  Eigen::Vector3f bkc;
+
   Camera() {
     std::cout<<"New camera constructed!"<<std::endl;
   };

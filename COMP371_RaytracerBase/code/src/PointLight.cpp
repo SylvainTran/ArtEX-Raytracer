@@ -70,8 +70,7 @@ Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
 
     // LOCAL ILLUMINATION (BLINN-PHONG)
     // --------------------------------
-    // cos_theta = max(n.dot(light_ray), 0.0);
-    cos_theta = max(n.dot(light_ray), 0);
+    cos_theta = max(n.dot(light_ray), 0.0);
     shininess = 0.0;
 
     // BLINN VERSION

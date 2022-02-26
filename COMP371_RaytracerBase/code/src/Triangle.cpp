@@ -88,12 +88,11 @@ bool Triangle::hit(Ray& r, float t0, float t1, HitRecord& hitReturn) {
  if(!hit) {
   return false;
  }
- // NORMAL
- // ------
- Eigen::Vector3f n = (p2-p1).cross(p3-p1);
- n = n.normalized();
- normal_v = n;
- hitReturn.setHitRecord(this, this->t_hit, n, this->color);
+ // SET NORMAL
+ // ----------
+ normal_v = (p2-p1).cross(p3-p1);
+ normal_v =  normal_v.normalized();
+ hitReturn.setHitRecord(this, this->t_hit, normal_v, this->color);
  return true;
 };
 void Triangle::info() {

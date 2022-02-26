@@ -116,7 +116,7 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
     // -------------
     HitRecord* currentHit = new HitRecord(t1); // Start ray at max range
     HitRecord* closestHit = currentHit;
-    Vector3f colorNoHit(1,1,1); // TODO use bkc from JSON instead
+    //Vector3f colorNoHit(1,1,1); // TODO use bkc from JSON instead
     Vector3f one(1,1,1);
     float minT1 = t1; // The minimum closest hit to viewer
     bool hitSomethingAtAll = false; // Should return bkg color if no hit
@@ -224,7 +224,8 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
     }
   // If the ray has not touched any geometry at all, then use bkg color
   if(!hitSomethingAtAll) {
-    hitReturn.color = colorNoHit;
+    // hitReturn.color = colorNoHit;
+    hitReturn.color = this->activeSceneCamera->bkc;
     // COLORS DEBUG
     // -------------
     // hitReturn.color = (ray.d.normalized() + one)/2;
@@ -332,16 +333,16 @@ void RayTracer::run() {
         ray_nds = CB + (i*delta+delta/2)*cam_left - (j*delta+delta/2)*cam_up;
           
         // Modelview/Eye to World
-        // ----------
+        // ----------------------
         currentRay.setRay(cam_position, ray_nds);
           
         // Intersection Test
-        // ----------
+        // -----------------
         // cout<<"ray nds: "<<ray_nds<<endl;
         hitSomething = groupRaycastHit(currentRay, 0, MAX_RAY_DISTANCE, *rayColor);
 
         // COLOR DEBUG 1
-        // -----------
+        // -------------
         // Vector3f tmp = currentRay.d.normalized();
           
         // Buffer out
@@ -351,10 +352,10 @@ void RayTracer::run() {
         buffer[3*j*dimx+3*i+2] = rayColor->color(2);
         
         // COLOR DEBUG 2
-        // -----------
-//        buffer[3*j*dimx+3*i+0] = (tmp(0) + 1)/2;
-//        buffer[3*j*dimx+3*i+1] = (tmp(1) + 1)/2;
-//        buffer[3*j*dimx+3*i+2] = (tmp(2) + 1)/2;
+        // -------------
+        // buffer[3*j*dimx+3*i+0] = (tmp(0) + 1)/2;
+        // buffer[3*j*dimx+3*i+1] = (tmp(1) + 1)/2;
+        // buffer[3*j*dimx+3*i+2] = (tmp(2) + 1)/2;
       }
     }
     // Write to ppm

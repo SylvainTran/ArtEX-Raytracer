@@ -142,8 +142,8 @@ void JSONSceneParser::parse_geometry(RayTracer* gE) {
 void JSONSceneParser::parse_output(RayTracer* gE) {
   for (auto itr = sceneJSONData["output"].begin(); itr!= sceneJSONData["output"].end(); itr++){      
     std::string filename;
-    Eigen::Vector3f size(0,0,0), lookat(0,0,0), up(0,0,0), centre(0,0,0), ai(0,0,0);
-    vector<float> centreInput, sizeInput, lookAtInput, upInput, aiInput;
+    Eigen::Vector3f size(0,0,0), lookat(0,0,0), up(0,0,0), centre(0,0,0), ai(0,0,0), bkc(0,0,0);
+    vector<float> centreInput, sizeInput, lookAtInput, upInput, aiInput, bkcInput;
     if((*itr)["centre"] != NULL) {
       centreInput = (*itr)["centre"].get<std::vector<float>>();
       copyInputVector3f(3, centre, centreInput);
@@ -164,6 +164,10 @@ void JSONSceneParser::parse_output(RayTracer* gE) {
     if((*itr)["fov"] != NULL) {
       fov = (*itr)["fov"].get<float>();
     }
+    if((*itr)["bkc"] != NULL) {
+      bkcInput = (*itr)["bkc"].get<std::vector<float>>();
+      copyInputVector3f(3, bkc, bkcInput);
+    }
     // Set parameters in camera
     auto newCamera = new Camera();
     newCamera->fov = fov;
@@ -171,6 +175,7 @@ void JSONSceneParser::parse_output(RayTracer* gE) {
     newCamera->lookat = lookat;
     newCamera->up = up;
     newCamera->size = size;
+    newCamera->bkc = bkc;
     gE->cameraList.push_back(newCamera);
     if((*itr)["ai"] != NULL) {
       aiInput = (*itr)["ai"].get<std::vector<float>>();
