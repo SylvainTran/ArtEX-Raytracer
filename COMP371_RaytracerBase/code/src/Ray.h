@@ -2,6 +2,7 @@
 #include <math.h>
 #include <Eigen/Core>
 #include <Eigen/Dense>
+#include <iostream>
 
 struct Ray {
   /**
@@ -40,6 +41,7 @@ struct Ray {
   };
   // Returns a point at o+t(d)
   Eigen::Vector3f evaluate(float t) {
+    // std::cout<<"o + t*d: "<<o + (t*d)<<std::endl;
     return o+(t*d);
   };
   //Eigen::Vector3f normalize() {

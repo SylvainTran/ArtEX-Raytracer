@@ -53,11 +53,7 @@ Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
     Eigen::Vector3f x = ray.evaluate(hrec.t);
     Vector3f light_ray = (p-x); // Light Ray: Ray from point x to PointLight
     light_ray = light_ray.normalized();
-    Vector3f sphereCenterTemp(2,0,-6);
-    Vector3f n = x - sphereCenterTemp; // There is a problem with the hrec.m->centre being 0,0,0
-    n(2) = -1*n(2); // Makes the normal points towards the outside
-    n = n.normalized();
-    cout<<"n: "<<n<<endl;
+    Vector3f n = hrec.n;
     
     // OPTIMIZATIONS
     // -------------
@@ -65,49 +61,57 @@ Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
     if(light_ray.dot(x) <= epsilon_approx) {
         // light is parallel to the point of intersection on the surface
     }
-    //cout<<"SPHERE CENTER: "<<hrec.m->centre<<endl;
-    //exit(0);
     
     // ANGLES AND RAYS SETUP
     // ---------------------
     Vector3f viewing_ray = -1*(ray.d);
     viewing_ray = viewing_ray.normalized();
-    float cos_theta, cos_alpha, specular, specular_max, diffuse_max, distance, attenuation_factor;
+    float cos_theta, cos_alpha, shininess, distance, attenuation_factor;
 
     // LOCAL ILLUMINATION (BLINN-PHONG)
     // --------------------------------
-    diffuse_max = 0;
-    specular = 0;
     cos_theta = max(n.dot(light_ray), 0.0);
+    shininess = 0.0;
     
-    if(cos_theta > 0.0) {
-        // BLINN VERSION
-        // -------------
-        Vector3f half = viewing_ray + light_ray;
-        half = half.normalized();
-        // cos_alpha = n.dot(half);
-        // ------------------------
-        // PHONG VERSION
-        // -------------
-        Vector3f reflection_ray = (2*n)*(cos_theta) - light_ray;
-        cos_alpha = reflection_ray.dot(viewing_ray);
-        // Clamp to positive values and calculate attenuation factor
-        // ---------------------------------------------------------
-        specular_max = max(0, cos_alpha);
-        diffuse_max = max(0, cos_theta);
-        distance = light_ray.norm() * light_ray.norm();
-        attenuation_factor = 1 / distance; // Not used for now
+    // BLINN VERSION
+    // -------------
+    Vector3f half = viewing_ray + light_ray;
+    half = half.normalized();
+    cos_alpha = max(0.0, n.dot(half));
+    // ------------------------
+    // PHONG VERSION
+    // -------------
+    Vector3f reflection_ray = (2*n)*(cos_theta) - light_ray;
+    // cos_alpha = reflection_ray.dot(viewing_ray);
+    // Clamp to positive values and calculate attenuation factor
+    // ---------------------------------------------------------
+    distance = light_ray.norm() * light_ray.norm();
+    attenuation_factor = 1 / distance; // Not used for now
 
-        // SPECULAR HIGHLIGHT (SHININESS)
-        // ------------------
-        if(diffuse_max > 0) {
-            specular = pow(specular_max, pc);
-        }
+    // SPECULAR HIGHLIGHT (SHININESS)
+    // ------------------
+    if(cos_theta > 0.0) {
+        shininess = pow(cos_alpha, pc);
     }
     // OUTPUT COLOR FOR DIFFUSE + SPECULAR
     // -----------------------------------
     Vector3f lightColor(1,1,1);
-    Vector3f diffuseColor = (dc * diffuse_max).cwiseProduct(id).cwiseProduct(lightColor);
-    Vector3f specularColor = (sc * specular).cwiseProduct(is).cwiseProduct(lightColor);
+    Vector3f diffuseColor = (kd * dc * cos_theta).cwiseProduct(id).cwiseProduct(lightColor);
+    Vector3f specularColor = (ks * sc * shininess).cwiseProduct(is).cwiseProduct(lightColor);
+    
+    // NORMALS DEBUG
+    // -------------
+    // return n;
+    //
+    // COLOR DEBUG
+    // -----------
+    // return diffuseColor;
+    //
+    // SPECULAR DEBUG
+    // -----------
+    // return specularColor;
+    //
+    // OUTPUT DEBUG
+    // -----------
     return diffuseColor + specularColor;
 };

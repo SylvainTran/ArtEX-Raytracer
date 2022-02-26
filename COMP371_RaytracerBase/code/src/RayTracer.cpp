@@ -100,7 +100,9 @@ Eigen::Vector3f RayTracer::clampVectorXf(Eigen::Vector3f value, float min, float
   }
   return clamped;
 };
-double integrate(int N) {
+// UTILITY: MONTE CARLO ESTIMATOR OR E[FN] ~ I (UNBIASED)
+// ------------------------------------------------------
+double getMonteCarloEstimator(int N) {
   double x, sum = 0.0f;
   for(int i = 0; i < N; i++) {
     x = drand48();
@@ -109,74 +111,111 @@ double integrate(int N) {
   return sum/double(N);
 };
 bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitReturn) {
-  HitRecord* currentHit = new HitRecord(INFINITY);
-  HitRecord* closestHit = currentHit;
-  Eigen::Vector3f colorNoHit(1,1,1); // TODO bkc from JSON instead
+    
+    // HIT RECORD SETUP
+    // -------------
+    HitRecord* currentHit = new HitRecord(t1); // Start ray at max range
+    HitRecord* closestHit = currentHit;
+    Vector3f colorNoHit(1,1,1); // TODO use bkc from JSON instead
+    Vector3f one(1,1,1);
+    float minT1 = t1; // The minimum closest hit to viewer
+    bool hitSomethingAtAll = false; // Should return bkg color if no hit
 
-  float minT1 = t1;
-  bool hitSomethingAtAll = false;
-
-  // Ambient light
-  float ka;
-  Eigen::Vector3f ai, ac;
-  ai = this->ambientIntensity;
+    // AMBIENT LIGHT
+    // -------------
+    float ka;
+    Vector3f ai, ac;
+    ai = this->ambientIntensity;
   
-  for(Surface* s : this->geometryRenderList) {
-    bool hitSomething = s->hit(ray, t0, t1, *currentHit);
-    if(hitSomething) {
-        hitSomethingAtAll = true;
-        
-        if(abs(currentHit->t) < abs(minT1)) {
-          minT1 = currentHit->t;
-          t1 = minT1;
-          closestHit = currentHit;
+    for(Surface* s : this->geometryRenderList) {
+        // GEOMETRY INTERSECTION TEST
+        // --------------------------
+        bool hitSomething = s->hit(ray, t0, t1, *currentHit);
+        if(hitSomething) {
+            // NO BKG COLOR TEST
+            // -----------------
+            hitSomethingAtAll = true;
+            
+            // CLOSEST HIT: MIN T TEST
+            // -----------------------
+            if(abs(currentHit->t) < abs(minT1)) {
+                minT1 = currentHit->t;
+                t1 = minT1;
+                closestHit = currentHit;
 
-          // Lights
-          Eigen::Vector3f light_sum(0,0,0);
-          Eigen::Vector3f lightOutput;
-          bool local_illum = true;
-          double light_sum_glob = 0.0;
+                // LIGHT PARAMETERS
+                // ----------------
+                Eigen::Vector3f light_sum(0,0,0); // THE LIGHT SUM
+                Eigen::Vector3f lightOutput; // THE FINAL OUTPUT
+                // USE LOCAL ILLUMINATION FLAG
+                // ---------------------------
+                bool local_illum = true;
+                // GLOBAL ILLUMINATION ACCUMULATOR
+                // -------------------------------
+                double light_sum_glob = 0.0;
+                
+                // LOCAL ILLUMINATION
+                // ------------------
+                if(local_illum) {
 
-          if(local_illum) {
-
-            ka = closestHit->m->mat->ka; // Ambient coefficient
-            ac = closestHit->m->mat->ac; // Ambient color
-            Vector3f aL = ka * ac.cwiseProduct(ai);
-            int light_count = 0;
-            for(Light* l : lights) {
-              light_sum += l->illuminate(ray, *closestHit);
-                ++light_count;
+                    // ACCUMULATE LIGHT SOURCES
+                    // ------------------------
+                    for(Light* l : lights) {
+                        light_sum += l->illuminate(ray, *closestHit);
+                    }
+                    // AMBIENT LIGHT CONTRIBUTION
+                    // ------------------------
+                    ka = closestHit->m->mat->ka; // Ambient coefficient
+                    ac = closestHit->m->mat->ac; // Ambient color
+                    Vector3f aL = ka * ac.cwiseProduct(ai);
+                    light_sum += aL; // THE REFLECTION EQUATION
+                    // CLAMP
+                    // -----
+                    lightOutput = clampVectorXf(light_sum, 0.0, 1.0);
+                    // LOCAL ILLUMINATION OUTPUT COLOR
+                    
+                    // DIFFUSE OR SPECULAR DEBUG
+                    // -------------------------
+                    closestHit->color = lightOutput;
+                    //
+                    // COLOR DEBUG
+                    // -----------
+                    // closestHit->color = (ray.d.normalized() + one)/2;
+                    //
+                    // "NORMALS" DEBUG
+                    // ---------------
+                    // closestHit->color = (light_sum + one)/2;
+                    
+                } else {
+                    // GLOBAL ILLUMINATION
+                    // -------------------
+                        
+                    // Generate random points
+                    // Build rays from these to the surface
+                    // Accumulate light colors under certain
+                    // constraints (i.e., max 5 bounces, etc.)
+                    // Apply rejection zone
+                    // Return ray to the eye...
+                    light_sum_glob = getMonteCarloEstimator(1000);
+                    cout<<"glob illum: "<<light_sum_glob<<endl;
+                    Eigen::Vector3f lcol(0,0,1);
+                    closestHit->color = clampVectorXf(light_sum_glob*lcol, 0.0, 1.0);
+                }
+                // ANTIALIASING OPTION
+                // -------------------
+                // Shoot more rays and take average
+                // cout<<"Light sum:"<<light_sum<<endl;
+                // cout<<"Light output:\n"<<lightOutput<<endl;
+                //exit(0);
             }
-              cout<<"light count: "<<light_count<<endl;
-            light_sum += aL;
-            lightOutput = clampVectorXf(light_sum, 0.0, 1.0);
-            closestHit->color = lightOutput;
-          } else {
-            // Global illum
-            // Generate random points
-            // Build rays from these to the surface
-            // Accumulate light colors under certain
-            // constraints (i.e., max 5 bounces, etc.)
-            // Apply rejection zone
-            // Return ray to the eye...
-            light_sum_glob = integrate(1000);
-            cout<<"glob illum: "<<light_sum_glob<<endl;
-            Eigen::Vector3f lcol(0,0,1);
-            closestHit->color = clampVectorXf(light_sum_glob*lcol, 0.0, 1.0);
-            // Antialiasing
-            // Shoot more rays and take average
-          }
-          //lightOutput = light_sum;
-          cout<<"Light sum:"<<light_sum<<endl;
-          cout<<"Light output:\n"<<lightOutput<<endl;
-          //exit(0);
         }
     }
-    //currentHit->t = INFINITY;
-  }
-  // Ray has not touched any geometry at all, then give bg color
+  // If the ray has not touched any geometry at all, then use bkg color
   if(!hitSomethingAtAll) {
-    hitReturn.color = colorNoHit; // set to background color instead TODO
+    hitReturn.color = colorNoHit;
+    // COLORS DEBUG
+    // -------------
+    // hitReturn.color = (ray.d.normalized() + one)/2;
     return false;
   } else {
     hitReturn.color = closestHit->color;
@@ -230,6 +269,7 @@ void RayTracer::run() {
     Vector3f cam_forward = this->activeSceneCamera->lookat; // already neg: -z
     Vector3f cam_up = this->activeSceneCamera->up;
     Vector3f cam_left = cam_forward.cross(cam_up);
+    // Vector3f cam_left = -1*(cam_forward.cross(cam_up));
     cam_up = cam_forward.cross(cam_left); // Actual up
     cam_up *= -1; // flip it up
     
@@ -252,7 +292,7 @@ void RayTracer::run() {
     Vector3f CB = BA - (cam_left * (delta*(dimx/2)));
 
     cout<<"size of a pixel: "<<delta<<endl;
-//    cout<<"size vertically: "<<delta2<<endl;
+    // cout<<"size vertically: "<<delta2<<endl;
     cout<<"BA (TOP_CENTER): "<<BA<<endl;
     cout<<"A CENTER: "<<A<<endl;
     cout<<"TOP_RIGHT: "<<CB<<endl;
@@ -285,13 +325,24 @@ void RayTracer::run() {
           
         // Intersection Test
         // ----------
+        // cout<<"ray nds: "<<ray_nds<<endl;
         hitSomething = groupRaycastHit(currentRay, 0, MAX_RAY_DISTANCE, *rayColor);
-        
+
+        // COLOR DEBUG 1
+        // -----------
+        // Vector3f tmp = currentRay.d.normalized();
+          
         // Buffer out
         // ----------
         buffer[3*j*dimx+3*i+0] = rayColor->color(0);
         buffer[3*j*dimx+3*i+1] = rayColor->color(1);
         buffer[3*j*dimx+3*i+2] = rayColor->color(2);
+        
+        // COLOR DEBUG 2
+        // -----------
+//        buffer[3*j*dimx+3*i+0] = (tmp(0) + 1)/2;
+//        buffer[3*j*dimx+3*i+1] = (tmp(1) + 1)/2;
+//        buffer[3*j*dimx+3*i+2] = (tmp(2) + 1)/2;
       }
     }
     // Write to ppm

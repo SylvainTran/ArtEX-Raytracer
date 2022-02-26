@@ -22,34 +22,24 @@ bool Sphere::hit(Ray& r, float t0, float t1, HitRecord& hitReturn) {
   Eigen::Vector3f e = r.o;
   Eigen::Vector3f d = r.d;
   Eigen::Vector3f c = this->centre;
-  Eigen::Vector3f oc = e-c;
-  float r2 = this->radius*this->radius;
-  float A = d.dot(d); // d.mag^2
-  float B = 2.0 * oc.dot(d);
-  float C = (e-c).dot(e-c)-r2;
-  float discriminant = B*B-4*(A*C);
-  float closest, smallest, largest,s_t1,s_t2;
-  
+
+  float discriminant = (d.dot(e-c)*d.dot(e-c) - (d.dot(d)*((e-c).dot(e-c) - this->radius*this->radius)));
+  float s_t1, closest;
+
   if(discriminant<0) {
     return false;
-  } else if (discriminant==0) {
-    s_t1 = -B/A;
+  } else if (discriminant>=0) {
+    s_t1 = (-1*(d.dot(e-c)) - sqrt(discriminant)) / (d.dot(d));
     closest = s_t1;
-  } else if (discriminant>0) {
-    //cout<<"intersected!"<<endl;
-    s_t1 = -B + sqrt(discriminant) * 1/2*A;
-    s_t2 = -B - sqrt(discriminant) * 1/2*A;
-    largest = s_t1>s_t2? s_t1 : s_t2;
-    smallest = largest == s_t1? s_t2 : s_t1;
-    if(smallest > t0 && smallest < t1) { // Inside the sphere and the ray has hit the backface?
-      closest = smallest;
-    } else if(largest > t0 && largest < t1) { // Ray hit the front face of the sphere since the smallest negative value (largest) is in the interval
-      closest = largest;
-    }
+    //cout<<"closest (smallest abs) t: "<<closest<<endl;
   }
-  Eigen::Vector3f n = oc; // TEMP, TO BE ACTUALLY SET FROM PT OF INTERSECTION INSTEAD
+  // NORMAL
+  // ------
+  Eigen::Vector3f n = r.evaluate(closest) - c;
+  n = n.normalized();
   Eigen::Vector3f color = this->mat->ac;
   hitReturn.setHitRecord(this, closest, n, color);
+  //cout<<"t: "<< closest<<endl;
   return true;
 };
 void Sphere::info() {
