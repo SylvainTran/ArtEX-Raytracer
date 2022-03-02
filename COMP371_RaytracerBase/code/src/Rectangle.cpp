@@ -32,8 +32,8 @@ bool Rectangle::hit(Ray& r, float t0, float t1, HitRecord& hitReturn) {
  //std::cout<<"Hit triangle 1 or 2 (the rect) : "<<hitAny<<std::endl;
  if(!hitAny) {
    //std::cout<<"Did not Hit triangle 1 or 2!"<<std::endl;
-   Eigen::Vector3f colorNoHit(1,1,1);
-   hitReturn.color = colorNoHit;
+//   Eigen::Vector3f colorNoHit(0,0,1);
+//   hitReturn.color = colorNoHit;
    //exit(0);
    return false;
  }
@@ -49,7 +49,8 @@ bool Rectangle::hit(Ray& r, float t0, float t1, HitRecord& hitReturn) {
  if(hitTriangle2) {
    //cout<<"Hit triangle 2"<<endl;
    t_hit = this->triangle2->t_hit;
-   hitReturn.color = this->triangle1->color;
+     Eigen::Vector3f b(0,0,1);
+     hitReturn.color = b;
    hitReturn.setNormal(this->triangle2->normal_v);
    //exit(0);
  }

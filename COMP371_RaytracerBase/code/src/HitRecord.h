@@ -17,7 +17,6 @@ struct HitRecord {
   // The constructor used to indicate a miss, by setting t = +inf
   HitRecord() : HitRecord(INFINITY) {
   };
-
   HitRecord(float t) {
     this->t = t;
     this->m = nullptr;
@@ -31,7 +30,7 @@ struct HitRecord {
     this->color = c;
   };
   HitRecord(HitRecord& h) {
-    this->m = h.m;
+    this->m = new Surface(*h.m);
     t = h.t;
     n = h.n;
     color = h.color;

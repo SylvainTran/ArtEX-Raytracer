@@ -66,11 +66,11 @@ int main(int argc, char* argv[])
 #else
         
 #ifdef STUDENT_SOLUTION
-        cout<<"Running studnt solution"<<endl;
+        cout<<"Running student solution"<<endl;
         RayTracer rt = RayTracer(j);
         rt.run();
 #else
-        // GIven code - a bunch of test functions to showcase the funcitonality
+        // Given code - a bunch of test functions to showcase the funcitonality
         test_eigen();
         test_save_ppm();
         

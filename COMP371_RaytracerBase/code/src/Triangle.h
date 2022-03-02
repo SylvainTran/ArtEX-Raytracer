@@ -17,7 +17,6 @@ struct Triangle : public Surface {
   Eigen::Vector3f p3;
   float t_hit; // the t of intersection if applicable
   Eigen::Vector3f normal_v;
-  Eigen::Vector3f color;
   Material mat;
 
   /**The centre of the triangle**/

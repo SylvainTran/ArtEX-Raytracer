@@ -12,10 +12,9 @@ Sphere::Sphere() {
 };
 Sphere::Sphere(Eigen::Vector3f centre) {
     this->centre = centre;
-    cout<<"Centre from constructor in sphere: "<<this->centre<<endl;
 };
 Sphere::~Sphere() {
-	std::cout<<"Sphere destructor called!"<<std::endl;
+
 };
 bool Sphere::hit(Ray& r, float t0, float t1, HitRecord& hitReturn) {
   

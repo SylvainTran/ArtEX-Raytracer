@@ -77,6 +77,18 @@ class RayTracer {
      * Ambient intensity of the current scene.
      **/
     Eigen::Vector3f ambientIntensity;
+    double getLambertianBRDF(float r);
+    Eigen::Vector3f getAmbientReflectance(Vector3f ac, float ka);
+    Vector3f getDiffuseReflection(HitRecord& hrec, Ray& ray, Vector3f x);
+    Vector3f getSpecularReflectance(HitRecord& hrec, Ray& ray, Vector3f& n);
+    void getBRDF2(Vector3f viewing_ray, Vector3f light_ray, Vector3f n);
+    Vector3f getRandomVector(Ray& ray, Vector3f hitPoint, Vector3f n, Vector3f& random_dir_vector);
+    Vector3f radiance(HitRecord& currentHit, Vector3f o, Vector3f d);
+    void modelViewTransformation(Eigen::Matrix4f& MVP, Surface& position);
+    void printUsefulLogs();
+    void printUselessLogs(int dialogueNode);
+    void printDebugLogs();
+    void logSpeedTest(std::chrono::duration<double> time_span);
   private:
     nlohmann::json j;
 };

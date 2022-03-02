@@ -1,6 +1,8 @@
 #include "PointLight.h"
 #include "Ray.h"
 #include "HitRecord.h"
+#include "Utility.hpp"
+
 using Eigen::Vector3f;
 #include <iostream>
 using std::cout;
@@ -18,21 +20,6 @@ PointLight::PointLight(Eigen::Vector3f centre, Eigen::Vector3f id, Eigen::Vector
 };
 PointLight::~PointLight() {
 
-};
-float max(float a, float b) {
-  return a>b?a:b;
-};
-float min(float a, float b) {
-  return a<b?a:b;
-};
-float clamp(float val, float min, float max) {
-  if(val < min) {
-    val = min;
-  }
-  if(val > max) {
-    val = max;
-  }
-  return val;
 };
 Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
     // SCENE PARAMETER INPUTS
@@ -70,14 +57,14 @@ Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
 
     // LOCAL ILLUMINATION (BLINN-PHONG)
     // --------------------------------
-    cos_theta = max(n.dot(light_ray), 0.0);
+    cos_theta = Utility::max(n.dot(light_ray), 0.0);
     shininess = 0.0;
 
     // BLINN VERSION
     // -------------
     Vector3f half = viewing_ray + light_ray;
     half = half.normalized();
-    cos_alpha = max(0.0, n.dot(half));
+    cos_alpha = Utility::max(0.0, n.dot(half));
     // ------------------------
     // PHONG VERSION
     // -------------
@@ -93,7 +80,7 @@ Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
     if(cos_theta > 0.0) {
         shininess = pow(cos_alpha, pc);
     }
-    // OUTPUT COLOR FOR DIFFUSE + SPECULAR
+    // BRDF OUTPUT COLOR FOR DIFFUSE + SPECULAR
     // -----------------------------------
     Vector3f lightColor(1,1,1);
     Vector3f diffuseColor = (kd * dc * cos_theta).cwiseProduct(id).cwiseProduct(lightColor);

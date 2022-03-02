@@ -53,12 +53,12 @@ void JSONSceneParser::parse_geometry(RayTracer* gE) {
     std::string type;
     if(itr->contains("type")) {
      type = (*itr)["type"];
-     cout<<"Type in json: "<<type<<endl;
+     //cout<<"Type in json: "<<type<<endl;
     }
     Surface* surface;
     if(type=="sphere") {
       Eigen::Vector3f centre(0,0,0);
-      std::cout<<"*itr: "<<*(itr)<<endl;
+      //std::cout<<"*itr: "<<*(itr)<<endl;
       vector<float> input = (*itr)["centre"].get<std::vector<float>>();
       copyInputVector3f(3, centre, input);
       surface = new Sphere(centre);
@@ -67,7 +67,7 @@ void JSONSceneParser::parse_geometry(RayTracer* gE) {
       dynamic_cast<Sphere*>(surface)->radius = radius;
     }
     if(type=="rectangle") {
-      std::cout<<"Parsing a rectangle! "<<std::endl;
+      //std::cout<<"Parsing a rectangle! "<<std::endl;
       Eigen::Vector3f P1(0,0,0);
       Eigen::Vector3f P2(0,0,0);
       Eigen::Vector3f P3(0,0,0);
@@ -101,33 +101,33 @@ void JSONSceneParser::parse_geometry(RayTracer* gE) {
     if(itr->contains("ac")) {
       ac_input = (*itr)["ac"].get<std::vector<float>>();
       copyInputVector3f(3, ac, ac_input);
-      cout<<"ac: "<<ac<<endl;
+      //cout<<"ac: "<<ac<<endl;
     }
     if(itr->contains("dc")) {
       dc_input = (*itr)["dc"].get<std::vector<float>>();
       copyInputVector3f(3, dc, dc_input);
-      cout<<"dc: "<<dc<<endl;
+//      cout<<"dc: "<<dc<<endl;
     }
     if(itr->contains("sc")) {
       sc_input = (*itr)["sc"].get<std::vector<float>>();
       copyInputVector3f(3, sc, sc_input);
-      cout<<"sc: "<<sc<<endl;
+//      cout<<"sc: "<<sc<<endl;
     }
     if(itr->contains("ka")) {
       ka = (*itr)["ka"];
-      cout<<"ka: "<<ka<<endl;
+//      cout<<"ka: "<<ka<<endl;
     }
     if(itr->contains("kd")) {
       kd = (*itr)["kd"];
-      cout<<"kd: "<<kd<<endl;
+//      cout<<"kd: "<<kd<<endl;
     }
     if(itr->contains("ks")) {
       ks = (*itr)["ks"];
-      cout<<"ks: "<<ks<<endl;
+//      cout<<"ks: "<<ks<<endl;
     }
     if(itr->contains("pc")) {
       pc = (*itr)["pc"];
-      cout<<"pc: "<<pc<<endl;
+//      cout<<"pc: "<<pc<<endl;
     }
     surface->mat->ac = ac;
     surface->mat->dc = dc;
@@ -136,6 +136,9 @@ void JSONSceneParser::parse_geometry(RayTracer* gE) {
     surface->mat->kd = kd;
     surface->mat->ks = ks;
     surface->mat->pc = pc;
+    // Set default dc in mat as surface color for now
+    // ----
+    surface->color = surface->mat->dc;
     gE->addGeometry(surface);
   }
 };
@@ -168,6 +171,9 @@ void JSONSceneParser::parse_output(RayTracer* gE) {
       bkcInput = (*itr)["bkc"].get<std::vector<float>>();
       copyInputVector3f(3, bkc, bkcInput);
     }
+    if((*itr)["filename"] != NULL) {
+        filename = (*itr)["filename"].get<std::string>();
+    }
     // Set parameters in camera
     auto newCamera = new Camera();
     newCamera->fov = fov;
@@ -176,6 +182,7 @@ void JSONSceneParser::parse_output(RayTracer* gE) {
     newCamera->up = up;
     newCamera->size = size;
     newCamera->bkc = bkc;
+    newCamera->filename = filename;
     gE->cameraList.push_back(newCamera);
     if((*itr)["ai"] != NULL) {
       aiInput = (*itr)["ai"].get<std::vector<float>>();
@@ -187,7 +194,7 @@ void JSONSceneParser::parse_output(RayTracer* gE) {
   gE->activeSceneCamera = gE->cameraList[0];
 };
 bool JSONSceneParser::test_parse_geometry() {
-  cout<<"Geometry: "<<endl;
+//  cout<<"Geometry: "<<endl;
   int gc = 0;
 
   // use iterators to read-in array types
@@ -204,38 +211,38 @@ bool JSONSceneParser::test_parse_geometry() {
         Eigen::Vector3f ac;
         vector<float> ac_input = (*itr)["ac"];
         copyInputVector3f(3, ac, ac_input);
-        cout<<"ac: "<<ac<<endl;
+//        cout<<"ac: "<<ac<<endl;
       }
       if(itr->contains("dc")) {
         Eigen::Vector3f dc;
         vector<float> dc_input = (*itr)["dc"];
         copyInputVector3f(3, dc, dc_input);
-        cout<<"dc: "<<dc<<endl;
+//        cout<<"dc: "<<dc<<endl;
       }
       if(itr->contains("sc")) {
         Eigen::Vector3f sc;
         vector<float> sc_input = (*itr)["sc"];
         copyInputVector3f(3, sc, sc_input);
-        cout<<"sc: "<<sc<<endl;
+//        cout<<"sc: "<<sc<<endl;
       }
       if(itr->contains("ka")) {
         float ka = (*itr)["ka"];
-        cout<<"ka: "<<ka<<endl;
+//        cout<<"ka: "<<ka<<endl;
       }
       if(itr->contains("kd")) {
         float kd = (*itr)["kd"];
-        cout<<"kd: "<<kd<<endl;
+//        cout<<"kd: "<<kd<<endl;
       }
       if(itr->contains("ks")) {
         float ks = (*itr)["ks"];
-        cout<<"ks: "<<ks<<endl;
+//        cout<<"ks: "<<ks<<endl;
       }
       if(itr->contains("pc")) {
         float pc = (*itr)["pc"];
-        cout<<"pc: "<<pc<<endl;
+//        cout<<"pc: "<<pc<<endl;
       }
       if(type=="sphere") {
-        cout<<"Sphere: "<<endl;
+//        cout<<"Sphere: "<<endl;
         Eigen::Vector3f centre(0,0,0);  
         // This makes sure this persists in the game engine, but with weak_ptr
         // TODO: request the engine to allocate for a new geometry (shared_ptr), return it here and then use a copy constructor here or too complicated?      
@@ -243,12 +250,12 @@ bool JSONSceneParser::test_parse_geometry() {
 
         vector<float> input = (*itr)["centre"];
         copyInputVector3f(3, centre, input);
-        cout<<"Centre:\n"<<centre<<endl;
+//        cout<<"Centre:\n"<<centre<<endl;
         newSphere->centre = centre;
         float radius;
         try {
           radius = (*itr)["radius"];
-          cout<<"Radius: "<<radius<<endl;
+//          cout<<"Radius: "<<radius<<endl;
           newSphere->radius = radius;
         } catch(nlohmann::detail::type_error typeError) {
           std::cerr<<"Type error: Geometry radius must be a number! Aborting..."<<endl;
@@ -257,27 +264,27 @@ bool JSONSceneParser::test_parse_geometry() {
           std::cerr<<"Caught an unhandled error!"<<endl;
           return false;
         }
-        cout<<"Sphere info:"<<endl;
-        cout<<newSphere->centre<<endl;
-        cout<<newSphere->radius<<endl;
+//        cout<<"Sphere info:"<<endl;
+        // cout<<newSphere->centre<<endl;
+        // cout<<newSphere->radius<<endl;
       }
       if(type=="rectangle"){
-        std::cout<<"testing rectangle: "<<std::endl;
+//        std::cout<<"testing rectangle: "<<std::endl;
         std::vector<float> p1_input, p2_input, p3_input, p4_input;
         if((*itr)["p1"] != NULL) {
-          std::cout<<"P1 is null"<<std::endl;
+//          std::cout<<"P1 is null"<<std::endl;
           p1_input = (*itr)["p1"].get<std::vector<float>>();
         }
         if((*itr)["p2"] != NULL) {
-          std::cout<<"P2 is null"<<std::endl;
+//          std::cout<<"P2 is null"<<std::endl;
           p2_input = (*itr)["p2"].get<std::vector<float>>();
         }
         if((*itr)["p3"] != NULL) {
-          std::cout<<"P3 is null"<<std::endl;
+//          std::cout<<"P3 is null"<<std::endl;
           p3_input = (*itr)["p3"].get<std::vector<float>>();
         }
         if((*itr)["p4"] != NULL) {
-          std::cout<<"P4 is null"<<std::endl;
+//          std::cout<<"P4 is null"<<std::endl;
           p4_input = (*itr)["p4"].get<std::vector<float>>();
         }
         Eigen::Vector3f P1(0,0,0);
@@ -285,18 +292,18 @@ bool JSONSceneParser::test_parse_geometry() {
         Eigen::Vector3f P3(0,0,0);
         Eigen::Vector3f P4(0,0,0);
         copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);
-        cout<<"P1 : "<<P1<<endl;
-        cout<<"P2 : "<<P2<<endl;
-        cout<<"P3 : "<<P3<<endl;
-        cout<<"P4 : "<<P4<<endl;
+//        cout<<"P1 : "<<P1<<endl;
+//        cout<<"P2 : "<<P2<<endl;
+//        cout<<"P3 : "<<P3<<endl;
+//        cout<<"P4 : "<<P4<<endl;
       }
       ++gc;
   }
-  cout<<"We have: "<<gc<<" objects!"<<endl;
+//  cout<<"We have: "<<gc<<" objects!"<<endl;
   return true;
 };
 void JSONSceneParser::parse_lights(RayTracer* gE) {
-  cout<<"Light: "<<endl;
+//  cout<<"Light: "<<endl;
   int lc = 0;
 
   // use iterators to read-in array types
@@ -338,10 +345,10 @@ void JSONSceneParser::parse_lights(RayTracer* gE) {
     }
     ++lc;
   }
-  cout<<"We have: "<<lc<<" objects!"<<endl;
+//  cout<<"We have: "<<lc<<" objects!"<<endl;
 };
 bool JSONSceneParser::test_parse_lights() {
-  cout<<"Light: "<<endl;
+//  cout<<"Light: "<<endl;
   int lc = 0;
   
   // use iterators to read-in array types
@@ -355,13 +362,13 @@ bool JSONSceneParser::test_parse_lights() {
       }
       
       if(type=="point") {
-          cout<<"Point based light: "<<endl;
+//          cout<<"Point based light: "<<endl;
           Eigen::Vector3f centre,id,is;
           std::vector<float> id_input;
           std::vector<float> is_input;
           vector<float> centre_input = (*(sceneJSONData["light"].begin()))["centre"];
           copyInputVector3f(3, centre, centre_input);
-          cout<<"Centre:\n"<<centre<<endl;          
+//          cout<<"Centre:\n"<<centre<<endl;
           if((*itr)["id"] != NULL) {
             id_input = (*itr)["id"].get<std::vector<float>>();
           }
@@ -370,11 +377,11 @@ bool JSONSceneParser::test_parse_lights() {
           }
           copyInputVector3f(3, id, id_input);
           copyInputVector3f(3, is, is_input);
-          cout<<"id:\n"<<id<<endl;
-          cout<<"is:\n"<<is<<endl;
+//          cout<<"id:\n"<<id<<endl;
+//          cout<<"is:\n"<<is<<endl;
       }
       if(type=="area") {
-        cout<<"Area-based light: "<<endl;          
+//        cout<<"Area-based light: "<<endl;
         Eigen::Vector3f P1(0,0,0);
         Eigen::Vector3f P2(0,0,0);
         Eigen::Vector3f P3(0,0,0);
@@ -387,11 +394,11 @@ bool JSONSceneParser::test_parse_lights() {
       }
       ++lc;
    }
-  cout<<"We have: "<<lc<<" objects!"<<endl;
+//  cout<<"We have: "<<lc<<" objects!"<<endl;
   return true;
 };
 bool JSONSceneParser::test_parse_output() {
-  cout<<"Outputs: "<<endl;
+//  cout<<"Outputs: "<<endl;
   int lc = 0;
   
   // use iterators to read-in array types
@@ -415,7 +422,7 @@ bool JSONSceneParser::test_parse_output() {
       // I am retrieving the field of view
       // this is mandatory field here, but if I dont check if it exists,
       // the code will throw an exception which if not caught will end the execution of yoru program
-      cout<<"A"<<endl;
+//      cout<<"A"<<endl;
       float fov;
       try {
         fov = (*itr)["fov"].get<float>();
@@ -426,15 +433,15 @@ bool JSONSceneParser::test_parse_output() {
         std::cerr<<"Caught an unhandled error!"<<endl;
         return false;
       }
-      cout<<"B"<<endl;
-      cout<<"Filename: "<<filename<<endl;
-      cout<<"Size:\n"<<size<<endl;
-      cout<<"Camera centre:\n"<<centre<<endl;
-      cout<<"FOV:\n"<<fov<<endl;
-      cout<<"lookat:\n"<<lookat<<endl;
-      cout<<"up:\n"<<up<<endl;            
+//      cout<<"B"<<endl;
+//      cout<<"Filename: "<<filename<<endl;
+//      cout<<"Size:\n"<<size<<endl;
+//      cout<<"Camera centre:\n"<<centre<<endl;
+//      cout<<"FOV:\n"<<fov<<endl;
+//      cout<<"lookat:\n"<<lookat<<endl;
+//      cout<<"up:\n"<<up<<endl;
       ++lc;
   }
-  cout<<"We have: "<<lc<<" objects!"<<endl;
+//  cout<<"We have: "<<lc<<" objects!"<<endl;
   return true;
 };
