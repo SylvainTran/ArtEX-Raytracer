@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
@@ -6,6 +7,7 @@ class HitRecord;
 class Ray;
 
 struct Light {
+    std::string type;
     /**
     *  The centre.
     **/
@@ -22,9 +24,10 @@ struct Light {
     *  Constructors and destructors.
     **/
     Light() {
-
+        this->type = "light";
     };
     Light(Eigen::Vector3f id, Eigen::Vector3f is) {
+        this->type = "light";
         this->id = id;
         this->is = is;
     };

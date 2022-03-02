@@ -13,10 +13,11 @@ using std::endl;
 PointLight::PointLight() {
 };
 PointLight::PointLight(Eigen::Vector3f centre, Eigen::Vector3f id, Eigen::Vector3f is, RayTracer* gE) : p(centre) {
-  this->id = id;
-  this->is = is;
-  this->I = id; // from JSON - not really used?
-  this->gE = gE;
+    this->type = "point";
+    this->id = id;
+    this->is = is;
+    this->I = id; // from JSON - not really used?
+    this->gE = gE;
 };
 PointLight::~PointLight() {
 

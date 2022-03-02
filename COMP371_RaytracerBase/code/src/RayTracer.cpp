@@ -42,7 +42,7 @@ using namespace std::chrono;
 //
 // GENERAL OPTIONS
 // ---------------------------
-bool local_illum = false; // ---> Switch this to have local or global illum.
+bool local_illum = true; // ---> Switch this to have local or global illum.
 bool shadows = false;
 bool antialiasing = false;
 const int NB_SAMPLES_PER_PIXEL = 100;
@@ -430,9 +430,9 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
                     for(Light* l : lights) {
                         if(l->type == "point") {
                             light_sum += l->illuminate(ray, *closestHit);
-                        } else if(i->type = "area") {
+                        } else if(l->type == "area") {
                             // create points i,j,k over the surface area
-                            // by sampling over unit square area and projecting it around the area light
+                            // by sampling over unit square area and projecting it around the area light        
                         }
                         //cout<<"light sum: " <<light_sum<<endl;
                     }

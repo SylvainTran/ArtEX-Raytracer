@@ -19,6 +19,7 @@ using json = nlohmann::json;
 #include "Camera.h"
 #include "Rectangle.h"
 #include "PointLight.h"
+#include "AreaLight.h"
 
 JSONSceneParser::JSONSceneParser(nlohmann::json& j) : sceneJSONData(j) {
 
@@ -342,6 +343,8 @@ void JSONSceneParser::parse_lights(RayTracer* gE) {
       vector<float> p3_input = (*itr)["P3"];
       vector<float> p4_input = (*itr)["P4"];
       copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);
+        AreaLight* light = new AreaLight(P1,P2,P3,P4, gE);
+        gE->lights.push_back(light);
     }
     ++lc;
   }
