@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <vector>
 #include <string>
-#include <math.h>       /* tan */
+#include <math.h>       /* tan, pow */
 #include <time.h>       /* srand */
 #include <algorithm>
 
@@ -49,7 +49,7 @@ const float MIN_RAY_DISTANCE = 0.0f;
 const float MAX_RAY_DISTANCE = INFINITY;
 // GI OPTIONS
 // ----------
-const int NB_SAMPLES_PER_PIXEL = 100;
+const int NB_SAMPLES_PER_PIXEL = 10;
 const int MAX_NB_BOUNCES = 1; // the number of bounces/ray depth before terminating a path
 int current_path_samples = 0; // light path samples iterator
 int current_path_bounces = 0; // light path bounces iterator
@@ -547,7 +547,13 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
                     // cout<<"light_path after division and clamp: "<<light_path<<endl;
                     light_path += direct_illum;
                     light_path = light_path * getLambertianBRDF(1);
-
+                    
+                    // Gamma correction
+                    // ----------------
+                    light_path(0) = pow(light_path(0), 1.0f/2.2f);
+                    light_path(1) = pow(light_path(1), 1.0f/2.2f);
+                    light_path(2) = pow(light_path(2), 1.0f/2.2f);
+                    
                     // Set the total light path radiance with closestHit's surface color and divide by lambertian BRDF (the 1/PI)
                     // -----------------------------------------------
                     closestHit->color = light_path;
