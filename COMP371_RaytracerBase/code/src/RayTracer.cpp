@@ -42,12 +42,14 @@ using namespace std::chrono;
 //
 // GENERAL OPTIONS
 // ---------------------------
-bool local_illum = true; // ---> Switch this to have local or global illum.
+bool local_illum = false; // ---> Switch this to have local or global illum.
 bool shadows = false;
 bool antialiasing = false;
-const int NB_SAMPLES_PER_PIXEL = 100;
+const float MIN_RAY_DISTANCE = 0.0f;
+const float MAX_RAY_DISTANCE = INFINITY;
 // GI OPTIONS
 // ----------
+const int NB_SAMPLES_PER_PIXEL = 100;
 const int MAX_NB_BOUNCES = 1; // the number of bounces/ray depth before terminating a path
 int current_path_samples = 0; // light path samples iterator
 int current_path_bounces = 0; // light path bounces iterator
@@ -55,12 +57,12 @@ bool stratified_sampling = false;
 const unsigned int NB_CELLS_X = 10;
 const unsigned int NB_CELLS_Y = 10;
 const unsigned int CELL_SIZE = NB_SAMPLES_PER_PIXEL / (NB_CELLS_X * NB_CELLS_Y);
-
 float p_termination_threshold = 0.333f;
 float p = 0.0f;
 float cos_theta;
-Vector3f light_color(1,1,1);
-Vector3f zero(0,0,0);
+const Vector3f light_color(1,1,1);
+const Vector3f one(1,1,1);
+const Vector3f zero(0,0,0);
 Vector3f Li(0,0,0); // Li
 Vector3f Le(0,0,0); // Le
 
@@ -85,8 +87,9 @@ bool RayTracer::validateSceneJSONData() {
   this->geometryRenderList = std::vector<Surface*>();
   this->lights = vector<Light*>();
   auto jsp = new JSONSceneParser(j);
+    
   if(!jsp->test_parse_geometry() || !jsp->test_parse_lights() || !jsp->test_parse_output()) {
-//        cout<<"One of the tests failed. Aborting..."<<endl;
+        cout<<"One of the tests failed. Aborting..."<<endl;
         return false;
     } else {
 //        cout<<"parsing geometry!"<<endl;
@@ -359,6 +362,9 @@ Vector3f RayTracer::radiance(HitRecord& currentHit, Vector3f o, Vector3f d) {
         }
     }
 };
+void RayTracer::partitionSpace(std::vector<float[]>& vertices, float screenWidth, float screenHeight, float near, float far) {
+    
+};
 void RayTracer::modelViewTransformation(Eigen::Matrix4f& MVP, Surface& s) {
     // Model transform
     Eigen::Matrix4f transformation {
@@ -379,8 +385,6 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
 
     // Iteration parameters
     // --------------------
-    Vector3f one(1,1,1);
-    Vector3f zero(0,0,0);
     float minT1 = t1; // The minimum closest hit to viewer
     bool hitSomethingAtAll = false; // Should return bkg color if no hit
 
@@ -432,7 +436,8 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
                             light_sum += l->illuminate(ray, *closestHit);
                         } else if(l->type == "area") {
                             // create points i,j,k over the surface area
-                            // by sampling over unit square area and projecting it around the area light        
+                            // by sampling over unit square area and projecting it around the area light
+                            
                         }
                         //cout<<"light sum: " <<light_sum<<endl;
                     }
@@ -444,8 +449,6 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
                     // DIFFUSE OR SPECULAR DEBUG
                     // -------------------------
                     closestHit->color = lightOutput;
-//                    cout<<"ac: "<<ac<<endl;
-//                    cout<<"dc: "<<dc<<endl;
                     //
                     // COLOR DEBUG
                     // -----------
@@ -586,7 +589,7 @@ bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitRetu
   // ---------------------------
   if(!hitSomethingAtAll) {
     // hitReturn.color = colorNoHit;
-    hitReturn.color = this->activeSceneCamera->bkc;
+    // hitReturn.color = this->activeSceneCamera->bkc;
     // COLORS DEBUG
     // -------------
     // hitReturn.color = (ray.d.normalized() + one)/2;
@@ -728,7 +731,7 @@ void RayTracer::run() {
     float vertical_fov = Utility::radToDeg(2*atan2(tan(Utility::degToRad(horizontal_fov/2)), aspect_ratio));
     float scale_v = tan(Utility::degToRad(vertical_fov/2));
     float scale_h = tan(Utility::degToRad(horizontal_fov/2));
-    float MAX_RAY_DISTANCE = 1000;
+
     Vector3f cam_position = this->activeSceneCamera->centre;
     Vector3f cam_forward = this->activeSceneCamera->lookat; // already neg: -z
     Vector3f cam_up = this->activeSceneCamera->up;
@@ -742,7 +745,7 @@ void RayTracer::run() {
     float delta = computePixelSizeDeltaHorizontal(horizontal_fov, dimy); // The direct pixel size
     //float delta2 = computePixelSizeVertical(vertical_fov, dimy);
     Vector3f A = cam_position + (1)*cam_forward;
-    Vector3f BA = A + (cam_up * (delta*(dimy/2))); //<-- correct one
+    Vector3f BA = A + (cam_up * (delta*(dimy/2)));
     Vector3f CB = BA - (cam_left * (delta*(dimx/2)));
     
     // Output buffer and output ppm file open
@@ -767,12 +770,14 @@ void RayTracer::run() {
         // ------------------------------------
         ray_nds = CB + (i*delta+delta/2)*cam_left - (j*delta+delta/2)*cam_up - cam_position; // Adjusts cam position
         currentRay.setRay(cam_position, ray_nds);
-          
+        
         // Intersection Test
         // -----------------
         // cout<<"ray nds: "<<ray_nds<<endl;
-        hitSomething = groupRaycastHit(currentRay, 0, MAX_RAY_DISTANCE, *rayColor);
-
+        hitSomething = groupRaycastHit(currentRay, MIN_RAY_DISTANCE, MAX_RAY_DISTANCE, *rayColor);
+        if(!hitSomething) {
+            continue;
+        }
         // COLOR DEBUG 1
         // -------------
         // Vector3f tmp = currentRay.d.normalized();

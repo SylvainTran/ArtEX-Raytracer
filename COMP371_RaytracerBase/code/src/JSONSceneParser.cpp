@@ -44,19 +44,19 @@ void JSONSceneParser::copyInputVector3f(int parameterLen, Eigen::Vector3f& outpu
    }
 };
 void JSONSceneParser::copyRectangleCorners(Eigen::Vector3f& P1, Eigen::Vector3f& P2, Eigen::Vector3f& P3, Eigen::Vector3f& P4, vector<float> p1_input, vector<float> p2_input, vector<float> p3_input, vector<float> p4_input) {
-  copyInputVector3f(3, P1, p1_input);
-  copyInputVector3f(3, P2, p2_input);
-  copyInputVector3f(3, P3, p3_input);
-  copyInputVector3f(3, P4, p4_input);
+    copyInputVector3f(3, P1, p1_input);
+    copyInputVector3f(3, P2, p2_input);
+    copyInputVector3f(3, P3, p3_input);
+    copyInputVector3f(3, P4, p4_input);
 };
 void JSONSceneParser::parse_geometry(RayTracer* gE) {
-  for (auto itr = sceneJSONData["geometry"].begin(); itr!=sceneJSONData["geometry"].end();itr++) {
+    Surface* surface;
+    for (auto itr = sceneJSONData["geometry"].begin(); itr!=sceneJSONData["geometry"].end();itr++) {
     std::string type;
     if(itr->contains("type")) {
      type = (*itr)["type"];
      //cout<<"Type in json: "<<type<<endl;
     }
-    Surface* surface;
     if(type=="sphere") {
       Eigen::Vector3f centre(0,0,0);
       //std::cout<<"*itr: "<<*(itr)<<endl;
@@ -306,52 +306,61 @@ bool JSONSceneParser::test_parse_geometry() {
 void JSONSceneParser::parse_lights(RayTracer* gE) {
 //  cout<<"Light: "<<endl;
   int lc = 0;
+    Light* light;
 
   // use iterators to read-in array types
-  for (auto itr = sceneJSONData["light"].begin(); itr!= sceneJSONData["light"].end(); itr++) {
-    std::string type;
-    type = (*itr)["type"];
+    for (auto itr = sceneJSONData["light"].begin(); itr!= sceneJSONData["light"].end(); itr++) {
+        std::string type;
+        type = (*itr)["type"];
 
     if(type=="point") {
-      Eigen::Vector3f centre,id,is;
-      std::vector<float> id_input;
-      std::vector<float> is_input;
-      vector<float> centre_input;
+        Eigen::Vector3f centre,id,is;
+        std::vector<float> id_input;
+        std::vector<float> is_input;
+        vector<float> centre_input;
 
-      if((*itr)["centre"] != NULL) {
+        if((*itr)["centre"] != NULL) {
         centre_input = (*itr)["centre"].get<std::vector<float>>();
-      }
-      if((*itr)["id"] != NULL) {
+        }
+        if((*itr)["id"] != NULL) {
         id_input = (*itr)["id"].get<std::vector<float>>();
-      }
-      if((*itr)["is"] != NULL) {
+        }
+        if((*itr)["is"] != NULL) {
         is_input = (*itr)["is"].get<std::vector<float>>();
-      }
-      copyInputVector3f(3, centre, centre_input);
-      copyInputVector3f(3, id, id_input);
-      copyInputVector3f(3, is, is_input);
-      PointLight* light = new PointLight(centre,id,is, gE);
-      gE->lights.push_back(light);
+        }
+        copyInputVector3f(3, centre, centre_input);
+        copyInputVector3f(3, id, id_input);
+        copyInputVector3f(3, is, is_input);
+        light = new PointLight(centre,id,is, gE);
     }
     if(type=="area") {
-      Eigen::Vector3f P1(0,0,0);
-      Eigen::Vector3f P2(0,0,0);
-      Eigen::Vector3f P3(0,0,0);
-      Eigen::Vector3f P4(0,0,0);
-      vector<float> p1_input = (*itr)["P1"];
-      vector<float> p2_input = (*itr)["P2"];
-      vector<float> p3_input = (*itr)["P3"];
-      vector<float> p4_input = (*itr)["P4"];
-      copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);
-        AreaLight* light = new AreaLight(P1,P2,P3,P4, gE);
-        gE->lights.push_back(light);
+        Eigen::Vector3f P1(0,0,0);
+        Eigen::Vector3f P2(0,0,0);
+        Eigen::Vector3f P3(0,0,0);
+        Eigen::Vector3f P4(0,0,0);
+        std::vector<float> p1_input, p2_input, p3_input, p4_input;
+        if((*itr)["p1"] != NULL) {
+          p1_input = (*itr)["p1"].get<std::vector<float>>();
+        }
+        if((*itr)["p2"] != NULL) {
+          p2_input = (*itr)["p2"].get<std::vector<float>>();
+        }
+        if((*itr)["p3"] != NULL) {
+          p3_input = (*itr)["p3"].get<std::vector<float>>();
+        }
+        if((*itr)["p4"] != NULL) {
+          p4_input = (*itr)["p4"].get<std::vector<float>>();
+        }
+        copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);
+        light = new AreaLight(P1,P2,P3,P4, gE);
     }
+    gE->lights.push_back(light);
     ++lc;
   }
 //  cout<<"We have: "<<lc<<" objects!"<<endl;
 };
 bool JSONSceneParser::test_parse_lights() {
-//  cout<<"Light: "<<endl;
+//  cout<<"Test Lights: "<<endl;
   int lc = 0;
   
   // use iterators to read-in array types
@@ -369,14 +378,18 @@ bool JSONSceneParser::test_parse_lights() {
           Eigen::Vector3f centre,id,is;
           std::vector<float> id_input;
           std::vector<float> is_input;
-          vector<float> centre_input = (*(sceneJSONData["light"].begin()))["centre"];
+          vector<float> centre_input = (*itr)["centre"].get<std::vector<float>>();
           copyInputVector3f(3, centre, centre_input);
 //          cout<<"Centre:\n"<<centre<<endl;
           if((*itr)["id"] != NULL) {
             id_input = (*itr)["id"].get<std::vector<float>>();
+          } else {
+              return false;
           }
           if((*itr)["is"] != NULL) {
             is_input = (*itr)["is"].get<std::vector<float>>();
+          } else {
+              return false;
           }
           copyInputVector3f(3, id, id_input);
           copyInputVector3f(3, is, is_input);
@@ -385,14 +398,39 @@ bool JSONSceneParser::test_parse_lights() {
       }
       if(type=="area") {
 //        cout<<"Area-based light: "<<endl;
+        std::vector<float> p1_input, p2_input, p3_input, p4_input;
+        if((*itr)["p1"] != NULL) {
+            cout<<"Here"<<endl;
+            p1_input = (*itr)["p1"].get<std::vector<float>>();
+        } else {
+            cout<<"p1 Is Null"<<endl;
+            return false;
+        }
+        if((*itr)["p2"] != NULL) {
+            cout<<"here2"<<endl;
+            p2_input = (*itr)["p2"].get<std::vector<float>>();
+        } else {
+            cout<<"p2 Is Null"<<endl;
+            return false;
+        }
+        if((*itr)["p3"] != NULL) {
+            cout<<"here3"<<endl;
+            p3_input = (*itr)["p3"].get<std::vector<float>>();
+        } else {
+            cout<<"p3 Is Null"<<endl;
+            return false;
+        }
+        if((*itr)["p4"] != NULL) {
+            cout<<"here4"<<endl;
+            p4_input = (*itr)["p4"].get<std::vector<float>>();
+        } else {
+            cout<<"p4 Is Null"<<endl;
+            return false;
+        }
         Eigen::Vector3f P1(0,0,0);
         Eigen::Vector3f P2(0,0,0);
         Eigen::Vector3f P3(0,0,0);
-        Eigen::Vector3f P4(0,0,0);                        
-        vector<float> p1_input = (*itr)["P1"];
-        vector<float> p2_input = (*itr)["P2"];
-        vector<float> p3_input = (*itr)["P3"];
-        vector<float> p4_input = (*itr)["P4"];                        
+        Eigen::Vector3f P4(0,0,0);
         copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);
       }
       ++lc;
@@ -403,7 +441,6 @@ bool JSONSceneParser::test_parse_lights() {
 bool JSONSceneParser::test_parse_output() {
 //  cout<<"Outputs: "<<endl;
   int lc = 0;
-  
   // use iterators to read-in array types
   for (auto itr = sceneJSONData["output"].begin(); itr!= sceneJSONData["output"].end(); itr++){      
       std::string filename;
@@ -413,19 +450,37 @@ bool JSONSceneParser::test_parse_output() {
         cout<<"Fatal error: output shoudl always contain a filename!!!"<<endl;
         return false;
       }
-      Eigen::Vector3f size(0,0,0), lookat(0,0,0), up(0,0,0), centre(0,0,0);     
-      vector<float> centreInput = (*itr)["centre"];
-      vector<float> sizeInput = (*itr)["size"];
-      vector<float> lookAtInput = (*itr)["lookat"];
-      vector<float> upInput = (*itr)["up"];
+      vector<float> centreInput, sizeInput, lookAtInput, upInput;
+      Eigen::Vector3f size(0,0,0), lookat(0,0,0), up(0,0,0), centre(0,0,0);
+      if((*itr)["centre"] != NULL) {
+          centreInput = (*itr)["centre"].get<std::vector<float>>();
+      } else {
+          cout<<"centre Is Null"<<endl;
+          return false;
+      }
+      if((*itr)["size"] != NULL) {
+          sizeInput = (*itr)["size"].get<std::vector<float>>();
+      } else {
+          cout<<"size Is Null"<<endl;
+          return false;
+      }
+      if((*itr)["lookat"] != NULL) {
+          lookAtInput = (*itr)["lookat"].get<std::vector<float>>();
+      } else {
+          cout<<"lookat Is Null"<<endl;
+          return false;
+      }
+      if((*itr)["up"] != NULL) {
+          upInput = (*itr)["up"].get<std::vector<float>>();
+      } else {
+          cout<<"up Is Null"<<endl;
+          return false;
+      }
       copyInputVector3f(3, centre, centreInput);
       copyInputVector3f(3, lookat, lookAtInput);     
       copyInputVector3f(3, up, upInput);            
       copyInputVector3f(2, size, sizeInput);      
-      // I am retrieving the field of view
-      // this is mandatory field here, but if I dont check if it exists,
-      // the code will throw an exception which if not caught will end the execution of yoru program
-//      cout<<"A"<<endl;
+
       float fov;
       try {
         fov = (*itr)["fov"].get<float>();

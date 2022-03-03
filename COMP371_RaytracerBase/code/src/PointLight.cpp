@@ -66,6 +66,7 @@ Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
     Vector3f half = viewing_ray + light_ray;
     half = half.normalized();
     cos_alpha = Utility::max(0.0, n.dot(half));
+    
     // ------------------------
     // PHONG VERSION
     // -------------
@@ -83,9 +84,8 @@ Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
     }
     // BRDF OUTPUT COLOR FOR DIFFUSE + SPECULAR
     // -----------------------------------
-    Vector3f lightColor(1,1,1);
-    Vector3f diffuseColor = (kd * dc * cos_theta).cwiseProduct(id).cwiseProduct(lightColor);
-    Vector3f specularColor = (ks * sc * shininess).cwiseProduct(is).cwiseProduct(lightColor);
+    Vector3f diffuseColor = attenuation_factor * (kd * dc * cos_theta).cwiseProduct(id);
+    Vector3f specularColor = attenuation_factor * (ks * sc * shininess).cwiseProduct(is);
    
     // NORMALS DEBUG
     // -------------
