@@ -1,6 +1,6 @@
 CMakeFiles/capsule03.dir/src/TCamera.cpp.o: \
-  /Users/sylvaintran/-c371labs/capsule3/src/TCamera.cpp \
-  /Users/sylvaintran/-c371labs/capsule3/src/TCamera.h \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TCamera.cpp \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TCamera.h \
   /usr/local/include/glm/glm.hpp \
   /usr/local/include/glm/detail/_fixes.hpp \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/cmath \
@@ -265,9 +265,9 @@ CMakeFiles/capsule03.dir/src/TCamera.cpp.o: \
   /usr/local/include/glm/gtc/../geometric.hpp \
   /usr/local/include/glm/gtc/../trigonometric.hpp \
   /usr/local/include/glm/gtc/../matrix.hpp \
-  /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall.h \
-  /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall360.h \
-  /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall360google.h \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall.h \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall360.h \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall360google.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/iostream \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/ios \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/iosfwd \

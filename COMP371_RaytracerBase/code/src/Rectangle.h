@@ -30,4 +30,16 @@ struct Rectangle : public Surface {
     ios<<"Rectangle: triangle1="<<rect.triangle1<<"\ntriangle2="<<rect.triangle2<<std::endl;
     return ios;
   };
+  /* for faster intersection test, since it's a natural fit to a bounding box */
+  bool intersect_AABB(float x, float y, float z) {
+      float box_minX = this->triangle1->p2.x() - 0.1f;
+      float box_MaxX = this->triangle2->p2.x() + 0.1f;
+      float box_minY = this->triangle1->p2.y() - 0.1f;
+      float box_maxY = this->triangle2->p2.y() + 0.1f;
+      float box_minZ = this->triangle2->p2.z() - 0.1f;
+      float box_maxZ = this->triangle1->p2.z() + 0.1f;
+      return (x >= box_minX && x <= box_MaxX &&
+              y >= box_minY && y <= box_maxY &&
+              z >= box_minZ && z <= box_maxZ);
+  };
 };

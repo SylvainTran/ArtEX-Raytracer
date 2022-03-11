@@ -42,7 +42,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/local/lib/cmake/glew/glew-targets.cmake"
   "/usr/local/lib/cmake/glfw3/glfw3Config.cmake"
   "/usr/local/lib/cmake/glfw3/glfw3ConfigVersion.cmake"
-  "/usr/local/lib/cmake/glfw3/glfw3Targets-release.cmake"
+  "/usr/local/lib/cmake/glfw3/glfw3Targets-noconfig.cmake"
   "/usr/local/lib/cmake/glfw3/glfw3Targets.cmake"
   )
 

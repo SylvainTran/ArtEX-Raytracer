@@ -13,7 +13,6 @@ struct Surface {
 	~Surface();
 	Eigen::Vector3f centre;
 	Material* mat;
-    Eigen::Vector3f color;
     virtual void info();
     virtual bool hit(Ray& r, float t0, float t1, HitRecord& hitReturn);
   //virtual bool hit(Ray& r, float t0, float t1) = 0;

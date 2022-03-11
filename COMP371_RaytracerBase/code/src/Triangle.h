@@ -28,14 +28,16 @@ struct Triangle : public Surface {
     p1 = other.p1;
     p2 = other.p2;
     p3 = other.p3;
-    color = other.color;
+    normal_v = other.normal_v;
+    normal_v =  normal_v.normalized();
   };
   Triangle& operator=(Triangle& other) {
     p1 = other.p1;
     p2 = other.p2;
     p3 = other.p3;
-    color = other.color;
     mat = other.mat;
+    normal_v = other.normal_v;
+    normal_v =  normal_v.normalized();
     return *this;
   };
   /**Check for hit the PLANE!**/

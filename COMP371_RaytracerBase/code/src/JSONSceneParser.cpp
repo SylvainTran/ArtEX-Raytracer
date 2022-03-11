@@ -20,6 +20,7 @@ using json = nlohmann::json;
 #include "Rectangle.h"
 #include "PointLight.h"
 #include "AreaLight.h"
+#include "BoundingBox.h"
 
 JSONSceneParser::JSONSceneParser(nlohmann::json& j) : sceneJSONData(j) {
 
@@ -51,6 +52,7 @@ void JSONSceneParser::copyRectangleCorners(Eigen::Vector3f& P1, Eigen::Vector3f&
 };
 void JSONSceneParser::parse_geometry(RayTracer* gE) {
     Surface* surface;
+    BoundingBox* bbox;
     for (auto itr = sceneJSONData["geometry"].begin(); itr!=sceneJSONData["geometry"].end();itr++) {
     std::string type;
     if(itr->contains("type")) {
@@ -93,6 +95,10 @@ void JSONSceneParser::parse_geometry(RayTracer* gE) {
       Triangle* triangle1 = new Triangle(P1,P2,P3);
       Triangle* triangle2 = new Triangle(P1,P3,P4);
       surface = new Rectangle(triangle1, triangle2);
+
+      // BOUNDING BOX
+      // if boundingbox = on
+      bbox = new BoundingBox(dynamic_cast<Rectangle*>(surface));
     }
     // material settings
     vector<float> ac_input,dc_input,sc_input;
@@ -137,10 +143,16 @@ void JSONSceneParser::parse_geometry(RayTracer* gE) {
     surface->mat->kd = kd;
     surface->mat->ks = ks;
     surface->mat->pc = pc;
-    // Set default dc in mat as surface color for now
-    // ----
-    surface->color = surface->mat->dc;
-    gE->addGeometry(surface);
+//    // Set default dc in mat as surface color for now
+//    // ----
+//    surface->color = surface->mat->dc;
+    // gE->addGeometry(surface);
+    // if boundingbox = on
+    if(type=="rectangle") {
+        gE->addGeometry(bbox);
+    } else if(type == "sphere") {
+        gE->addGeometry(surface);
+    }
   }
 };
 void JSONSceneParser::parse_output(RayTracer* gE) {
@@ -400,28 +412,24 @@ bool JSONSceneParser::test_parse_lights() {
 //        cout<<"Area-based light: "<<endl;
         std::vector<float> p1_input, p2_input, p3_input, p4_input;
         if((*itr)["p1"] != NULL) {
-            cout<<"Here"<<endl;
             p1_input = (*itr)["p1"].get<std::vector<float>>();
         } else {
             cout<<"p1 Is Null"<<endl;
             return false;
         }
         if((*itr)["p2"] != NULL) {
-            cout<<"here2"<<endl;
             p2_input = (*itr)["p2"].get<std::vector<float>>();
         } else {
             cout<<"p2 Is Null"<<endl;
             return false;
         }
         if((*itr)["p3"] != NULL) {
-            cout<<"here3"<<endl;
             p3_input = (*itr)["p3"].get<std::vector<float>>();
         } else {
             cout<<"p3 Is Null"<<endl;
             return false;
         }
         if((*itr)["p4"] != NULL) {
-            cout<<"here4"<<endl;
             p4_input = (*itr)["p4"].get<std::vector<float>>();
         } else {
             cout<<"p4 Is Null"<<endl;

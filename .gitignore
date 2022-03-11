@@ -1,7 +1,15 @@
+/COMP371_RaytracerBase/code/.idea
+/COMP371_RaytracerBase/code/cmake-build-debug
 /COMP371_RaytracerBase/code/build/
 /Lab_capsules/capsule1/code/build/
 /Lab_capsules/capsule2/code/build/
 /Lab_capsules/capsule3/code/build/
+
+/Lab_capsules/capsule1/build/
+/Lab_capsules/capsule2/build/
+/Lab_capsules/capsule3/build/
+/Lab_capsules/capsule3/.idea/
+/Lab_capsules/capsule3/cmake-build-debug/
 
 .DS_STORE
 *.ppm

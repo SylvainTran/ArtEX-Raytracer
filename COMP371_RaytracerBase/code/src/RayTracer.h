@@ -84,12 +84,15 @@ class RayTracer {
     void getBRDF2(Vector3f viewing_ray, Vector3f light_ray, Vector3f n);
     Vector3f getRandomVector(Ray& ray, Vector3f hitPoint, Vector3f n, Vector3f& random_dir_vector);
     Vector3f radiance(HitRecord& currentHit, Vector3f o, Vector3f d);
+    Vector3f radianceIterative(HitRecord& currentHit, Vector3f o, Vector3f d, int N);
+
     // Space partitioning
     // ------------------
     // Fills a list of vertices representing voxel cubes in the viewing volume
     //
     // ------------------
     void partitionSpace(std::vector<float[]>& vertices, float screenWidth, float screenHeight, float near, float far);
+    void setupSubdivisionGrid();
     // Transformation => TODO: Refactor into camera
     // ------------------
     void modelViewTransformation(Eigen::Matrix4f& MVP, Surface& position);

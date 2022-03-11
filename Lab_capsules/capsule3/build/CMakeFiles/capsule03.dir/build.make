@@ -53,10 +53,10 @@ RM = /usr/local/Cellar/cmake/3.22.2/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/sylvaintran/-c371labs/capsule3
+CMAKE_SOURCE_DIR = /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/sylvaintran/-c371labs/capsule3/build
+CMAKE_BINARY_DIR = /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/capsule03.dir/depend.make
@@ -72,226 +72,226 @@ include CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/GLUtils.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/GLUtils.cpp.o: ../src/GLUtils.cpp
 CMakeFiles/capsule03.dir/src/GLUtils.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/capsule03.dir/src/GLUtils.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/GLUtils.cpp.o -MF CMakeFiles/capsule03.dir/src/GLUtils.cpp.o.d -o CMakeFiles/capsule03.dir/src/GLUtils.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/GLUtils.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/capsule03.dir/src/GLUtils.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/GLUtils.cpp.o -MF CMakeFiles/capsule03.dir/src/GLUtils.cpp.o.d -o CMakeFiles/capsule03.dir/src/GLUtils.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/GLUtils.cpp
 
 CMakeFiles/capsule03.dir/src/GLUtils.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/GLUtils.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/GLUtils.cpp > CMakeFiles/capsule03.dir/src/GLUtils.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/GLUtils.cpp > CMakeFiles/capsule03.dir/src/GLUtils.cpp.i
 
 CMakeFiles/capsule03.dir/src/GLUtils.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/GLUtils.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/GLUtils.cpp -o CMakeFiles/capsule03.dir/src/GLUtils.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/GLUtils.cpp -o CMakeFiles/capsule03.dir/src/GLUtils.cpp.s
 
 CMakeFiles/capsule03.dir/src/ObjModel.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/ObjModel.cpp.o: ../src/ObjModel.cpp
 CMakeFiles/capsule03.dir/src/ObjModel.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/capsule03.dir/src/ObjModel.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/ObjModel.cpp.o -MF CMakeFiles/capsule03.dir/src/ObjModel.cpp.o.d -o CMakeFiles/capsule03.dir/src/ObjModel.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/ObjModel.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/capsule03.dir/src/ObjModel.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/ObjModel.cpp.o -MF CMakeFiles/capsule03.dir/src/ObjModel.cpp.o.d -o CMakeFiles/capsule03.dir/src/ObjModel.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/ObjModel.cpp
 
 CMakeFiles/capsule03.dir/src/ObjModel.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/ObjModel.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/ObjModel.cpp > CMakeFiles/capsule03.dir/src/ObjModel.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/ObjModel.cpp > CMakeFiles/capsule03.dir/src/ObjModel.cpp.i
 
 CMakeFiles/capsule03.dir/src/ObjModel.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/ObjModel.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/ObjModel.cpp -o CMakeFiles/capsule03.dir/src/ObjModel.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/ObjModel.cpp -o CMakeFiles/capsule03.dir/src/ObjModel.cpp.s
 
 CMakeFiles/capsule03.dir/src/ObjModel2.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/ObjModel2.cpp.o: ../src/ObjModel2.cpp
 CMakeFiles/capsule03.dir/src/ObjModel2.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/capsule03.dir/src/ObjModel2.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/ObjModel2.cpp.o -MF CMakeFiles/capsule03.dir/src/ObjModel2.cpp.o.d -o CMakeFiles/capsule03.dir/src/ObjModel2.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/ObjModel2.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/capsule03.dir/src/ObjModel2.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/ObjModel2.cpp.o -MF CMakeFiles/capsule03.dir/src/ObjModel2.cpp.o.d -o CMakeFiles/capsule03.dir/src/ObjModel2.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/ObjModel2.cpp
 
 CMakeFiles/capsule03.dir/src/ObjModel2.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/ObjModel2.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/ObjModel2.cpp > CMakeFiles/capsule03.dir/src/ObjModel2.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/ObjModel2.cpp > CMakeFiles/capsule03.dir/src/ObjModel2.cpp.i
 
 CMakeFiles/capsule03.dir/src/ObjModel2.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/ObjModel2.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/ObjModel2.cpp -o CMakeFiles/capsule03.dir/src/ObjModel2.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/ObjModel2.cpp -o CMakeFiles/capsule03.dir/src/ObjModel2.cpp.s
 
 CMakeFiles/capsule03.dir/src/ObjParser.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/ObjParser.cpp.o: ../src/ObjParser.cpp
 CMakeFiles/capsule03.dir/src/ObjParser.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/capsule03.dir/src/ObjParser.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/ObjParser.cpp.o -MF CMakeFiles/capsule03.dir/src/ObjParser.cpp.o.d -o CMakeFiles/capsule03.dir/src/ObjParser.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/ObjParser.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/capsule03.dir/src/ObjParser.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/ObjParser.cpp.o -MF CMakeFiles/capsule03.dir/src/ObjParser.cpp.o.d -o CMakeFiles/capsule03.dir/src/ObjParser.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/ObjParser.cpp
 
 CMakeFiles/capsule03.dir/src/ObjParser.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/ObjParser.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/ObjParser.cpp > CMakeFiles/capsule03.dir/src/ObjParser.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/ObjParser.cpp > CMakeFiles/capsule03.dir/src/ObjParser.cpp.i
 
 CMakeFiles/capsule03.dir/src/ObjParser.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/ObjParser.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/ObjParser.cpp -o CMakeFiles/capsule03.dir/src/ObjParser.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/ObjParser.cpp -o CMakeFiles/capsule03.dir/src/ObjParser.cpp.s
 
 CMakeFiles/capsule03.dir/src/RUIObject.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/RUIObject.cpp.o: ../src/RUIObject.cpp
 CMakeFiles/capsule03.dir/src/RUIObject.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/capsule03.dir/src/RUIObject.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/RUIObject.cpp.o -MF CMakeFiles/capsule03.dir/src/RUIObject.cpp.o.d -o CMakeFiles/capsule03.dir/src/RUIObject.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/RUIObject.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/capsule03.dir/src/RUIObject.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/RUIObject.cpp.o -MF CMakeFiles/capsule03.dir/src/RUIObject.cpp.o.d -o CMakeFiles/capsule03.dir/src/RUIObject.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/RUIObject.cpp
 
 CMakeFiles/capsule03.dir/src/RUIObject.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/RUIObject.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/RUIObject.cpp > CMakeFiles/capsule03.dir/src/RUIObject.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/RUIObject.cpp > CMakeFiles/capsule03.dir/src/RUIObject.cpp.i
 
 CMakeFiles/capsule03.dir/src/RUIObject.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/RUIObject.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/RUIObject.cpp -o CMakeFiles/capsule03.dir/src/RUIObject.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/RUIObject.cpp -o CMakeFiles/capsule03.dir/src/RUIObject.cpp.s
 
 CMakeFiles/capsule03.dir/src/RenderModel.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/RenderModel.cpp.o: ../src/RenderModel.cpp
 CMakeFiles/capsule03.dir/src/RenderModel.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/capsule03.dir/src/RenderModel.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/RenderModel.cpp.o -MF CMakeFiles/capsule03.dir/src/RenderModel.cpp.o.d -o CMakeFiles/capsule03.dir/src/RenderModel.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/RenderModel.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/capsule03.dir/src/RenderModel.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/RenderModel.cpp.o -MF CMakeFiles/capsule03.dir/src/RenderModel.cpp.o.d -o CMakeFiles/capsule03.dir/src/RenderModel.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/RenderModel.cpp
 
 CMakeFiles/capsule03.dir/src/RenderModel.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/RenderModel.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/RenderModel.cpp > CMakeFiles/capsule03.dir/src/RenderModel.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/RenderModel.cpp > CMakeFiles/capsule03.dir/src/RenderModel.cpp.i
 
 CMakeFiles/capsule03.dir/src/RenderModel.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/RenderModel.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/RenderModel.cpp -o CMakeFiles/capsule03.dir/src/RenderModel.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/RenderModel.cpp -o CMakeFiles/capsule03.dir/src/RenderModel.cpp.s
 
 CMakeFiles/capsule03.dir/src/TCamera.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/TCamera.cpp.o: ../src/TCamera.cpp
 CMakeFiles/capsule03.dir/src/TCamera.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/capsule03.dir/src/TCamera.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/TCamera.cpp.o -MF CMakeFiles/capsule03.dir/src/TCamera.cpp.o.d -o CMakeFiles/capsule03.dir/src/TCamera.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/TCamera.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/capsule03.dir/src/TCamera.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/TCamera.cpp.o -MF CMakeFiles/capsule03.dir/src/TCamera.cpp.o.d -o CMakeFiles/capsule03.dir/src/TCamera.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TCamera.cpp
 
 CMakeFiles/capsule03.dir/src/TCamera.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/TCamera.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/TCamera.cpp > CMakeFiles/capsule03.dir/src/TCamera.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TCamera.cpp > CMakeFiles/capsule03.dir/src/TCamera.cpp.i
 
 CMakeFiles/capsule03.dir/src/TCamera.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/TCamera.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/TCamera.cpp -o CMakeFiles/capsule03.dir/src/TCamera.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TCamera.cpp -o CMakeFiles/capsule03.dir/src/TCamera.cpp.s
 
 CMakeFiles/capsule03.dir/src/TOGLApp.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/TOGLApp.cpp.o: ../src/TOGLApp.cpp
 CMakeFiles/capsule03.dir/src/TOGLApp.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/capsule03.dir/src/TOGLApp.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/TOGLApp.cpp.o -MF CMakeFiles/capsule03.dir/src/TOGLApp.cpp.o.d -o CMakeFiles/capsule03.dir/src/TOGLApp.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/TOGLApp.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/capsule03.dir/src/TOGLApp.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/TOGLApp.cpp.o -MF CMakeFiles/capsule03.dir/src/TOGLApp.cpp.o.d -o CMakeFiles/capsule03.dir/src/TOGLApp.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TOGLApp.cpp
 
 CMakeFiles/capsule03.dir/src/TOGLApp.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/TOGLApp.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/TOGLApp.cpp > CMakeFiles/capsule03.dir/src/TOGLApp.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TOGLApp.cpp > CMakeFiles/capsule03.dir/src/TOGLApp.cpp.i
 
 CMakeFiles/capsule03.dir/src/TOGLApp.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/TOGLApp.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/TOGLApp.cpp -o CMakeFiles/capsule03.dir/src/TOGLApp.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TOGLApp.cpp -o CMakeFiles/capsule03.dir/src/TOGLApp.cpp.s
 
 CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.o: ../src/TOGLWindow.cpp
 CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.o -MF CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.o.d -o CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/TOGLWindow.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.o -MF CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.o.d -o CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TOGLWindow.cpp
 
 CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/TOGLWindow.cpp > CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TOGLWindow.cpp > CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.i
 
 CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/TOGLWindow.cpp -o CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TOGLWindow.cpp -o CMakeFiles/capsule03.dir/src/TOGLWindow.cpp.s
 
 CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.o: ../src/TOGWLayer.cpp
 CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.o -MF CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.o.d -o CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/TOGWLayer.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.o -MF CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.o.d -o CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TOGWLayer.cpp
 
 CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/TOGWLayer.cpp > CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TOGWLayer.cpp > CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.i
 
 CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/TOGWLayer.cpp -o CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TOGWLayer.cpp -o CMakeFiles/capsule03.dir/src/TOGWLayer.cpp.s
 
 CMakeFiles/capsule03.dir/src/TTrackBall.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/TTrackBall.cpp.o: ../src/TTrackBall.cpp
 CMakeFiles/capsule03.dir/src/TTrackBall.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/capsule03.dir/src/TTrackBall.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/TTrackBall.cpp.o -MF CMakeFiles/capsule03.dir/src/TTrackBall.cpp.o.d -o CMakeFiles/capsule03.dir/src/TTrackBall.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/capsule03.dir/src/TTrackBall.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/TTrackBall.cpp.o -MF CMakeFiles/capsule03.dir/src/TTrackBall.cpp.o.d -o CMakeFiles/capsule03.dir/src/TTrackBall.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall.cpp
 
 CMakeFiles/capsule03.dir/src/TTrackBall.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/TTrackBall.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall.cpp > CMakeFiles/capsule03.dir/src/TTrackBall.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall.cpp > CMakeFiles/capsule03.dir/src/TTrackBall.cpp.i
 
 CMakeFiles/capsule03.dir/src/TTrackBall.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/TTrackBall.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall.cpp -o CMakeFiles/capsule03.dir/src/TTrackBall.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall.cpp -o CMakeFiles/capsule03.dir/src/TTrackBall.cpp.s
 
 CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.o: ../src/TTrackBall360.cpp
 CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.o -MF CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.o.d -o CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall360.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.o -MF CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.o.d -o CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall360.cpp
 
 CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall360.cpp > CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall360.cpp > CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.i
 
 CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall360.cpp -o CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall360.cpp -o CMakeFiles/capsule03.dir/src/TTrackBall360.cpp.s
 
 CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.o: ../src/TTrackBall360google.cpp
 CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.o -MF CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.o.d -o CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall360google.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.o -MF CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.o.d -o CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall360google.cpp
 
 CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall360google.cpp > CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall360google.cpp > CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.i
 
 CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall360google.cpp -o CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall360google.cpp -o CMakeFiles/capsule03.dir/src/TTrackBall360google.cpp.s
 
 CMakeFiles/capsule03.dir/src/Text.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/Text.cpp.o: ../src/Text.cpp
 CMakeFiles/capsule03.dir/src/Text.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/capsule03.dir/src/Text.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/Text.cpp.o -MF CMakeFiles/capsule03.dir/src/Text.cpp.o.d -o CMakeFiles/capsule03.dir/src/Text.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/Text.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/capsule03.dir/src/Text.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/Text.cpp.o -MF CMakeFiles/capsule03.dir/src/Text.cpp.o.d -o CMakeFiles/capsule03.dir/src/Text.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/Text.cpp
 
 CMakeFiles/capsule03.dir/src/Text.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/Text.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/Text.cpp > CMakeFiles/capsule03.dir/src/Text.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/Text.cpp > CMakeFiles/capsule03.dir/src/Text.cpp.i
 
 CMakeFiles/capsule03.dir/src/Text.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/Text.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/Text.cpp -o CMakeFiles/capsule03.dir/src/Text.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/Text.cpp -o CMakeFiles/capsule03.dir/src/Text.cpp.s
 
 CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o: ../src/Virtual3DLayer.cpp
 CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o -MF CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o.d -o CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/Virtual3DLayer.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o -MF CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o.d -o CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/Virtual3DLayer.cpp
 
 CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/Virtual3DLayer.cpp > CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/Virtual3DLayer.cpp > CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.i
 
 CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/Virtual3DLayer.cpp -o CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/Virtual3DLayer.cpp -o CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.s
 
 CMakeFiles/capsule03.dir/src/main.cpp.o: CMakeFiles/capsule03.dir/flags.make
 CMakeFiles/capsule03.dir/src/main.cpp.o: ../src/main.cpp
 CMakeFiles/capsule03.dir/src/main.cpp.o: CMakeFiles/capsule03.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/capsule03.dir/src/main.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/main.cpp.o -MF CMakeFiles/capsule03.dir/src/main.cpp.o.d -o CMakeFiles/capsule03.dir/src/main.cpp.o -c /Users/sylvaintran/-c371labs/capsule3/src/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/capsule03.dir/src/main.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/capsule03.dir/src/main.cpp.o -MF CMakeFiles/capsule03.dir/src/main.cpp.o.d -o CMakeFiles/capsule03.dir/src/main.cpp.o -c /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/main.cpp
 
 CMakeFiles/capsule03.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/capsule03.dir/src/main.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/-c371labs/capsule3/src/main.cpp > CMakeFiles/capsule03.dir/src/main.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/main.cpp > CMakeFiles/capsule03.dir/src/main.cpp.i
 
 CMakeFiles/capsule03.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/capsule03.dir/src/main.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/-c371labs/capsule3/src/main.cpp -o CMakeFiles/capsule03.dir/src/main.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/main.cpp -o CMakeFiles/capsule03.dir/src/main.cpp.s
 
 # Object files for target capsule03
 capsule03_OBJECTS = \
@@ -335,10 +335,10 @@ capsule03: CMakeFiles/capsule03.dir/build.make
 capsule03: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/OpenGL.framework/OpenGL.tbd
 capsule03: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/OpenGL.framework/OpenGL.tbd
 capsule03: /usr/local/lib/libGLEW.2.2.0.dylib
-capsule03: /usr/local/lib/libglfw.3.3.dylib
+capsule03: /usr/local/lib/libglfw3.a
 capsule03: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/OpenGL.framework/OpenGL.tbd
 capsule03: CMakeFiles/capsule03.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX executable capsule03"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX executable capsule03"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/capsule03.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -350,6 +350,6 @@ CMakeFiles/capsule03.dir/clean:
 .PHONY : CMakeFiles/capsule03.dir/clean
 
 CMakeFiles/capsule03.dir/depend:
-	cd /Users/sylvaintran/-c371labs/capsule3/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/sylvaintran/-c371labs/capsule3 /Users/sylvaintran/-c371labs/capsule3 /Users/sylvaintran/-c371labs/capsule3/build /Users/sylvaintran/-c371labs/capsule3/build /Users/sylvaintran/-c371labs/capsule3/build/CMakeFiles/capsule03.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3 /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3 /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/build/CMakeFiles/capsule03.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/capsule03.dir/depend
 

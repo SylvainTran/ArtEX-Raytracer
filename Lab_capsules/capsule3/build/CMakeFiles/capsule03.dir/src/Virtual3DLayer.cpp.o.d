@@ -1,6 +1,6 @@
 CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o: \
-  /Users/sylvaintran/-c371labs/capsule3/src/Virtual3DLayer.cpp \
-  /Users/sylvaintran/-c371labs/capsule3/src/Virtual3DLayer.h \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/Virtual3DLayer.cpp \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/Virtual3DLayer.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/vector \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/__config \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/pthread.h \
@@ -168,8 +168,8 @@ CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/functional \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/bit \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/__split_buffer \
-  /Users/sylvaintran/-c371labs/capsule3/src/TOGWLayer.h \
-  /Users/sylvaintran/-c371labs/capsule3/src/RUIObject.h \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TOGWLayer.h \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/RUIObject.h \
   /usr/local/include/glm/glm.hpp \
   /usr/local/include/glm/detail/_fixes.hpp \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/cmath \
@@ -431,10 +431,10 @@ CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o: \
   /usr/local/include/glm/gtx/../gtx/vector_query.hpp \
   /usr/local/include/glm/gtx/vector_query.inl \
   /usr/local/include/glm/gtx/intersect.inl \
-  /Users/sylvaintran/-c371labs/capsule3/src/TCamera.h \
-  /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall.h \
-  /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall360.h \
-  /Users/sylvaintran/-c371labs/capsule3/src/TTrackBall360google.h \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TCamera.h \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall.h \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall360.h \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TTrackBall360google.h \
   /usr/local/include/GL/glew.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.sdk/System/Library/Frameworks/OpenGL.framework/Headers/glu.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.sdk/System/Library/Frameworks/OpenGL.framework/Headers/OpenGLAvailability.h \
@@ -505,12 +505,12 @@ CMakeFiles/capsule03.dir/src/Virtual3DLayer.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/_types/_nl_item.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/__bsd_locale_defaults.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/bitset \
-  /Users/sylvaintran/-c371labs/capsule3/src/RenderModel.h \
-  /Users/sylvaintran/-c371labs/capsule3/src/ObjModel.h \
-  /Users/sylvaintran/-c371labs/capsule3/src/TKernel/TTuple.h \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/RenderModel.h \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/ObjModel.h \
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/TKernel/TTuple.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/fstream \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/filesystem \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/stack \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/deque \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/iomanip \
-  /Users/sylvaintran/-c371labs/capsule3/src/GLUtils.h
+  /Users/sylvaintran/Documents/GitHub/COMP371_all/Lab_capsules/capsule3/src/GLUtils.h
