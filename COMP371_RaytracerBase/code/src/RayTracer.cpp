@@ -21,6 +21,7 @@
 #include "JSONSceneParser.h"
 #include "Utility.hpp"
 #include "Grid.h"
+#include "Point3.h"
 
 // File streams
 std::ofstream ofs;
@@ -47,17 +48,14 @@ bool local_illum = false; // ---> Switch this to have local or global illum.
 bool shadows = false;
 bool antialiasing = false;
 const float MIN_RAY_DISTANCE = 0.0f;
-const float MAX_RAY_DISTANCE = 5000.0f;
+const float MAX_RAY_DISTANCE = 100000.0f;
+
 // GI OPTIONS
 // ----------
-const int NB_SAMPLES_PER_PIXEL = 10;
+const int NB_SAMPLES_PER_PIXEL = 4; // Random sampling: only applies if stratified_sampling == false
 const int MAX_NB_BOUNCES = 3; // the number of bounces/ray depth before terminating a path
 int current_path_samples = 0; // light path samples iterator
 int current_path_bounces = 0; // light path bounces iterator
-bool stratified_sampling = false;
-const unsigned int NB_CELLS_X = 10;
-const unsigned int NB_CELLS_Y = 10;
-const unsigned int CELL_SIZE = NB_SAMPLES_PER_PIXEL / (NB_CELLS_X * NB_CELLS_Y);
 float p_termination_threshold = 0.333f;
 float p = 0.0f;
 float p_reflection = 0.1f; // chance to reflect
@@ -67,6 +65,16 @@ const Vector3f one(1,1,1);
 const Vector3f zero(0,0,0);
 Vector3f Li(0,0,0); // Li
 Vector3f Le(0,0,0); // Le
+
+// Stratified Sampling
+// ---- ---- ---- ----
+bool stratified_sampling = false;
+bool hybrid_sampling = true;
+const unsigned int NB_CELLS_X = 10;
+const unsigned int NB_CELLS_Y = 10;
+
+// Pre-processed sample tables
+std::vector<Point3f> stratified_sample_table;
 
 // ----------------------------
 // Simple True Beginner RayTracer (STBRT)
@@ -272,458 +280,209 @@ Vector3f RayTracer::getRandomVector(Ray& ray, Vector3f hitPoint, Vector3f n, Vec
 
     // Change of basis transformation matrix
     // -------------------------------------
-    Matrix3f matrix_R {
-        {frame_left(0),frame_left(1),frame_left(2)},
-        {intersected_point_normal(0),intersected_point_normal(1),intersected_point_normal(2)},
-        {frame_z(0),frame_z(1),frame_z(2)}
-    };
+//    Matrix3f matrix_R {
+//        {frame_left(0),frame_left(1),frame_left(2)},
+//        {intersected_point_normal(0),intersected_point_normal(1),intersected_point_normal(2)},
+//        {frame_z(0),frame_z(1),frame_z(2)}
+//    };
+    Matrix3f matrix_R = Utility::transformPointToLocalObject(frame_left, intersected_point_normal, frame_z);
     random_dir_vector = intersected_point + (matrix_R.inverse() * rand_point);
 };
 // radiance at point x
 //
-// This calculation corresponds to the recursively defined Lf term in the Rendering equation
+// This calculation corresponds to the recursively defined Lf term in the Rendering equation (RANDOM SAMPLING)
 // -----------------------------------------------------------------------------------------
-Vector3f radiance_accumulator(0,0,0);
 Vector3f RayTracer::radiance(HitRecord& currentHit, Vector3f o, Vector3f d) {
-    
-    Vector3f hitPoint;
-    
-    // Check for bounces on all surfaces in the scene
-    // ----------------------------------------------
-    for(Surface* s : this->geometryRenderList) {
-        
-        // Compute a new ray in the path
-        // Given previous origin and direction vectors
-        // -------------------------------------------
-        Ray ray(o, d); // from last point of intersect x, to a random dir d
-        
-        // New intersection test for a random surface
-        // ------------------------------------------
-        bool hitSomething = s->hit(ray, 0, 1000, currentHit);
-        
-        if(hitSomething) {
-            // Rendering Equation Parameters
-            // -----------------------------
-            
-            // Hit point intersected (x)
-            // -----------------------
-            hitPoint = ray.evaluate(currentHit.t);
-            Vector3f random_dir_vec(0,0,0);
-            
-            // Random dir vec (w)
-            // ------------------
-            getRandomVector(ray, hitPoint.normalized(), currentHit.n, random_dir_vec);
-            random_dir_vec = random_dir_vec.normalized();
-            
-            // Normal (n)
-            // ----------
-            Vector3f n = currentHit.n;
-            
-            // cos(theta)
-            // -----------
-            cos_theta = Utility::max(n.dot(d), 0.0f); // d = ki
-            
-            // 'Le' term update for the new hitPoint x
-            // ---------------------------------------
-            // Le = getDiffuseReflection(currentHit, ray, hitPoint);
-            // Le = getAmbientReflectance(s->mat->ac, s->mat->ka);
 
-            // Apply Russian roulette (p)
-            // --------------------------
-            p = drand48();
-                                    
-            if(current_path_bounces > MAX_NB_BOUNCES || p < p_termination_threshold) {
-                                
-                // Shoot a ray last intersection point (i.e., current final path)
-                // to all the light sources in scene (gather irradiance)
-                // ---------------------------------------
-                Li = zero;
-                for(Light* l : lights) {
+    Ray ray(o, d); // from last point of intersect x, to a random dir d
+    bool hitSomething = exhaustiveClosestHitSearch(ray, currentHit, MIN_RAY_DISTANCE, MAX_RAY_DISTANCE);
+    Vector3f subpixel_sample;
+
+    if(hitSomething) {
+        Vector3f hitPoint = ray.evaluate(currentHit.t);
+        Vector3f nextSamplePoint(0,0,0);
+
+        if(hybrid_sampling || !stratified_sampling) {
+            getRandomVector(ray, hitPoint.normalized(), currentHit.n, nextSamplePoint);
+            nextSamplePoint = nextSamplePoint.normalized();
+        } else {
+//            // Re-sample around new jittered centre
+//            Eigen::Vector2i center(hitPoint(0), hitPoint(1));
+//            int jx = center(0), jy = center(1);
+//            jitter(jx, jy); // Generate the first subpixel sample vectors
+//            nextSamplePoint = Vector3f(jx, jy, 0.0f);
+        }
+
+        Vector3f n = currentHit.n;
+        cos_theta = Utility::max(n.dot(d), 0.0f); // d = ki
+        p = drand48();
+
+        if(current_path_bounces > MAX_NB_BOUNCES || p < p_termination_threshold) {
+            Li = zero;
+            for(Light* l : lights) {
+                if(l->type == "point") {
                     Li += l->illuminate(ray, currentHit);
                 }
-                
-                // Reset global path bounces
-                // -------------------------
-                current_path_bounces = 0;
-                return Li;
-            } else {
-                // This is the integration or the recursive radiance walk along random paths in the hemisphere
-                // Uses cos(theta) for the random sampling cosine weight correction and 1/1-p is the prob of that light ray reflecting
-                // ---------------------------------------------------------------------------------
-                return (currentHit.m->mat->dc.cwiseProduct(radiance(currentHit, hitPoint, random_dir_vec) * cos_theta));
             }
-            
-            // Update the light path
-            // ---------------------
-            ++current_path_bounces;
-            
+            current_path_bounces = 0;
+            return Li;
         } else {
-            // No hit => background color
-            // --------------------------
-            return this->activeSceneCamera->bkc;
+            // This is the integration or the recursive radiance walk along random paths in the hemisphere
+            // Uses cos(theta) for the random sampling cosine weight correction and 1/1-p is the prob of that light ray reflecting
+            // ---------------------------------------------------------------------------------
+            ++current_path_bounces;
+            return currentHit.m->mat->dc.cwiseProduct(radiance(currentHit, hitPoint, nextSamplePoint)) * cos_theta;
         }
+    } else {
+        return this->activeSceneCamera->bkc;
     }
 };
-
-void getIrradianceFactors(Vector3f& irradiance, float& cos) {
-
-};
-//
-//Vector3f RayTracer::radianceIterative(HitRecord& currentHit, Vector3f o, Vector3f d, int N) {
-//    Vector3f total_radiance = zero;
-//    Vector3f hitPoint;
-//
-//    // Check for bounces on all surfaces in the scene
-//    // ----------------------------------------------
-//    for(Surface* s : this->geometryRenderList) {
-//
-//        // Compute a new ray in the path
-//        // Given previous origin and direction vectors
-//        // -------------------------------------------
-//        Ray ray(o, d); // from last point of intersect x, to a random dir d
-//
-//        // New intersection test for a random surface
-//        // ------------------------------------------
-//        bool hitSomething = s->hit(ray, 0, 1000, currentHit);
-//
-//        if(hitSomething) {
-//            // Rendering Equation Parameters
-//            // -----------------------------
-//            for (int i = 0; i < N; i++) {
-//
-//                // Hit point intersected (x)
-//                // -----------------------
-//                hitPoint = ray.evaluate(currentHit.t);
-//                Vector3f random_dir_vec(0,0,0);
-//
-//                // Random dir vec (w)
-//                // ------------------
-//                getRandomVector(ray, hitPoint.normalized(), currentHit.n, random_dir_vec);
-//                random_dir_vec = random_dir_vec.normalized();
-//
-//                // Normal (n)
-//                // ----------
-//                Vector3f n = currentHit.n;
-//
-//                // cos(theta)
-//                // -----------
-//                cos_theta = Utility::max(n.dot(d), 0.0f); // d = ki
-//
-//                // 'Le' term update for the new hitPoint x
-//                // ---------------------------------------
-//                Le = getDiffuseReflection(currentHit, ray, hitPoint);
-//
-//                total_radiance += ((1/1-p_reflection) * Le * cos_theta);
-//
-//                bool end_bouncing = false;
-//                for(int j = 0; j < MAX_NB_BOUNCES && !end_bouncing; j++) {
-//                    Ray _ray(o, d); // from last point of intersect x, to a random dir d
-//
-//                    for(Surface* s : this->geometryRenderList) {
-//                        // New intersection test for a random surface
-//                        // ------------------------------------------
-//                        hitSomething = s->hit(_ray, 0, 5000, currentHit);
-//
-//                        if(hitSomething) {
-//                            // Hit point intersected (x)
-//                            // -----------------------
-//                            hitPoint = _ray.evaluate(currentHit.t);
-//                            Vector3f random_dir_vec(0,0,0);
-//
-//                            // Random dir vec (w)
-//                            // ------------------
-//                            getRandomVector(_ray, hitPoint.normalized(), currentHit.n, random_dir_vec);
-//                            random_dir_vec = random_dir_vec.normalized();
-//
-//                            // Normal (n)
-//                            // ----------
-//                            Vector3f n = currentHit.n;
-//
-//                            // cos(theta)
-//                            // -----------
-//                            cos_theta = Utility::max(n.dot(d), 0.0f); // d = ki
-//
-//                            // 'Le' term update for the new hitPoint x
-//                            // ---------------------------------------
-//                            Le = getDiffuseReflection(currentHit, _ray, hitPoint);
-//                            total_radiance += ((1/1-p_reflection) * Le * cos_theta);
-//                        } else {
-//                            // No hit => background color
-//                            // --------------------------
-//                            return this->activeSceneCamera->bkc;
-//                        }
-//                        // Apply Russian roulette (p)
-//                        // --------------------------
-//                        p = drand48();
-//                        if(j > MAX_NB_BOUNCES || p < p_termination_threshold) {
-//                            end_bouncing = true;
-//                            break;
-//                        }
-//                    }
-//                }
-//            }
-//        } else {
-//            // No hit => background color
-//            // --------------------------
-//            return this->activeSceneCamera->bkc;
-//        }
-//    }
-//};
-
-void RayTracer::setupSubdivisionGrid() {
-    for(Surface* s : this->geometryRenderList) {
-
-    }
-};
-
-// Precompute / construct the grid and tree for space partitioning
-// This is before the raycasting begins since we are not using exhaustive search anymore
-// -----------------------------
-void RayTracer::partitionSpace(std::vector<float[]>& vertices, float screenWidth, float screenHeight, float near, float far) {
-    // TODO: Pick up here
-    
-};
-void RayTracer::modelViewTransformation(Eigen::Matrix4f& MVP, Surface& s) {
-    // Model transform
-    Eigen::Matrix4f transformation {
-        {s.centre(0),0,0,0},
-        {0,s.centre(1),0,0},
-        {0,0,s.centre(2),0},
-        {0,0,0,1}
-    };
-    MVP = transformation * MVP;
-};
-bool RayTracer::groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitReturn) {
-    
-    // HIT RECORD SETUP
-    // ----------------
+bool RayTracer::exhaustiveClosestHitSearch(Ray& ray, HitRecord& hitReturn, float t0, float t1) {
     HitRecord* currentHit = new HitRecord(t1); // Start ray at max range
-    HitRecord* closestHit = currentHit;
-    HitRecord* shadowHit(currentHit);
+    bool intersected = false, hitSomething = false;
+    float minT1 = t1;
 
-    // Iteration parameters
-    // --------------------
-    float minT1 = t1; // The minimum closest hit to viewer
-    bool hitSomethingAtAll = false; // Should return bkg color if no hit
-
-    // AMBIENT LIGHT
-    // -------------
-    float ka;
-    Vector3f ai, ac, dc;
-    ai = this->ambientIntensity;
-  
     for(Surface* s : this->geometryRenderList) {
-        
-        // GEOMETRY INTERSECTION TEST
-        // --------------------------
-        bool hitSomething = s->hit(ray, t0, t1, *currentHit);
-        
-        if(hitSomething) {
-            // NO BKG COLOR TEST
-            // -----------------
-            hitSomethingAtAll = true;
-            
-            // CLOSEST HIT: MIN T TEST
-            // -----------------------
+        // Discard if farther than last known t1 (ray upper bound)
+//        if (std::abs(s->centre.z()) > std::abs(t1)) {
+//            continue;
+//        }
+        hitSomething = s->hit(ray, t0, t1, *currentHit);
+
+        if (hitSomething) {
+            intersected = true;
             if(abs(currentHit->t) < abs(minT1)) {
                 minT1 = currentHit->t;
                 t1 = minT1;
-                closestHit = currentHit;
-
-                // LIGHT PARAMETERS
-                // ----------------
-                Vector3f light_sum(0,0,0); // THE LIGHT SUM
-                Vector3f lightOutput; // THE FINAL OUTPUT
-                
-                // GLOBAL ILLUMINATION STUFF
-                // -------------------------------
-                ka = closestHit->m->mat->ka; // Ambient coefficient
-                ac = closestHit->m->mat->ac; // Ambient color
-                dc = closestHit->m->mat->dc; // Diffuse material color used for integration
-                Vector3f aL = ka * ac.cwiseProduct(ai);
-
-                // LOCAL ILLUMINATION : PRIMARY RAY
-                // --------------------------------
-                if(local_illum) {
-
-                    // ACCUMULATE LIGHT SOURCES
-                    // ------------------------
-                    // bool pointIsInShadow = false;
-                    for(Light* l : lights) {
-                        if(l->type == "point") {
-//                            if(shadows) {
-//                                for(Surface* s2 : this->geometryRenderList) {
-//                                    Vector3f x = ray.evaluate(closestHit->t);
-//                                    Vector3f light_ray = (x - l->centre);
-//                                    light_ray = light_ray.normalized();
-//                                    float bias = 1.0f;
-//                                    Ray shadowRay(x - closestHit->n * bias, -light_ray);
-//                                    bool srec = s2->hit(shadowRay, MIN_RAY_DISTANCE, light_ray.norm(), *shadowHit);
-//
-//                                    if(srec) {
-//                                        hitReturn.color = zero;
-//                                        return true;
-//                                    } else {
-//                                        light_sum += l->illuminate(ray, *closestHit);
-//                                    }
-//                                }
-                           //} else {
-                                light_sum += l->illuminate(ray, *closestHit);
-                           //}
-                            
-                        } else if(l->type == "area") {
-                            // create points i,j,k over the surface area
-                            // by sampling over unit square area and projecting it around the area light
-                            
-                        }
-                        //cout<<"light sum: " <<light_sum<<endl;
-                    }
-                    light_sum += aL; // THE REFLECTION EQUATION
-                    // CLAMP
-                    // -----
-                    lightOutput = Utility::clampVectorXf(light_sum, 0.0, 1.0);
-                    // LOCAL ILLUMINATION OUTPUT COLOR
-                    // DIFFUSE OR SPECULAR DEBUG
-                    // -------------------------
-                    closestHit->color = lightOutput;
-                    //
-                    // COLOR DEBUG
-                    // -----------
-                    // closestHit->color = (ray.d.normalized() + one)/2;
-                    //
-                    // "NORMALS" DEBUG
-                    // ---------------
-                    // closestHit->color = (light_sum + one)/2;
-                } else {
-                    // GLOBAL ILLUMINATION : PRIMARY + SECONDARY RAYS
-                    // ----------------------------------------------
-                    
-                    // LIGHT PATH BUILDING PARAMETERS
-                    // ------------------------------
-                    srand((unsigned)time( NULL ));
-                    
-                    // Iteration parameters
-                    // --------------------
-                    Vector3f light_path(0,0,0);
-                    Vector3f indirect_iillum(0,0,0);
-                    Vector3f direct_illum(0,0,0);
-                    Vector3f random_dir_vec(0,0,0);
-                    Vector3f hitPoint = ray.evaluate(closestHit->t);
-                    getRandomVector(ray, hitPoint.normalized(), closestHit->n, random_dir_vec);
-                    random_dir_vec = random_dir_vec.normalized();
-                    Vector3f n = currentHit->n;
-                    cos_theta = Utility::max(n.dot(random_dir_vec), 0.0f); // d = ki
-
-                    // Le part (camera light)
-                    // ------------------------
-                    Le = getDiffuseReflection(*closestHit, ray, hitPoint); // + getSpecularReflectance(*closestHit, ray, n);
-                    // light_path += getSpecularReflectance(*closestHit, ray, n);
-                    // light_path += Le;
-
-                    // Start light path building
-                    // Direct illumination
-                    // Add the light path between the viewer and the first point of intersection
-                    // -----------------------------
-                    for(Light* l : lights) {
-                        direct_illum += l->illuminate(ray, *closestHit);
-                    }
-
-                    // Indirect illumination part
-                    // --------------------------
-                    if (stratified_sampling) {
-                        for(int i = 0, j = 0; i < NB_CELLS_Y; i++) {
-                            do {
-                                indirect_iillum += radiance(*closestHit, hitPoint, random_dir_vec) * cos_theta;
-                                // cout<<"indirect_iillum: "<<indirect_iillum<<endl;
-                                j++;
-                            } while (j < NB_CELLS_X);
-                            // Divide by cell size to reduce variance
-                            // --------------------------------------
-                            indirect_iillum /= NB_CELLS_X;
-                            
-                            // Put it together
-                            // ---------------
-                            light_path += indirect_iillum;
-                            light_path *= getLambertianBRDF(1);
-                            
-                            // Reset indirect illum sum and path sample count for next cell
-                            // -------------------------------------
-                            indirect_iillum = zero;
-                            j = 0;
-                        }
-                    } else {
-                        do {
-                            // Start the radiance walk over the path
-                            // -------------------------------------
-                            indirect_iillum += (closestHit->m->mat->dc.cwiseProduct(radiance(*closestHit, hitPoint, random_dir_vec) * cos_theta));
-                            // cout<<"Cos theta: "<<cos_theta<<endl;
-                            // cout<<"indirect_iillum: "<<indirect_iillum<<endl;
-
-                            // Update path sampling count
-                            // --------------------------
-                            ++current_path_samples;
-                            
-                        } while (current_path_samples < NB_SAMPLES_PER_PIXEL);
-                        // Divide by N samples to take the average
-                        // ---------------------------------------
-                        // cout<<"light_path before division: "<<light_path<<endl;
-                        light_path += indirect_iillum;
-                        // light_path *= getLambertianBRDF(1);
-                        light_path /= (NB_SAMPLES_PER_PIXEL);
-                        // light_path += Le;
-                    }
-                    
-                    // Putting everything together:
-                    // ----------------------------
-                    // cout<<"light_path after division and clamp: "<<light_path<<endl;
-                    light_path += direct_illum;
-                    
-                    // Gamma correction
-                    // ----------------
-                    light_path(0) = pow(light_path(0), 1.0f/2.2f);
-                    light_path(1) = pow(light_path(1), 1.0f/2.2f);
-                    light_path(2) = pow(light_path(2), 1.0f/2.2f);
-                    
-                    // Set the total light path radiance with closestHit's surface color and divide by lambertian BRDF (the 1/PI)
-                    // -----------------------------------------------
-                    closestHit->color = light_path;
-                    //cout<<"N path samples used: "<<current_path_samples<<endl;
-                    current_path_samples = 0;
-                }
-            } // End Local vs. Global
-            
-            // ANTIALIASING RAYS (AA)
-            // ----------------------
-            if (antialiasing) {
-              // ANTIALIASING OPTION
-              // -------------------
-              // Shoot multiple rays from camera/eye, and take average
+                hitReturn = *currentHit;
             }
-        } // Closest hit to viewer
-    }// Surface list loop
-    
-  // COLOR OUTPUT FOR THIS PIXEL
-  // ---------------------------
-  if(!hitSomethingAtAll) {
-    // hitReturn.color = colorNoHit;
-    hitReturn.color = this->activeSceneCamera->bkc;
-    // COLORS DEBUG
-    // -------------
-    // hitReturn.color = (ray.d.normalized() + one)/2;
-    return false;
-  } else {
-    hitReturn.color = closestHit->color;
-  }
-  return true;
+        }
+    }
+    return intersected;
+};
+bool RayTracer::exhaustiveClosestHitSearchIgnore(Ray& ray, HitRecord& hitReturn, float t0, float t1, Surface* ignore) {
+    HitRecord* currentHit = new HitRecord(t1); // Start ray at max range
+    bool hitSomething = false;
+
+    for(Surface* s : this->geometryRenderList) {
+        if(s == ignore) {
+            continue;
+        }
+        hitSomething = s->hit(ray, t0, t1, *currentHit);
+
+        if (hitSomething) {
+            return true;
+        }
+    }
+    return hitSomething;
+};
+void RayTracer::localIllumination(HitRecord& closestHit, Ray& ray, Vector3f& directIllumination) {
+    Vector3f ai = this->ambientIntensity, ac, dc; float ka;
+    Vector3f light_sum(0,0,0), lightOutput;
+    ka = closestHit.m->mat->ka; // Ambient coefficient
+    ac = closestHit.m->mat->ac; // Ambient color
+    Vector3f aL = ka * ac.cwiseProduct(ai); // Ambient light
+    Vector3f x = ray.evaluate(closestHit.t); // Intersection point
+
+    HitRecord* shadowHit;
+
+    bool inShadow = false;
+    float max_shadow_ray_dist;
+    float bias = 1.f;
+
+    for(Light* l : lights) {
+        if(l->type == "point") {
+
+            if(shadows) {
+                Vector3f light_ray = (l->centre - x);
+                //cout << "Light_ray from x: " << light_ray.normalized() << endl;
+                Vector3f offsetOrigin = Utility::getOffsetRayOrigin(x, bias, closestHit.n, ray.d);
+                //cout << "shadow offset origin: " << offsetOrigin << endl;
+                Ray shadowRay(offsetOrigin, light_ray.normalized());
+                //Ray shadowRay(x*bias, light_ray.normalized());
+                max_shadow_ray_dist = light_ray.norm() - (1.f-0.999999f);
+
+//                cout << "light ray normalized : " << light_ray.normalized();
+//                cout << "normal of hit: " << closestHit.n << endl; // suspicious?
+//                cout << "max dist" << max_shadow_ray_dist << endl;
+
+                inShadow = exhaustiveClosestHitSearchIgnore(shadowRay, *shadowHit, MIN_RAY_DISTANCE, std::abs(max_shadow_ray_dist), closestHit.m);
+            }
+            if (!shadows || !inShadow) {
+                light_sum += l->illuminate(ray, closestHit);
+            } else {
+                directIllumination = zero;
+            }
+        } else if(l->type == "area") {
+            // create points i,j,k over the surface area
+//            // by sampling over unit square area
+//            const int NB_AREA_LIGHT_SAMPLES = 10;
+//            for(int i = 0; i < NB_AREA_LIGHT_SAMPLES; i++) {
+//                light_sum += l->illuminate(ray, closestHit);
+//            }
+//            light_sum /= NB_AREA_LIGHT_SAMPLES;
+        }
+    }
+    light_sum += aL;
+    lightOutput = Utility::clampVectorXf(light_sum, 0.0, 1.0);
+    directIllumination = lightOutput;
+};
+void RayTracer::globalIllumination(HitRecord& closestHit, Ray& ray, Vector3f& estimatedLR) {
+
+    Vector3f light_path(0,0,0);
+    Vector3f indirect_iillum(0,0,0);
+    Vector3f direct_illum(0,0,0);
+    Vector3f random_dir_vec(0,0,0);
+    Vector3f hitPoint = ray.evaluate(closestHit.t);
+    getRandomVector(ray, hitPoint.normalized(), closestHit.n, random_dir_vec);
+    random_dir_vec = random_dir_vec.normalized();
+    Vector3f n = closestHit.n;
+    cos_theta = Utility::max(n.dot(random_dir_vec), 0.0f); // d = ki
+    srand((unsigned)time( NULL ));
+
+    do {
+
+        indirect_iillum += radiance(closestHit, hitPoint, random_dir_vec);
+        ++current_path_samples;
+
+    } while (current_path_samples < NB_SAMPLES_PER_PIXEL);
+
+    light_path += indirect_iillum;
+    light_path *= getLambertianBRDF(1);
+    light_path /= (current_path_samples);
+
+    applyGammaCorrection(light_path);
+    estimatedLR = light_path;
+//    cout << "Estimated LR:  " << estimatedLR << endl;
+    current_path_samples = 0;
+};
+void RayTracer::applyGammaCorrection(Vector3f& light_path) {
+    light_path(0) = pow(light_path(0), 1.0f/2.2f);
+    light_path(1) = pow(light_path(1), 1.0f/2.2f);
+    light_path(2) = pow(light_path(2), 1.0f/2.2f);
+};
+void RayTracer::setPixelColor(std::vector<float>& buffer, Vector3f closestHitColor, int dimx, int i, int j) {
+    buffer[3*j*dimx+3*i+0] = closestHitColor(0);
+    buffer[3*j*dimx+3*i+1] = closestHitColor(1);
+    buffer[3*j*dimx+3*i+2] = closestHitColor(2);
+};
+void RayTracer::setPixelToNoise(std::vector<float>& buffer, int dimx, Eigen::Vector2i jitteredPos) {
+    int i = jitteredPos(0);
+    int j = jitteredPos(1);
+
+    buffer[3*j*dimx+3*i+0] = 1.0f;
+    buffer[3*j*dimx+3*i+1] = 1.0f;
+    buffer[3*j*dimx+3*i+2] = 1.0f;
+};
+void RayTracer::jitter(int& jx, int& jy) {
+  jx += drand48() * 4;
+  jy += drand48() * 4;
 };
 // Computes the size of a pixel according to horizontal and vertical fov
 // 2*tan(fov/2)/width = 1 horizontal unit assuming square pixels (the ratio is already adjusted)
 // ----------
 float computePixelSizeDeltaHorizontal(float horizontal_fov, float height) {
   return 2*tan(Utility::degToRad(horizontal_fov/2))/height;
-};
-float computePixelSizeVertical(float vertical_fov, float height) {
-  return 2*tan(Utility::degToRad(vertical_fov/2))/height;
 };
 int RayTracer::save_ppm(const std::vector<float>& buffer, int dimx, int dimy) {
     for (unsigned int j = 0; j < dimy; j++) {
@@ -874,48 +633,70 @@ void RayTracer::run() {
     // Raycasting other parameters
     // ---------------------------
     Ray currentRay; // the current ray to raycast
-    Vector3f ray_nds; // the raycasted ray in nds
-    HitRecord* rayColor = new HitRecord(MAX_RAY_DISTANCE); // the ray color to use
-    bool hitSomething = false; // if the current ray hit a geometry in the scene
-    
+    Vector3f raycast; // the raycasted ray in nds
+    HitRecord* closestHit = new HitRecord(MAX_RAY_DISTANCE); // the ray color to use
+    Vector3f directIllumination = zero, estimated_LR = zero;
+    bool intersected = false; // if the current ray hit a geometry in the scene
+    // Jitter parameters for stratified sampling
+    int jx = 0, jy = 0;
+
     // Rendering loop
     // --------------
     for(int j = dimy-1; j >= 0; j--) {
       for(int i = 0; i < dimx; i++) {
-          
+
         // Simulate projection through sweeping
         // ------------------------------------
-        ray_nds = CB + (i*delta+delta/2)*cam_left - (j*delta+delta/2)*cam_up - cam_position; // Adjusts cam position
-        currentRay.setRay(cam_position, ray_nds);
-        
-        // Intersection Test
-        // -----------------
-        // cout<<"ray nds: "<<ray_nds<<endl;
-        hitSomething = groupRaycastHit(currentRay, MIN_RAY_DISTANCE, MAX_RAY_DISTANCE, *rayColor);
-        if(!hitSomething) {
-            continue;
-        }
-        // COLOR DEBUG 1
-        // -------------
-        // Vector3f tmp = currentRay.d.normalized();
-          
-        // Buffer out
-        // ----------
-        buffer[3*j*dimx+3*i+0] = rayColor->color(0);
-        buffer[3*j*dimx+3*i+1] = rayColor->color(1);
-        buffer[3*j*dimx+3*i+2] = rayColor->color(2);
-        
-        // COLOR DEBUG 2
-        // -------------
-        // buffer[3*j*dimx+3*i+0] = (tmp(0) + 1)/2;
-        // buffer[3*j*dimx+3*i+1] = (tmp(1) + 1)/2;
-        // buffer[3*j*dimx+3*i+2] = (tmp(2) + 1)/2;
+        raycast = CB + (i*delta+delta/2)*cam_left - (j*delta+delta/2)*cam_up - cam_position; // Adjusts cam position
+        currentRay.setRay(cam_position, raycast);
+
+        // cout << "path-tracing " << (1-j/dimy) * 100.0f << "% done" << endl;
+
+        intersected = exhaustiveClosestHitSearch(currentRay, *closestHit, MIN_RAY_DISTANCE, MAX_RAY_DISTANCE);
+
+//        if (!local_illum && stratified_sampling) {
+//            // For each pixel (we are the center i,j),
+//            // From center i,j, generate a 2D sample vector with offset jitter jx, jy, and generate those light transport
+//            // equations at those sample points as well.
+//            // Then take the average at i,j of all these values.
+//
+//            Eigen::Vector2i center(i, j);
+//            Vector3f subpixel_sample;
+//            Vector3f stratified_sum = zero;
+//            Ray subpixel_ray;
+//            estimated_LR = zero;
+//            for (int _i = 0; _i < 4; _i++) {
+//                // sample in the second dimension y
+//                jx = currentRay.d(0), jy = currentRay.d(1);
+//                jitter(jx, jy); // Generate the first subpixel sample vectors - at the first dimension (dimx vs dimy)
+//                subpixel_sample = Vector3f(jx, jy, 0.0f);
+//                subpixel_ray.setRay(cam_position, subpixel_sample);
+//                stratified_sum += globalIllumination(*closestHit, subpixel_ray, estimated_LR);
+//            }
+//            stratified_sum /= 4;
+//            estimated_LR = stratified_sum;
+//        } // Stratified
+
+        if (intersected) {
+            localIllumination(*closestHit, currentRay, directIllumination);
+            if(!local_illum) {
+                if(!stratified_sampling) {
+                    globalIllumination(*closestHit, currentRay, estimated_LR);
+                }
+            } // Global illumination
+        } else {
+            directIllumination = this->activeSceneCamera->bkc;
+        } // Intersected
+
+        // Output pixel color
+        setPixelColor(buffer, directIllumination + estimated_LR, dimx, i, j);
       }
-    }
+    } // End render loop
+
     // Write to ppm
     // ------------
     save_ppm(buffer, dimx, dimy);
-    
+
     // Stop Speed Timer
     // ----------------
     steady_clock::time_point t2 = steady_clock::now();
@@ -927,5 +708,5 @@ void RayTracer::run() {
     
     // Clean-up
     // --------
-    delete rayColor;
+    delete closestHit;
 };

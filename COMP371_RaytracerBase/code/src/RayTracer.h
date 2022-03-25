@@ -41,8 +41,13 @@ class RayTracer {
     // RayTracer(RayTracer&& arg) { //: member(std::move(arg.member));
     // Simple assignment operator, TODO: move ass. operator
     RayTracer& operator=(RayTracer& other);
-    ~RayTracer();  
-    bool groupRaycastHit(Ray& ray, float t0, float t1, HitRecord& hitReturn);
+    ~RayTracer();
+    void localIllumination(HitRecord& closestHit, Ray& ray, Vector3f& directIllumination);
+    void globalIllumination(HitRecord& closestHit, Ray& ray, Vector3f& estimatedLR);
+    void applyGammaCorrection(Vector3f& light_path);
+    bool groupRaycastHit(Ray& ray, HitRecord& hitReturn, float t0, float t1);
+    void setPixelColor(std::vector<float>& buffer, Vector3f rayColor, int dimx, int i, int j);
+    void setPixelToNoise(std::vector<float>& buffer, int dimx, Eigen::Vector2i jitteredPos);
     // Eigen::Vector3f groupRaycastHit(Ray* ray, float t0, float t1);
     bool validateSceneJSONData();
     void run();
@@ -86,6 +91,13 @@ class RayTracer {
     Vector3f radiance(HitRecord& currentHit, Vector3f o, Vector3f d);
     Vector3f radianceIterative(HitRecord& currentHit, Vector3f o, Vector3f d, int N);
 
+    bool exhaustiveClosestHitSearch(Ray& ray, HitRecord& hitReturn, float t0, float t1);
+    void jitter(int& jx, int& jy);
+    Eigen::Matrix3f transformPointToLocalObject(Vector3f frame_left, Vector3f x_normal, Vector3f frame_z);
+    void sampleJittered(Vector3f &strat_sampled_dir_vec, HitRecord &closestHit, Vector3f hitPoint, Vector3f &estimatedLR);
+    void sampleJittered(Ray& subpixel_ray, Vector3f &estimated_LR);
+    bool exhaustiveClosestHitSearchIgnore(Ray &ray, HitRecord &hitReturn, float t0, float t1, Surface *ignore);
+
     // Space partitioning
     // ------------------
     // Fills a list of vertices representing voxel cubes in the viewing volume
@@ -102,6 +114,7 @@ class RayTracer {
     void printUselessLogs(int dialogueNode);
     void printDebugLogs();
     void logSpeedTest(std::chrono::duration<double> time_span);
+
   private:
     nlohmann::json j;
 };

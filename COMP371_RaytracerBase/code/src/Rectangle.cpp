@@ -2,6 +2,7 @@
 #include <vector>
 #include <Eigen/Core>
 #include "HitRecord.h"
+#include "BBox3D.h"
 using namespace std;
 
 Rectangle::Rectangle(Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, Eigen::Vector3f p4) {
@@ -9,6 +10,7 @@ Rectangle::Rectangle(Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3,
 Rectangle::Rectangle(Triangle* triangle1, Triangle* triangle2) {
   this->triangle1 = new Triangle(*triangle1);
   this->triangle2 = new Triangle(*triangle2);
+
 };
 /**
 Rectangle::Rectangle(std::vector<Eigen::Vector3f> pointList) {
@@ -22,6 +24,7 @@ bool Rectangle::hit(Ray& r, float t0, float t1, HitRecord& hitReturn) {
         std::cout<<"NULL triangles! Aborting hit..."<<std::endl;
         return false;
     }
+
     float t_hit;
     Eigen::Vector3f normal_v;
     Eigen::Vector3f color;
@@ -44,6 +47,7 @@ bool Rectangle::hit(Ray& r, float t0, float t1, HitRecord& hitReturn) {
         hitReturn.setHitRecord(this, t_hit);
         return true;
     }
+    hitReturn.setHitRecord(this, INFINITY);
     return false;
 };
 Rectangle::~Rectangle() {

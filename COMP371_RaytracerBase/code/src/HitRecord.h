@@ -39,25 +39,37 @@ struct HitRecord {
     //delete this->m;
   };
   HitRecord& operator=(HitRecord& h) {
-    this->m = h.m;
+    if(this->m != nullptr) {
+      delete this->m;
+    }
+    this->m = new Surface(*h.m);
     t = h.t;
     n = h.n;
     color = h.color;
     return *this;
   };
   void setHitRecord(Surface* m, float t_hit, Eigen::Vector3f n, Eigen::Vector3f color) {
-    this->m = m;
+    if(this->m != nullptr) {
+      delete this->m;
+    }
+    this->m = new Surface(*m);
     this->t = t_hit;
     this->n = n;
     this->color = color;
   };
   void setHitRecord(Surface* m, float t_hit, Eigen::Vector3f& n) {
-    this->m = m;
+    if(this->m != nullptr) {
+      delete this->m;
+    }
+    this->m = new Surface(*m);
     this->t = t_hit;
     this->n = n;
   };
   void setHitRecord(Surface* m, float t_hit) {
-    this->m = m;
+    if(this->m != nullptr) {
+      delete this->m;
+    }
+    this->m = new Surface(*m);
     this->t = t_hit;
   };
   void setNormal(Eigen::Vector3f& n) {

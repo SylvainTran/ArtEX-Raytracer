@@ -45,9 +45,10 @@ Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
     
     // OPTIMIZATIONS
     // -------------
-    float epsilon_approx = 0.00000000000001f;
-    if(light_ray.dot(x) <= epsilon_approx) {
+    float epsilon_approx = 0.0001f;
+    if(std::abs(light_ray.dot(x)) <= epsilon_approx) {
         // light is parallel to the point of intersection on the surface
+        return Vector3f(0.f, 0.f, 0.f);
     }
     
     // ANGLES AND RAYS SETUP
@@ -84,9 +85,9 @@ Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
     }
     // BRDF OUTPUT COLOR FOR DIFFUSE + SPECULAR
     // -----------------------------------
-    Vector3f diffuseColor = attenuation_factor * (kd * dc * cos_theta).cwiseProduct(id);
-    Vector3f specularColor = attenuation_factor * (ks * sc * shininess).cwiseProduct(is);
-   
+    Vector3f diffuseColor = (kd * dc * cos_theta).cwiseProduct(id);
+    Vector3f specularColor = (ks * sc * shininess).cwiseProduct(is);
+
     // NORMALS DEBUG
     // -------------
     // return n;

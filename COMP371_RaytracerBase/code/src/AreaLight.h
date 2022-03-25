@@ -8,5 +8,8 @@ struct AreaLight : public Light {
     RayTracer* rt = rt;
 	AreaLight();
     AreaLight(Vector3f P1, Vector3f P2, Vector3f P3, Vector3f P4, RayTracer* rt);
-	~AreaLight();
+    Eigen::Vector3f illuminate(Ray& r, HitRecord& hrec) override;
+    ~AreaLight();
+
+    Vector3f samplePointOverArea(Vector3f intersected_point, Vector3f n, Vector3f& rand_point, Vector3f& rand_dir_vec);
 };

@@ -52,4 +52,6 @@ struct Triangle : public Surface {
     ios<<"Triangle : p1="<<t->p1<<", p2="<<t->p2<<", p3="<<t->p3<<std::endl;
     return ios;
   };
+
+    bool barycentricHitTriangle(Ray &r, float t0, float t1);
 };
