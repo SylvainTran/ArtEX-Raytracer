@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Surface.h"
 #include "HitRecord.h"
+#include "Sphere.h"
 
 Surface::Surface() {
   this->mat = new Material();
@@ -10,6 +11,9 @@ Surface::Surface() {
 Surface::Surface(Surface& surface) {
   this->mat = surface.mat;
   this->centre = surface.centre;
+  this->ignore = surface.ignore;
+  this->type = surface.type;
+  this->worldBounds = surface.worldBounds;
 };
 Surface::~Surface() {
 
@@ -17,6 +21,9 @@ Surface::~Surface() {
 Surface& Surface::operator=(Surface& surface) {
   this->mat = surface.mat;
   this->centre = surface.centre;
+  this->ignore = surface.ignore;
+  this->type = surface.type;
+  this->worldBounds = surface.worldBounds;
   return *this;
 };
 void Surface::info() {

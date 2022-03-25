@@ -53,5 +53,5 @@ struct Triangle : public Surface {
     return ios;
   };
 
-    bool barycentricHitTriangle(Ray &r, float t0, float t1);
+  bool barycentricHitTriangle(Ray &r, float t0, float t1);
 };

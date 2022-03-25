@@ -18,6 +18,7 @@ PointLight::PointLight(Eigen::Vector3f centre, Eigen::Vector3f id, Eigen::Vector
     this->is = is;
     this->I = id; // from JSON - not really used?
     this->gE = gE;
+    this->centre = centre; //!!!
 };
 PointLight::~PointLight() {
 
@@ -39,9 +40,9 @@ Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
     // LIGHT AND VIEW RAY INPUTS (NORMAL AND POINT OF INTERSECTION)
     // ------------------------------------------------------------
     Eigen::Vector3f x = ray.evaluate(hrec.t);
-    Vector3f light_ray = (p-x); // Light Ray: Ray from point x to PointLight
+    Vector3f light_ray = (this->centre-x); // Light Ray: Ray from point x to PointLight
     light_ray = light_ray.normalized();
-    Vector3f n = hrec.n;
+    Vector3f n = (hrec.n).normalized();
     
     // OPTIMIZATIONS
     // -------------
@@ -85,8 +86,8 @@ Eigen::Vector3f PointLight::illuminate(Ray& ray, HitRecord& hrec) {
     }
     // BRDF OUTPUT COLOR FOR DIFFUSE + SPECULAR
     // -----------------------------------
-    Vector3f diffuseColor = (kd * dc * cos_theta).cwiseProduct(id);
-    Vector3f specularColor = (ks * sc * shininess).cwiseProduct(is);
+    Vector3f diffuseColor = attenuation_factor * (kd * dc * cos_theta).cwiseProduct(id);
+    Vector3f specularColor = attenuation_factor * (ks * sc * shininess).cwiseProduct(is);
 
     // NORMALS DEBUG
     // -------------

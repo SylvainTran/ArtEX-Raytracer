@@ -16,6 +16,9 @@ struct Surface {
 	Eigen::Vector3f centre;
 	Material* mat;
     BBox3Df* worldBounds;
+    std::string type;
+    bool ignore = false; // TODO: self-shadow prevention
+
     virtual void info();
     virtual bool hit(Ray& r, float t0, float t1, HitRecord& hitReturn);
   //virtual bool hit(Ray& r, float t0, float t1) = 0;

@@ -12,6 +12,7 @@ struct HitRecord {
   float t;
   Eigen::Vector3f n;
   Eigen::Vector3f color;
+  Vector3f intersected_p;
 
   // Constructors and destructors
   // The constructor used to indicate a miss, by setting t = +inf

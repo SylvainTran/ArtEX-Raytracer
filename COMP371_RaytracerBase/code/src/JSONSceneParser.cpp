@@ -54,105 +54,98 @@ void JSONSceneParser::parse_geometry(RayTracer* gE) {
     Surface* surface;
     BoundingBox* bbox;
     for (auto itr = sceneJSONData["geometry"].begin(); itr!=sceneJSONData["geometry"].end();itr++) {
-    std::string type;
-    if(itr->contains("type")) {
-     type = (*itr)["type"];
-     //cout<<"Type in json: "<<type<<endl;
-    }
-    if(type=="sphere") {
-      Eigen::Vector3f centre(0,0,0);
-      //std::cout<<"*itr: "<<*(itr)<<endl;
-      vector<float> input = (*itr)["centre"].get<std::vector<float>>();
-      copyInputVector3f(3, centre, input);
-      surface = new Sphere(centre);
-      float radius;
-      radius = (*itr)["radius"].get<float>();
-      dynamic_cast<Sphere*>(surface)->radius = radius;
-    }
-    if(type=="rectangle") {
-      //std::cout<<"Parsing a rectangle! "<<std::endl;
-      Eigen::Vector3f P1(0,0,0);
-      Eigen::Vector3f P2(0,0,0);
-      Eigen::Vector3f P3(0,0,0);
-      Eigen::Vector3f P4(0,0,0);
-      vector<float> p1_input;
-      if((*itr)["p1"] != NULL) {
-        p1_input = (*itr)["p1"].get<std::vector<float>>();
-      }
-      vector<float> p2_input;
-      if((*itr)["p2"] != NULL) {
-        p2_input = (*itr)["p2"].get<std::vector<float>>();
-      }
-      vector<float> p3_input;
-      if((*itr)["p3"] != NULL) {
-        p3_input = (*itr)["p3"].get<std::vector<float>>();
-      }
-      vector<float> p4_input; 
-      if((*itr)["p4"] != NULL) {
-        p4_input = (*itr)["p4"].get<std::vector<float>>();
-      }
-      copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);
-      Triangle* triangle1 = new Triangle(P1,P2,P3);
-      Triangle* triangle2 = new Triangle(P1,P3,P4);
-      surface = new Rectangle(triangle1, triangle2);
+        std::string type;
+        if(itr->contains("type")) {
+            type = (*itr)["type"];
+            //cout<<"Type in json: "<<type<<endl;
+        }
+        if(type=="sphere") {
+          Eigen::Vector3f centre(0,0,0);
+          //std::cout<<"*itr: "<<*(itr)<<endl;
+          vector<float> input = (*itr)["centre"].get<std::vector<float>>();
+          copyInputVector3f(3, centre, input);
+          surface = new Sphere(centre);
+          float radius;
+          radius = (*itr)["radius"].get<float>();
+          dynamic_cast<Sphere*>(surface)->radius = radius;
+          gE->addGeometry(surface);
+        }
+        if(type=="rectangle") {
+          //std::cout<<"Parsing a rectangle! "<<std::endl;
+          Eigen::Vector3f P1(0,0,0);
+          Eigen::Vector3f P2(0,0,0);
+          Eigen::Vector3f P3(0,0,0);
+          Eigen::Vector3f P4(0,0,0);
+          vector<float> p1_input;
+          if((*itr)["p1"] != NULL) {
+            p1_input = (*itr)["p1"].get<std::vector<float>>();
+          }
+          vector<float> p2_input;
+          if((*itr)["p2"] != NULL) {
+            p2_input = (*itr)["p2"].get<std::vector<float>>();
+          }
+          vector<float> p3_input;
+          if((*itr)["p3"] != NULL) {
+            p3_input = (*itr)["p3"].get<std::vector<float>>();
+          }
+          vector<float> p4_input;
+          if((*itr)["p4"] != NULL) {
+            p4_input = (*itr)["p4"].get<std::vector<float>>();
+          }
+          copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);
+          Triangle* triangle1 = new Triangle(P1,P2,P3);
+          Triangle* triangle2 = new Triangle(P1,P3,P4);
+          surface = new Rectangle(triangle1, triangle2);
 
-      // BOUNDING BOX
-      // if boundingbox = on
-      bbox = new BoundingBox(dynamic_cast<Rectangle*>(surface));
-    }
-    // material settings
-    vector<float> ac_input,dc_input,sc_input;
-    Eigen::Vector3f ac,dc,sc;
-    float ka,kd,ks,pc;
+          // BOUNDING BOX
+          // if boundingbox = on
+          bbox = new BoundingBox(dynamic_cast<Rectangle*>(surface));
+          gE->addGeometry(bbox);
+        }
+        surface->type = type;
+        // material settings
+        vector<float> ac_input,dc_input,sc_input;
+        Eigen::Vector3f ac,dc,sc;
+        float ka,kd,ks,pc;
 
-    if(itr->contains("ac")) {
-      ac_input = (*itr)["ac"].get<std::vector<float>>();
-      copyInputVector3f(3, ac, ac_input);
-      //cout<<"ac: "<<ac<<endl;
-    }
-    if(itr->contains("dc")) {
-      dc_input = (*itr)["dc"].get<std::vector<float>>();
-      copyInputVector3f(3, dc, dc_input);
-//      cout<<"dc: "<<dc<<endl;
-    }
-    if(itr->contains("sc")) {
-      sc_input = (*itr)["sc"].get<std::vector<float>>();
-      copyInputVector3f(3, sc, sc_input);
-//      cout<<"sc: "<<sc<<endl;
-    }
-    if(itr->contains("ka")) {
-      ka = (*itr)["ka"];
-//      cout<<"ka: "<<ka<<endl;
-    }
-    if(itr->contains("kd")) {
-      kd = (*itr)["kd"];
-//      cout<<"kd: "<<kd<<endl;
-    }
-    if(itr->contains("ks")) {
-      ks = (*itr)["ks"];
-//      cout<<"ks: "<<ks<<endl;
-    }
-    if(itr->contains("pc")) {
-      pc = (*itr)["pc"];
-//      cout<<"pc: "<<pc<<endl;
-    }
-    surface->mat->ac = ac;
-    surface->mat->dc = dc;
-    surface->mat->sc = sc;
-    surface->mat->ka = ka;
-    surface->mat->kd = kd;
-    surface->mat->ks = ks;
-    surface->mat->pc = pc;
-//    // Set default dc in mat as surface color for now
-//    // ----
-//    surface->color = surface->mat->dc;
-    // gE->addGeometry(surface);
-    // if boundingbox = on
-    if(type=="rectangle") {
-        gE->addGeometry(bbox);
-    } else if(type == "sphere") {
-        gE->addGeometry(surface);
-    }
+        if(itr->contains("ac")) {
+          ac_input = (*itr)["ac"].get<std::vector<float>>();
+          copyInputVector3f(3, ac, ac_input);
+          //cout<<"ac: "<<ac<<endl;
+        }
+        if(itr->contains("dc")) {
+          dc_input = (*itr)["dc"].get<std::vector<float>>();
+          copyInputVector3f(3, dc, dc_input);
+    //      cout<<"dc: "<<dc<<endl;
+        }
+        if(itr->contains("sc")) {
+          sc_input = (*itr)["sc"].get<std::vector<float>>();
+          copyInputVector3f(3, sc, sc_input);
+    //      cout<<"sc: "<<sc<<endl;
+        }
+        if(itr->contains("ka")) {
+          ka = (*itr)["ka"];
+    //      cout<<"ka: "<<ka<<endl;
+        }
+        if(itr->contains("kd")) {
+          kd = (*itr)["kd"];
+    //      cout<<"kd: "<<kd<<endl;
+        }
+        if(itr->contains("ks")) {
+          ks = (*itr)["ks"];
+    //      cout<<"ks: "<<ks<<endl;
+        }
+        if(itr->contains("pc")) {
+          pc = (*itr)["pc"];
+    //      cout<<"pc: "<<pc<<endl;
+        }
+        surface->mat->ac = ac;
+        surface->mat->dc = dc;
+        surface->mat->sc = sc;
+        surface->mat->ka = ka;
+        surface->mat->kd = kd;
+        surface->mat->ks = ks;
+        surface->mat->pc = pc;
   }
 };
 void JSONSceneParser::parse_output(RayTracer* gE) {
@@ -332,18 +325,20 @@ void JSONSceneParser::parse_lights(RayTracer* gE) {
         vector<float> centre_input;
 
         if((*itr)["centre"] != NULL) {
-        centre_input = (*itr)["centre"].get<std::vector<float>>();
+            centre_input = (*itr)["centre"].get<std::vector<float>>();
         }
         if((*itr)["id"] != NULL) {
-        id_input = (*itr)["id"].get<std::vector<float>>();
+            id_input = (*itr)["id"].get<std::vector<float>>();
         }
         if((*itr)["is"] != NULL) {
-        is_input = (*itr)["is"].get<std::vector<float>>();
+            is_input = (*itr)["is"].get<std::vector<float>>();
         }
         copyInputVector3f(3, centre, centre_input);
         copyInputVector3f(3, id, id_input);
         copyInputVector3f(3, is, is_input);
         light = new PointLight(centre,id,is, gE);
+        cout << "light centre: " << centre << endl;
+        gE->lights.push_back(light);
     }
     if(type=="area") {
         Eigen::Vector3f P1(0,0,0);
@@ -365,8 +360,8 @@ void JSONSceneParser::parse_lights(RayTracer* gE) {
         }
         copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);
         light = new AreaLight(P1,P2,P3,P4, gE);
+        gE->lights.push_back(light);
     }
-    gE->lights.push_back(light);
     ++lc;
   }
 //  cout<<"We have: "<<lc<<" objects!"<<endl;

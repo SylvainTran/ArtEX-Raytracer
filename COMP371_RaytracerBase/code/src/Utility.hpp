@@ -1,7 +1,10 @@
 #pragma once
 #include <stdio.h>
+#include <iostream>
 #include <Eigen/Core>
 using Eigen::Vector3f;
+using std::cout;
+using std::endl;
 
 class Utility {
     
@@ -107,6 +110,10 @@ public:
     };
     // Disk or square
     static Vector3f sampleOverUnitArea(Vector3f intersected_point, Vector3f n, Vector3f& rand_point, Vector3f& rand_dir_vec) {
+
+        srand((unsigned)time( NULL ));
+        srand48((unsigned)time( NULL ));
+
         bool outside = true;
         while(outside) {
             // Sampling between [-1,1]
@@ -119,15 +126,18 @@ public:
             rand_dir_vec(1) = (2 * drand48()) - 1;
             rand_dir_vec(2) = (2 * drand48()) - 1;
 
-            outside = rand_point.norm() > 1.0f;
+            outside = std::abs(rand_point.norm()) > 1.0f;
         }
+
         if(rand_point.dot(n) < 0) {
             rand_point *= -1;
         }
         Vector3f frame_left = rand_point.cross(n);
         Vector3f frame_z = n.cross(frame_left);
         Eigen::Matrix3f matrix_R = Utility::transformPointToLocalObject(frame_left, n, frame_z);
-        rand_dir_vec = intersected_point + (matrix_R.inverse() * rand_point);
+        rand_dir_vec = (matrix_R.inverse() * rand_point) + intersected_point;
+
+        // cout << " rand dir vec world coord : " << rand_dir_vec << endl;
     };
     static Eigen::Matrix3f transformPointToLocalObject(Vector3f frame_left, Vector3f x_normal, Vector3f frame_z) {
         Eigen::Matrix3f matrix_R {

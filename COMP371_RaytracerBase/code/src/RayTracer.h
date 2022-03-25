@@ -83,31 +83,36 @@ class RayTracer {
      **/
     Eigen::Vector3f ambientIntensity;
     double getLambertianBRDF(float r);
+
+    // Light transport and shading functions
     Eigen::Vector3f getAmbientReflectance(Vector3f ac, float ka);
     Vector3f getDiffuseReflection(HitRecord& hrec, Ray& ray, Vector3f x);
     Vector3f getSpecularReflectance(HitRecord& hrec, Ray& ray, Vector3f& n);
     void getBRDF2(Vector3f viewing_ray, Vector3f light_ray, Vector3f n);
+
+    // Utility
     Vector3f getRandomVector(Ray& ray, Vector3f hitPoint, Vector3f n, Vector3f& random_dir_vector);
+
+    // Global illumination
     Vector3f radiance(HitRecord& currentHit, Vector3f o, Vector3f d);
     Vector3f radianceIterative(HitRecord& currentHit, Vector3f o, Vector3f d, int N);
 
-    bool exhaustiveClosestHitSearch(Ray& ray, HitRecord& hitReturn, float t0, float t1);
+    // Hits
+    bool exhaustiveClosestHitSearch(Ray& ray, HitRecord& hitReturn, float t0, float t1, Surface* ignore);
+
+    // Jittering for stratified
     void jitter(int& jx, int& jy);
     Eigen::Matrix3f transformPointToLocalObject(Vector3f frame_left, Vector3f x_normal, Vector3f frame_z);
     void sampleJittered(Vector3f &strat_sampled_dir_vec, HitRecord &closestHit, Vector3f hitPoint, Vector3f &estimatedLR);
     void sampleJittered(Ray& subpixel_ray, Vector3f &estimated_LR);
-    bool exhaustiveClosestHitSearchIgnore(Ray &ray, HitRecord &hitReturn, float t0, float t1, Surface *ignore);
 
     // Space partitioning
     // ------------------
     // Fills a list of vertices representing voxel cubes in the viewing volume
-    //
     // ------------------
     void partitionSpace(std::vector<float[]>& vertices, float screenWidth, float screenHeight, float near, float far);
     void setupSubdivisionGrid();
-    // Transformation => TODO: Refactor into camera
-    // ------------------
-    void modelViewTransformation(Eigen::Matrix4f& MVP, Surface& position);
+
     // Utility methods => TODO: Refactor into logger
     // ---------------
     void printUsefulLogs();

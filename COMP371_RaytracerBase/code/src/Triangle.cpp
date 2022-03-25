@@ -11,17 +11,18 @@ Triangle::Triangle(Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3) {
     // SET NORMAL
     // ----------
     this->normal_v = (this->p2 - this->p1).cross(this->p3 - this->p1);
-    this->normal_v =  normal_v.normalized();
+//    this->normal_v =  normal_v.normalized();
 };
 Triangle::~Triangle() {
 
 };
+// Simple solution
 bool Triangle::handleHitPlane(Ray& r, float t0, float t1) {
     // build plane
     Vector3f edgeAB = p2 - p1;
     Vector3f edgeAC = p3 - p1;
     Vector3f n = edgeAB.cross(edgeAC);
-    this->normal_v = n.normalized();
+    this->normal_v = n; //n.normalized();
     float q1 = r.d.dot(n);
 
     // check if ray is parallel to plane

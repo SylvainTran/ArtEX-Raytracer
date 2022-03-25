@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <cstdio>
+#include <assert.h>     /* assert */
+
 #include <vector>
 #include <string>
 #include <math.h>       /* tan, pow */
@@ -22,6 +24,7 @@
 #include "Utility.hpp"
 #include "Grid.h"
 #include "Point3.h"
+#include "BVH.h"
 
 // File streams
 std::ofstream ofs;
@@ -44,16 +47,16 @@ using namespace std::chrono;
 //
 // GENERAL OPTIONS
 // ---------------------------
-bool local_illum = false; // ---> Switch this to have local or global illum.
-bool shadows = false;
+bool local_illum = true; // ---> Switch this to have local or global illum.
+bool shadows = true;
 bool antialiasing = false;
 const float MIN_RAY_DISTANCE = 0.0f;
 const float MAX_RAY_DISTANCE = 100000.0f;
 
 // GI OPTIONS
 // ----------
-const int NB_SAMPLES_PER_PIXEL = 4; // Random sampling: only applies if stratified_sampling == false
-const int MAX_NB_BOUNCES = 3; // the number of bounces/ray depth before terminating a path
+const int NB_SAMPLES_PER_PIXEL = 10; // Random sampling: only applies if stratified_sampling == false
+const int MAX_NB_BOUNCES = 4; // the number of bounces/ray depth before terminating a path
 int current_path_samples = 0; // light path samples iterator
 int current_path_bounces = 0; // light path bounces iterator
 float p_termination_threshold = 0.333f;
@@ -94,7 +97,7 @@ RayTracer& RayTracer::operator=(RayTracer& other) {
     return *this;
 };
 bool RayTracer::validateSceneJSONData() {
-  this->geometryRenderList = std::vector<Surface*>();
+  this->geometryRenderList = vector<Surface*>();
   this->lights = vector<Light*>();
   auto jsp = new JSONSceneParser(j);
     
@@ -295,15 +298,15 @@ Vector3f RayTracer::getRandomVector(Ray& ray, Vector3f hitPoint, Vector3f n, Vec
 Vector3f RayTracer::radiance(HitRecord& currentHit, Vector3f o, Vector3f d) {
 
     Ray ray(o, d); // from last point of intersect x, to a random dir d
-    bool hitSomething = exhaustiveClosestHitSearch(ray, currentHit, MIN_RAY_DISTANCE, MAX_RAY_DISTANCE);
+    bool hitSomething = exhaustiveClosestHitSearch(ray, currentHit, MIN_RAY_DISTANCE, MAX_RAY_DISTANCE, nullptr);
     Vector3f subpixel_sample;
 
     if(hitSomething) {
-        Vector3f hitPoint = ray.evaluate(currentHit.t);
+        Vector3f hitPoint = currentHit.intersected_p;
         Vector3f nextSamplePoint(0,0,0);
 
         if(hybrid_sampling || !stratified_sampling) {
-            getRandomVector(ray, hitPoint.normalized(), currentHit.n, nextSamplePoint);
+            getRandomVector(ray, hitPoint.normalized(), (currentHit.n).normalized(), nextSamplePoint);
             nextSamplePoint = nextSamplePoint.normalized();
         } else {
 //            // Re-sample around new jittered centre
@@ -313,7 +316,7 @@ Vector3f RayTracer::radiance(HitRecord& currentHit, Vector3f o, Vector3f d) {
 //            nextSamplePoint = Vector3f(jx, jy, 0.0f);
         }
 
-        Vector3f n = currentHit.n;
+        Vector3f n = (currentHit.n).normalized();
         cos_theta = Utility::max(n.dot(d), 0.0f); // d = ki
         p = drand48();
 
@@ -331,46 +334,59 @@ Vector3f RayTracer::radiance(HitRecord& currentHit, Vector3f o, Vector3f d) {
             // Uses cos(theta) for the random sampling cosine weight correction and 1/1-p is the prob of that light ray reflecting
             // ---------------------------------------------------------------------------------
             ++current_path_bounces;
+            // (1-/1-p)
             return currentHit.m->mat->dc.cwiseProduct(radiance(currentHit, hitPoint, nextSamplePoint)) * cos_theta;
         }
     } else {
         return this->activeSceneCamera->bkc;
     }
 };
-bool RayTracer::exhaustiveClosestHitSearch(Ray& ray, HitRecord& hitReturn, float t0, float t1) {
+bool RayTracer::exhaustiveClosestHitSearch(Ray& ray, HitRecord& hitReturn, float t0, float t1, Surface* ignore) {
     HitRecord* currentHit = new HitRecord(t1); // Start ray at max range
     bool intersected = false, hitSomething = false;
     float minT1 = t1;
 
     for(Surface* s : this->geometryRenderList) {
-        // Discard if farther than last known t1 (ray upper bound)
-//        if (std::abs(s->centre.z()) > std::abs(t1)) {
-//            continue;
-//        }
+
+        if (ignore != nullptr) {
+            if (ignore == s) { // avoid self-hits for shadow calculation
+                continue;
+            }
+        }
         hitSomething = s->hit(ray, t0, t1, *currentHit);
 
         if (hitSomething) {
-            intersected = true;
-            if(abs(currentHit->t) < abs(minT1)) {
-                minT1 = currentHit->t;
-                t1 = minT1;
-                hitReturn = *currentHit;
+            if(ray.d.dot(currentHit->n) > 0.f) {
+                // backface hit
+//                intersected = false;
+            } else {
+                intersected = true;
+                if(abs(currentHit->t) < abs(minT1)) {
+                    minT1 = currentHit->t;
+                    t1 = minT1;
+                    hitReturn = *currentHit;
+                    hitReturn.intersected_p = ray.evaluate(currentHit->t);
+                }
             }
         }
     }
     return intersected;
 };
-bool RayTracer::exhaustiveClosestHitSearchIgnore(Ray& ray, HitRecord& hitReturn, float t0, float t1, Surface* ignore) {
+bool RayTracer::exhaustiveClosestHitSearchIgnore(Ray& ray, HitRecord& hitReturn, float t0, float t1, float t_ignore) {
     HitRecord* currentHit = new HitRecord(t1); // Start ray at max range
     bool hitSomething = false;
 
     for(Surface* s : this->geometryRenderList) {
-        if(s == ignore) {
-            continue;
-        }
+
         hitSomething = s->hit(ray, t0, t1, *currentHit);
 
+        if(hitSomething && currentHit->m->centre == hitReturn.m->centre) {
+            cout << "self intersect" << endl;
+            cout << hitReturn.m->centre << endl;
+            continue;
+        }
         if (hitSomething) {
+            //cout << "found shadow hit: " << currentHit->t << endl;
             return true;
         }
     }
@@ -378,35 +394,36 @@ bool RayTracer::exhaustiveClosestHitSearchIgnore(Ray& ray, HitRecord& hitReturn,
 };
 void RayTracer::localIllumination(HitRecord& closestHit, Ray& ray, Vector3f& directIllumination) {
     Vector3f ai = this->ambientIntensity, ac, dc; float ka;
-    Vector3f light_sum(0,0,0), lightOutput;
+    Vector3f light_sum(0,0,0), area_light_sum(0,0,0), lightOutput;
     ka = closestHit.m->mat->ka; // Ambient coefficient
     ac = closestHit.m->mat->ac; // Ambient color
     Vector3f aL = ka * ac.cwiseProduct(ai); // Ambient light
-    Vector3f x = ray.evaluate(closestHit.t); // Intersection point
+    Vector3f x = closestHit.intersected_p; // Intersection point
 
-    HitRecord* shadowHit;
+    HitRecord* shadowHit = new HitRecord();
 
     bool inShadow = false;
     float max_shadow_ray_dist;
-    float bias = 1.f;
+    float bias = 1e-4;
+    const int N_SAMPLES = 5;
 
     for(Light* l : lights) {
         if(l->type == "point") {
 
             if(shadows) {
                 Vector3f light_ray = (l->centre - x);
-                //cout << "Light_ray from x: " << light_ray.normalized() << endl;
-                Vector3f offsetOrigin = Utility::getOffsetRayOrigin(x, bias, closestHit.n, ray.d);
-                //cout << "shadow offset origin: " << offsetOrigin << endl;
-                Ray shadowRay(offsetOrigin, light_ray.normalized());
-                //Ray shadowRay(x*bias, light_ray.normalized());
-                max_shadow_ray_dist = light_ray.norm() - (1.f-0.999999f);
+                //Vector3f offsetOrigin = Utility::getOffsetRayOrigin(x, bias, (closestHit.n).normalized(), light_ray.normalized());
+                //Ray shadowRay(offsetOrigin, light_ray.normalized());
 
-//                cout << "light ray normalized : " << light_ray.normalized();
-//                cout << "normal of hit: " << closestHit.n << endl; // suspicious?
-//                cout << "max dist" << max_shadow_ray_dist << endl;
+                Ray shadowRay(x + (closestHit.n).normalized() * bias, light_ray.normalized());
+                max_shadow_ray_dist = light_ray.norm();
 
-                inShadow = exhaustiveClosestHitSearchIgnore(shadowRay, *shadowHit, MIN_RAY_DISTANCE, std::abs(max_shadow_ray_dist), closestHit.m);
+                // Early termination if the surface's normal is opposite the light ray's direction
+                if((closestHit.n).dot(light_ray) < 0.f) {
+                    inShadow = true;
+                } else {
+                    inShadow = exhaustiveClosestHitSearch(shadowRay, *shadowHit, 0.f, max_shadow_ray_dist, closestHit.m);
+                }
             }
             if (!shadows || !inShadow) {
                 light_sum += l->illuminate(ray, closestHit);
@@ -414,30 +431,24 @@ void RayTracer::localIllumination(HitRecord& closestHit, Ray& ray, Vector3f& dir
                 directIllumination = zero;
             }
         } else if(l->type == "area") {
-            // create points i,j,k over the surface area
-//            // by sampling over unit square area
-//            const int NB_AREA_LIGHT_SAMPLES = 10;
-//            for(int i = 0; i < NB_AREA_LIGHT_SAMPLES; i++) {
-//                light_sum += l->illuminate(ray, closestHit);
-//            }
-//            light_sum /= NB_AREA_LIGHT_SAMPLES;
+
+            area_light_sum += l->illuminate(ray, closestHit);
+            area_light_sum /= N_SAMPLES;
+            //cout << " Area light sum: " << area_light_sum << endl;
         }
     }
     light_sum += aL;
+    light_sum += area_light_sum;
     lightOutput = Utility::clampVectorXf(light_sum, 0.0, 1.0);
     directIllumination = lightOutput;
 };
 void RayTracer::globalIllumination(HitRecord& closestHit, Ray& ray, Vector3f& estimatedLR) {
 
-    Vector3f light_path(0,0,0);
-    Vector3f indirect_iillum(0,0,0);
-    Vector3f direct_illum(0,0,0);
-    Vector3f random_dir_vec(0,0,0);
-    Vector3f hitPoint = ray.evaluate(closestHit.t);
-    getRandomVector(ray, hitPoint.normalized(), closestHit.n, random_dir_vec);
+    Vector3f light_path(0,0,0), indirect_iillum(0,0,0), direct_illum(0,0,0), random_dir_vec(0,0,0), hitPoint = closestHit.intersected_p, n = (closestHit.n).normalized();
+
+    getRandomVector(ray, hitPoint.normalized(), (closestHit.n).normalized(), random_dir_vec);
     random_dir_vec = random_dir_vec.normalized();
-    Vector3f n = closestHit.n;
-    cos_theta = Utility::max(n.dot(random_dir_vec), 0.0f); // d = ki
+    cos_theta = Utility::max(n.normalized().dot(random_dir_vec), 0.0f); // d = ki
     srand((unsigned)time( NULL ));
 
     do {
@@ -453,7 +464,6 @@ void RayTracer::globalIllumination(HitRecord& closestHit, Ray& ray, Vector3f& es
 
     applyGammaCorrection(light_path);
     estimatedLR = light_path;
-//    cout << "Estimated LR:  " << estimatedLR << endl;
     current_path_samples = 0;
 };
 void RayTracer::applyGammaCorrection(Vector3f& light_path) {
@@ -588,6 +598,7 @@ void RayTracer::run() {
         cout<<"no geometry to render!"<<endl;
         return;
     }
+
     // Useless and Useful Logs
     // -----------------------
     printUselessLogs(0);
@@ -612,10 +623,8 @@ void RayTracer::run() {
     Vector3f cam_forward = this->activeSceneCamera->lookat; // already neg: -z
     Vector3f cam_up = this->activeSceneCamera->up;
     Vector3f cam_left = cam_forward.cross(cam_up);
-    //Vector3f cam_left = -1*(cam_forward.cross(cam_up));
-    cam_up = cam_forward.cross(cam_left); // Actual up
-    cam_up *= -1; // flip it up
-        
+    cam_up = cam_left.cross(cam_forward); // Actual up
+
     // Raycasting setup
     // ----------------
     float delta = computePixelSizeDeltaHorizontal(horizontal_fov, dimy); // The direct pixel size
@@ -650,9 +659,9 @@ void RayTracer::run() {
         raycast = CB + (i*delta+delta/2)*cam_left - (j*delta+delta/2)*cam_up - cam_position; // Adjusts cam position
         currentRay.setRay(cam_position, raycast);
 
-        // cout << "path-tracing " << (1-j/dimy) * 100.0f << "% done" << endl;
+        cout << "path-tracing " << (1-j/dimy) * 100.0f << "% done" << endl;
 
-        intersected = exhaustiveClosestHitSearch(currentRay, *closestHit, MIN_RAY_DISTANCE, MAX_RAY_DISTANCE);
+        intersected = exhaustiveClosestHitSearch(currentRay, *closestHit, MIN_RAY_DISTANCE, MAX_RAY_DISTANCE, nullptr);
 
 //        if (!local_illum && stratified_sampling) {
 //            // For each pixel (we are the center i,j),
@@ -665,7 +674,7 @@ void RayTracer::run() {
 //            Vector3f stratified_sum = zero;
 //            Ray subpixel_ray;
 //            estimated_LR = zero;
-//            for (int _i = 0; _i < 4; _i++) {
+//            for (int _i = 0; _i < 10; _i++) {
 //                // sample in the second dimension y
 //                jx = currentRay.d(0), jy = currentRay.d(1);
 //                jitter(jx, jy); // Generate the first subpixel sample vectors - at the first dimension (dimx vs dimy)

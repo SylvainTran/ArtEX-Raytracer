@@ -6,17 +6,18 @@
 
 // My code
 #include "Surface.h"
-#include "Ray.h"
-#include "HitRecord.h"
-#include "Material.h"
 
 struct Sphere : public Surface {
     Sphere();
     Sphere(Eigen::Vector3f centre);
     ~Sphere();
-    Sphere(Sphere& sphere);
-    Sphere& operator=(Sphere& sphere);
-    Eigen::Vector3f centre;
+    Sphere(Sphere& sphere) {
+        this->radius = sphere.radius;
+    };
+    Sphere& operator=(Sphere& sphere) {
+        radius = sphere.radius;
+        return *this;
+    };
     float radius;
 
     void info() override;

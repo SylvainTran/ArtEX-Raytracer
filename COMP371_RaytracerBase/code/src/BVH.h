@@ -15,7 +15,7 @@ struct BVH {
         this->siblings.push_back(boundingBoxSurface);
     };
 
-    void createTree(std::vector<Surface*> surfaces) {
+    void buildTree(std::vector<Surface*> surfaces) {
         int len = surfaces.size();
         for(int i = 0 ; i < len; i++) {
             insert(surfaces[i]);
