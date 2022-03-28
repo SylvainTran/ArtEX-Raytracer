@@ -1,9 +1,6 @@
 // Standard
 #include <iostream>
 #include <fstream>
-#include <cstdio>
-#include <assert.h>     /* assert */
-
 #include <vector>
 #include <string>
 #include <math.h>       /* tan, pow */
@@ -11,7 +8,6 @@
 #include <algorithm>
 
 // Time
-#include <ctime>
 #include <ratio>
 #include <chrono>
 
@@ -19,19 +15,11 @@
 #include "HitRecord.h"
 #include "RayTracer.h"
 #include "Triangle.h"
-#include "Rectangle.h"
 #include "JSONSceneParser.h"
 #include "Utility.hpp"
 #include "Grid.h"
 #include "Point3.h"
 #include "BVH.h"
-
-// File streams
-std::ofstream ofs;
-std::ofstream speed_test_fs;
-
-// Eigen
-#include <Eigen/Geometry>
 
 // Namespaces
 using Eigen::Vector3f;
@@ -47,9 +35,11 @@ using namespace std::chrono;
 //
 // GENERAL OPTIONS
 // ---------------------------
-bool local_illum = true; // ---> Switch this to have local or global illum.
+unsigned int speedup = 1; // 0 = no speedup, 1 = bbox and bvh
+unsigned int raysperpixel[2];
+bool twosiderender = false;
+bool globalillum = false;  // ---> Switch this to have local or global illum.
 bool shadows = true;
-bool antialiasing = false;
 const float MIN_RAY_DISTANCE = 0.0f;
 const float MAX_RAY_DISTANCE = 100000.0f;
 
@@ -61,37 +51,24 @@ int current_path_samples = 0; // light path samples iterator
 int current_path_bounces = 0; // light path bounces iterator
 float p_termination_threshold = 0.333f;
 float p = 0.0f;
-float p_reflection = 0.1f; // chance to reflect
 float cos_theta;
-const Vector3f light_color(1,1,1);
 const Vector3f one(1,1,1);
 const Vector3f zero(0,0,0);
 Vector3f Li(0,0,0); // Li
-Vector3f Le(0,0,0); // Le
 
 // Stratified Sampling
 // ---- ---- ---- ----
-bool stratified_sampling = false;
+bool antialiasing = false;
 bool hybrid_sampling = true;
-const unsigned int NB_CELLS_X = 10;
-const unsigned int NB_CELLS_Y = 10;
 
-// Pre-processed sample tables
+// Pre-processed sample tables TODO:
 std::vector<Point3f> stratified_sample_table;
 
-// ----------------------------
-// Simple True Beginner RayTracer (STBRT)
-//
-// ----------------------------
-RayTracer::RayTracer() {
-
-};
+RayTracer::RayTracer() {};
 RayTracer::RayTracer(nlohmann::json& j) {
   this->j = j;
 };
-RayTracer::~RayTracer() {
-
-};
+RayTracer::~RayTracer() {};
 RayTracer& RayTracer::operator=(RayTracer& other) {
     // TODO: std::move() on other.members for this members'
     return *this;
@@ -105,8 +82,6 @@ bool RayTracer::validateSceneJSONData() {
         cout<<"One of the tests failed. Aborting..."<<endl;
         return false;
     } else {
-//        cout<<"parsing geometry!"<<endl;
-//        cout<<"parsing output (camera, etc.)!"<<endl;
         jsp->parse_geometry(this);
         jsp->parse_lights(this);
         jsp->parse_output(this);
@@ -115,9 +90,6 @@ bool RayTracer::validateSceneJSONData() {
 };
 void RayTracer::addGeometry(Surface* s) {
     this->geometryRenderList.push_back(s);
-//    s->info();
-//    std::cout<<"Added geometry to render list!"<<std::endl;
-//    std::cout<<"New list size: "<<this->geometryRenderList.size()<<std::endl;
 };
 void RayTracer::addLight(Light* l) {
     this->lights.push_back(l);
@@ -186,7 +158,6 @@ Vector3f RayTracer::getDiffuseReflection(HitRecord& hrec, Ray& ray, Vector3f x) 
             diffuseColor += (kd * dc * cos_theta).cwiseProduct(id);
         }
     }
-    //cout<<"diffuse color: "<<diffuseColor<<endl;
     return diffuseColor;
 };
 Vector3f RayTracer::getSpecularReflectance(HitRecord& hrec, Ray& ray, Vector3f& n) {
@@ -290,6 +261,8 @@ Vector3f RayTracer::getRandomVector(Ray& ray, Vector3f hitPoint, Vector3f n, Vec
 //    };
     Matrix3f matrix_R = Utility::transformPointToLocalObject(frame_left, intersected_point_normal, frame_z);
     random_dir_vector = intersected_point + (matrix_R.inverse() * rand_point);
+
+    return random_dir_vector;
 };
 // radiance at point x
 //
@@ -305,15 +278,9 @@ Vector3f RayTracer::radiance(HitRecord& currentHit, Vector3f o, Vector3f d) {
         Vector3f hitPoint = currentHit.intersected_p;
         Vector3f nextSamplePoint(0,0,0);
 
-        if(hybrid_sampling || !stratified_sampling) {
+        if(hybrid_sampling) {
             getRandomVector(ray, hitPoint.normalized(), (currentHit.n).normalized(), nextSamplePoint);
             nextSamplePoint = nextSamplePoint.normalized();
-        } else {
-//            // Re-sample around new jittered centre
-//            Eigen::Vector2i center(hitPoint(0), hitPoint(1));
-//            int jx = center(0), jy = center(1);
-//            jitter(jx, jy); // Generate the first subpixel sample vectors
-//            nextSamplePoint = Vector3f(jx, jy, 0.0f);
         }
 
         Vector3f n = (currentHit.n).normalized();
@@ -353,10 +320,12 @@ bool RayTracer::exhaustiveClosestHitSearch(Ray& ray, HitRecord& hitReturn, float
                 continue;
             }
         }
+
         hitSomething = s->hit(ray, t0, t1, *currentHit);
 
         if (hitSomething) {
-            if(ray.d.dot(currentHit->n) > 0.f) {
+
+            if(!twosiderender && ray.d.dot(currentHit->n) > 0.f) {
                 // backface hit
 //                intersected = false;
             } else {
@@ -371,26 +340,6 @@ bool RayTracer::exhaustiveClosestHitSearch(Ray& ray, HitRecord& hitReturn, float
         }
     }
     return intersected;
-};
-bool RayTracer::exhaustiveClosestHitSearchIgnore(Ray& ray, HitRecord& hitReturn, float t0, float t1, float t_ignore) {
-    HitRecord* currentHit = new HitRecord(t1); // Start ray at max range
-    bool hitSomething = false;
-
-    for(Surface* s : this->geometryRenderList) {
-
-        hitSomething = s->hit(ray, t0, t1, *currentHit);
-
-        if(hitSomething && currentHit->m->centre == hitReturn.m->centre) {
-            cout << "self intersect" << endl;
-            cout << hitReturn.m->centre << endl;
-            continue;
-        }
-        if (hitSomething) {
-            //cout << "found shadow hit: " << currentHit->t << endl;
-            return true;
-        }
-    }
-    return hitSomething;
 };
 void RayTracer::localIllumination(HitRecord& closestHit, Ray& ray, Vector3f& directIllumination) {
     Vector3f ai = this->ambientIntensity, ac, dc; float ka;
@@ -432,8 +381,8 @@ void RayTracer::localIllumination(HitRecord& closestHit, Ray& ray, Vector3f& dir
             }
         } else if(l->type == "area") {
 
-            area_light_sum += l->illuminate(ray, closestHit);
-            area_light_sum /= N_SAMPLES;
+            //area_light_sum += l->illuminate(ray, closestHit);
+            //area_light_sum /= N_SAMPLES;
             //cout << " Area light sum: " << area_light_sum << endl;
         }
     }
@@ -484,17 +433,18 @@ void RayTracer::setPixelToNoise(std::vector<float>& buffer, int dimx, Eigen::Vec
     buffer[3*j*dimx+3*i+1] = 1.0f;
     buffer[3*j*dimx+3*i+2] = 1.0f;
 };
-void RayTracer::jitter(int& jx, int& jy) {
-  jx += drand48() * 4;
-  jy += drand48() * 4;
+void RayTracer::jitter(int& jx, int& jy, int stepX, int stepY) {
+  jx += drand48() * stepX;
+  jy += drand48() * stepY;
 };
 // Computes the size of a pixel according to horizontal and vertical fov
 // 2*tan(fov/2)/width = 1 horizontal unit assuming square pixels (the ratio is already adjusted)
 // ----------
+float aspect_ratio = 1.f;
 float computePixelSizeDeltaHorizontal(float horizontal_fov, float height) {
-  return 2*tan(Utility::degToRad(horizontal_fov/2))/height;
+  return 2 * tan(Utility::degToRad(horizontal_fov/2)) / height;
 };
-int RayTracer::save_ppm(const std::vector<float>& buffer, int dimx, int dimy) {
+int RayTracer::save_ppm(ofstream& ofs, const std::vector<float>& buffer, int dimx, int dimy) {
     for (unsigned int j = 0; j < dimy; j++) {
       for (unsigned int i = 0; i < dimx; i++) {
         ofs << (char) (255.0 * buffer[3*j*dimx+3*i + 0]) <<  (char) (255.0 * buffer[3*j*dimx+3*i + 1]) << (char) (255.0 * buffer[3*j*dimx+3*i+2]);
@@ -507,10 +457,10 @@ int RayTracer::save_ppm(const std::vector<float>& buffer, int dimx, int dimy) {
 };
 void RayTracer::printUsefulLogs() {
     cout << "Running raytracer on scene: "<< this->activeSceneCamera->filename << endl;
-    cout << "\nLocal illumination (if 0 => global): " << local_illum << endl;
+    cout << "\nGlobal illumination (if 0 => local): " << globalillum << endl;
     cout << "\nShadows (true = 1): " << shadows << "\nAntialiasing: " << antialiasing << endl;
-    if(!local_illum) {
-        cout<< "\nSamples per pixel: " << NB_SAMPLES_PER_PIXEL << "\nMax bounces: " << MAX_NB_BOUNCES << "\nP termination threshold: " << p_termination_threshold << "\nstratified sampling: " << stratified_sampling << "\nCELL_SIZE: " << NB_CELLS_Y << endl;
+    if(!globalillum) {
+        cout<< "\nSamples per pixel: " << NB_SAMPLES_PER_PIXEL << "\nMax bounces: " << MAX_NB_BOUNCES << "\nP termination threshold: " << p_termination_threshold << "\nstratified sampling: " << antialiasing << endl;
     }
     cout<<"N geometry: "<<this->geometryRenderList.size()<<endl;
     cout<<"N lights: "<<this->lights.size()<<endl;
@@ -566,7 +516,7 @@ void RayTracer::printDebugLogs() {
 //    cout<<"DIMX: "<<dimx<<endl;
 //    cout<<"DIMY: "<<dimy<<endl;
 };
-void RayTracer::logSpeedTest(duration<double> time_span) {
+void RayTracer::logSpeedTest(ofstream& speed_test_fs, duration<double> time_span) {
     cout << endl;
     cout << "Speed Test Results:" << endl;
     cout << "\"The RayTracer\": It took me " << time_span.count() << " seconds to run the scene." << endl;
@@ -575,29 +525,34 @@ void RayTracer::logSpeedTest(duration<double> time_span) {
     // Write to file speed test
     // ------------------------
     speed_test_fs.open("speed_test.txt", std::ios_base::out | std::ios_base::binary | std::ofstream::app);
-    speed_test_fs << "\ntest file name: " << this->activeSceneCamera->filename << "\nlocal illumination (if 0 => global): " << local_illum << "\nN geometry: " << this->geometryRenderList.size() << "\nN lights: " << this->lights.size() << endl;
+    speed_test_fs << "\ntest file name: " << this->activeSceneCamera->filename << "\nlocal illumination (if 0 => global): " << globalillum << "\nN geometry: " << this->geometryRenderList.size() << "\nN lights: " << this->lights.size() << endl;
     speed_test_fs << "\nShadows (true = 1): " << shadows << "\nAntialiasing: " << antialiasing << endl;
-    if(local_illum) {
+    if(globalillum) {
 
     } else {
-        speed_test_fs << "\nSamples per pixel: " << NB_SAMPLES_PER_PIXEL << "\nMax bounces / ray depth: " << MAX_NB_BOUNCES << "\nP termination threshold: " << p_termination_threshold << "\nstratified sampling: " << stratified_sampling << "\nCELL_SIZE: " << NB_CELLS_Y << endl;
+        speed_test_fs << "\nSamples per pixel: " << NB_SAMPLES_PER_PIXEL << "\nMax bounces / ray depth: " << MAX_NB_BOUNCES << "\nP termination threshold: " << p_termination_threshold << "\nstratified sampling: " << antialiasing << "\nCELL_SIZE: " << endl;
     }
     speed_test_fs << endl << "\nresult (s): " << time_span.count() << endl << endl << "test end\n" << "------";
     speed_test_fs.close();
-}
+};
+void RayTracer::getWorldBounds(float& min_x_all, float& min_y_all, float& max_x_all, float& max_y_all) {
+    // find max bound among all max
+  for(Surface* s : this->geometryRenderList) {
+      BoundingBox* bbox = geometryRenderList[0]->bbox;
+      if(bbox == nullptr) {
+          continue; // has no bounding box
+      }
+      if(bbox->x_min < min_x_all) min_x_all = bbox->x_min;
+      if(bbox->y_min < min_y_all) min_y_all = bbox->y_min;
+
+      if(bbox->x_max > max_x_all) max_x_all = bbox->x_max;
+      if(bbox->y_max > max_y_all) max_y_all = bbox->y_max;
+  }
+  cout << "world bounds: min_x_all= " << min_x_all << " min_y_all= " << min_y_all << " max_x_all= " << max_x_all << "max_y_all= " << max_y_all << endl;
+};
 void RayTracer::run() {
-    // Validate scene data
-    // -------------------
-    if (!this->validateSceneJSONData()) {
-      cout<<"Invalid scene! Aborting..."<<endl;
-      return;
-    }
-    // Other guard checks
-    // ------------------
-    if (this->geometryRenderList.size() == 0) {
-        cout<<"no geometry to render!"<<endl;
-        return;
-    }
+    if (!this->validateSceneJSONData()) { cout<<"Invalid scene! Aborting..."<<endl; return; }
+    if (this->geometryRenderList.size() == 0) { cout<<"no geometry to render!"<<endl; return; }
 
     // Useless and Useful Logs
     // -----------------------
@@ -613,7 +568,7 @@ void RayTracer::run() {
     float dimx = this->activeSceneCamera->size(0);
     float dimy = this->activeSceneCamera->size(1);
     float fov = this->activeSceneCamera->fov;
-    float aspect_ratio = dimx/dimy;
+    aspect_ratio = dimx/dimy;
     float horizontal_fov = fov;
     float vertical_fov = Utility::radToDeg(2*atan2(tan(Utility::degToRad(horizontal_fov/2)), aspect_ratio));
     float scale_v = tan(Utility::degToRad(vertical_fov/2));
@@ -635,9 +590,17 @@ void RayTracer::run() {
     
     // Output buffer and output ppm file open
     // --------------------------------------
+    // File streams
+    std::ofstream ofs;
+    std::ofstream speed_test_fs;
     std::vector<float> buffer = std::vector<float>(3*dimx*dimy);
-    ofs.open("test_result.ppm", std::ios_base::out | std::ios_base::binary);
-    ofs << "P6" << endl << dimx << ' ' << dimy << endl << "255" << endl;
+
+    try {
+        ofs.open("test_result.ppm", std::ios_base::out | std::ios_base::binary);
+        ofs << "P6" << endl << dimx << ' ' << dimy << endl << "255" << endl;
+    } catch(std::ofstream::failure e) {
+        std::cerr << "Exception opening/reading/closing file\n";
+    }
 
     // Raycasting other parameters
     // ---------------------------
@@ -648,6 +611,23 @@ void RayTracer::run() {
     bool intersected = false; // if the current ray hit a geometry in the scene
     // Jitter parameters for stratified sampling
     int jx = 0, jy = 0;
+    float min_x_all = INFINITY, min_y_all = INFINITY, max_x_all = -INFINITY, max_y_all = -INFINITY;
+    getWorldBounds(min_x_all, min_y_all, max_x_all, max_y_all);
+    BoundingBox* worldBounds = new BoundingBox(min_x_all, max_x_all, min_y_all, max_y_all, -MAX_RAY_DISTANCE, MAX_RAY_DISTANCE);
+
+    // BVH and other optimizations
+    raycast = CB + (dimx*delta+delta/2)*cam_left - (dimy-1*delta+delta/2)*cam_up - cam_position; // Adjusts cam position
+    currentRay.setRay(cam_position, raycast);
+
+    // Check if ray misses whole scene
+    if (!worldBounds->hit(currentRay, MIN_RAY_DISTANCE, MAX_RAY_DISTANCE, *closestHit)) { cout << "degenerate ray or scene geometry... returning early" << endl; return; }
+
+    cout << "Raycasted into scene!" << endl;
+
+    // Make bvh tree
+    //BVHNode* bvh_tree = new BVHNode(nullptr, nullptr, nullptr);
+    //bvh_tree->make(geometryRenderList);
+    //exit(0);
 
     // Rendering loop
     // --------------
@@ -659,11 +639,11 @@ void RayTracer::run() {
         raycast = CB + (i*delta+delta/2)*cam_left - (j*delta+delta/2)*cam_up - cam_position; // Adjusts cam position
         currentRay.setRay(cam_position, raycast);
 
-        cout << "path-tracing " << (1-j/dimy) * 100.0f << "% done" << endl;
+        //cout << "path-tracing " << (1-j/dimy) * 100.0f << "% done" << endl;
 
         intersected = exhaustiveClosestHitSearch(currentRay, *closestHit, MIN_RAY_DISTANCE, MAX_RAY_DISTANCE, nullptr);
 
-//        if (!local_illum && stratified_sampling) {
+//        if (globalillum && antialiasing) {
 //            // For each pixel (we are the center i,j),
 //            // From center i,j, generate a 2D sample vector with offset jitter jx, jy, and generate those light transport
 //            // equations at those sample points as well.
@@ -674,22 +654,29 @@ void RayTracer::run() {
 //            Vector3f stratified_sum = zero;
 //            Ray subpixel_ray;
 //            estimated_LR = zero;
-//            for (int _i = 0; _i < 10; _i++) {
-//                // sample in the second dimension y
-//                jx = currentRay.d(0), jy = currentRay.d(1);
-//                jitter(jx, jy); // Generate the first subpixel sample vectors - at the first dimension (dimx vs dimy)
-//                subpixel_sample = Vector3f(jx, jy, 0.0f);
-//                subpixel_ray.setRay(cam_position, subpixel_sample);
-//                stratified_sum += globalIllumination(*closestHit, subpixel_ray, estimated_LR);
+//            int max_subpixel_samples = 9; // max_subpixel_samples = raysperpixel[2];
+//            int sample_index = 0;
+//
+//            for (int stepY = 1; stepY <= 3; stepY++) {
+//                for (int stepX = 1; stepX <= 3; stepX++) {
+//
+//                    jx = currentRay.d(0), jy = currentRay.d(1);
+//                    jitter(jx, jy, stepX, stepY); // Generate the first subpixel sample vectors - at the first dimension and second (dimx vs dimy)
+//                    subpixel_sample = Vector3f(jx, jy, 0.0f);
+//                    subpixel_ray.setRay(cam_position, subpixel_sample);
+//                    globalIllumination(*closestHit, subpixel_ray, stratified_sum);
+//                    estimated_LR += stratified_sum;
+//
+//                }
 //            }
-//            stratified_sum /= 4;
-//            estimated_LR = stratified_sum;
+//            estimated_LR /= max_subpixel_samples;
+//            estimated_LR = Utility::clampVectorXf(estimated_LR, 0.0, 1.0);
 //        } // Stratified
 
         if (intersected) {
             localIllumination(*closestHit, currentRay, directIllumination);
-            if(!local_illum) {
-                if(!stratified_sampling) {
+            if(globalillum) {
+                if(!antialiasing) {
                     globalIllumination(*closestHit, currentRay, estimated_LR);
                 }
             } // Global illumination
@@ -704,7 +691,7 @@ void RayTracer::run() {
 
     // Write to ppm
     // ------------
-    save_ppm(buffer, dimx, dimy);
+    save_ppm(ofs, buffer, dimx, dimy);
 
     // Stop Speed Timer
     // ----------------
@@ -713,7 +700,7 @@ void RayTracer::run() {
     
     // Write to file speed test
     // ------------------------
-    logSpeedTest(time_span);
+    logSpeedTest(speed_test_fs, time_span);
     
     // Clean-up
     // --------

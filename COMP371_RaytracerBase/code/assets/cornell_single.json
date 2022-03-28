@@ -1,0 +1,48 @@
+{
+  "geometry":[{
+    "comment":"back_wall",
+    "type":"rectangle",
+    "p2":[556, 0, -559],
+    "p1":[0, 0, -559],
+    "p4":[0, 548.8, -559],
+    "p3":[556, 548.8, -559],
+
+    "ac":[1,1,1],
+    "dc":[1,1,1],
+    "sc":[0,0,0],
+
+    "ka":0,
+    "kd":1,
+    "ks":0,
+
+    "pc":0,
+
+    "visible": true
+
+  }],
+  "light":[
+    {
+      "type":"point",
+      "centre":[278, 273, 800],
+      "id":[1, 1, 1],
+      "is":[1, 1, 1],
+      "use": false
+    }
+  ],
+  "output":[{
+    "filename":"cornel_box.ppm",
+    "size":[500,500],
+    "lookat":[0,0,-1],
+    "up":[0,1,0],
+    "fov":40,
+    "centre":[278, 273, 800],
+    "ai":[1,1,1],
+    "bkc":[0.5,0.5,0.5],
+
+    "globalillum": true,
+    "raysperpixel": [10, 10],
+    "maxbounces": 2,
+    "probterminate": 0.5
+  }
+  ]
+}

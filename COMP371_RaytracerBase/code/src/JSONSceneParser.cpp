@@ -68,7 +68,6 @@ void JSONSceneParser::parse_geometry(RayTracer* gE) {
           float radius;
           radius = (*itr)["radius"].get<float>();
           dynamic_cast<Sphere*>(surface)->radius = radius;
-          gE->addGeometry(surface);
         }
         if(type=="rectangle") {
           //std::cout<<"Parsing a rectangle! "<<std::endl;
@@ -93,16 +92,20 @@ void JSONSceneParser::parse_geometry(RayTracer* gE) {
             p4_input = (*itr)["p4"].get<std::vector<float>>();
           }
           copyRectangleCorners(P1,P2,P3,P4,p1_input,p2_input,p3_input,p4_input);
-          Triangle* triangle1 = new Triangle(P1,P2,P3);
-          Triangle* triangle2 = new Triangle(P1,P3,P4);
-          surface = new Rectangle(triangle1, triangle2);
+//          Triangle* triangle1 = new Triangle(P1,P2,P3);
+//          Triangle* triangle2 = new Triangle(P1,P3,P4);
+
+//          BoundingBox* _bbox = new BoundingBox(dynamic_cast<Rectangle*>(surface));
+          surface = new Rectangle(P1,P2,P3,P4);
+          //surface->setbbox(new BoundingBox(dynamic_cast<Rectangle*>(surface)));
 
           // BOUNDING BOX
           // if boundingbox = on
-          bbox = new BoundingBox(dynamic_cast<Rectangle*>(surface));
-          gE->addGeometry(bbox);
+//          bbox = new BoundingBox(dynamic_cast<Rectangle*>(surface));
+//          gE->addGeometry(bbox);
         }
         surface->type = type;
+        gE->addGeometry(surface);
         // material settings
         vector<float> ac_input,dc_input,sc_input;
         Eigen::Vector3f ac,dc,sc;
@@ -250,8 +253,7 @@ bool JSONSceneParser::test_parse_geometry() {
       if(type=="sphere") {
 //        cout<<"Sphere: "<<endl;
         Eigen::Vector3f centre(0,0,0);  
-        // This makes sure this persists in the game engine, but with weak_ptr
-        // TODO: request the engine to allocate for a new geometry (shared_ptr), return it here and then use a copy constructor here or too complicated?      
+        // TODO: request the engine to allocate for a new geometry (shared_ptr), return it here and then use a copy constructor here or too complicated?
         auto newSphere = std::make_shared<Sphere>();
 
         vector<float> input = (*itr)["centre"];
@@ -337,7 +339,6 @@ void JSONSceneParser::parse_lights(RayTracer* gE) {
         copyInputVector3f(3, id, id_input);
         copyInputVector3f(3, is, is_input);
         light = new PointLight(centre,id,is, gE);
-        cout << "light centre: " << centre << endl;
         gE->lights.push_back(light);
     }
     if(type=="area") {

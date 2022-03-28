@@ -2,22 +2,19 @@
 #include <iostream>
 // External
 #include <Eigen/Core>
-#include <Eigen/Dense>
 
 // My code
 #include "Surface.h"
 
 struct Sphere : public Surface {
     Sphere();
-    Sphere(Eigen::Vector3f centre);
+//    Sphere(Eigen::Vector3f centre);
+
+    Sphere(Vector3f centre);
+
     ~Sphere();
-    Sphere(Sphere& sphere) {
-        this->radius = sphere.radius;
-    };
-    Sphere& operator=(Sphere& sphere) {
-        radius = sphere.radius;
-        return *this;
-    };
+    Sphere(Sphere& sphere);
+    Sphere& operator=(Sphere& sphere);
     float radius;
 
     void info() override;

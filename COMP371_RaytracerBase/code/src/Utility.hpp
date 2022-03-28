@@ -138,6 +138,7 @@ public:
         rand_dir_vec = (matrix_R.inverse() * rand_point) + intersected_point;
 
         // cout << " rand dir vec world coord : " << rand_dir_vec << endl;
+        return rand_dir_vec;
     };
     static Eigen::Matrix3f transformPointToLocalObject(Vector3f frame_left, Vector3f x_normal, Vector3f frame_z) {
         Eigen::Matrix3f matrix_R {

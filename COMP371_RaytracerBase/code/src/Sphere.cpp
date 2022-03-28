@@ -4,14 +4,23 @@
 #include "HitRecord.h"
 #include "math.h"
 #include "Utility.hpp"
+#include "BoundingBox.h"
 using std::cout;
 using std::endl;
 
 Sphere::Sphere() {
 
 };
-Sphere::Sphere(Eigen::Vector3f centre) {
-    this->centre = centre;
+Sphere::Sphere(Eigen::Vector3f centre) : Surface(centre, bbox) {
+    bbox = new BoundingBox(this);
+};
+Sphere::Sphere(Sphere& sphere) : Surface(sphere.centre, new BoundingBox()) {
+    this->radius = sphere.radius;
+    bbox = new BoundingBox(this);
+};
+Sphere& Sphere::operator=(Sphere& sphere) {
+    radius = sphere.radius;
+    return *this;
 };
 Sphere::~Sphere() {
 

@@ -59,7 +59,7 @@ class RayTracer {
      *  List of lights to render in the scene.
      **/
     std::vector<Light*> lights;
-    int save_ppm(const std::vector<float>& buffer, int dimx, int dimy);
+    int save_ppm(std::ofstream& ofs, const std::vector<float>& buffer, int dimx, int dimy);
     Eigen::Vector3f clampVectorXf(Eigen::Vector3f value, float min, float max);
     /**
      * Adds a new mesh to the list of meshes to render.
@@ -118,8 +118,12 @@ class RayTracer {
     void printUsefulLogs();
     void printUselessLogs(int dialogueNode);
     void printDebugLogs();
-    void logSpeedTest(std::chrono::duration<double> time_span);
+    void logSpeedTest(std::ofstream& speed_test_fs, std::chrono::duration<double> time_span);
 
   private:
     nlohmann::json j;
+
+    void jitter(int &jx, int &jy, int stepX, int stepY);
+
+    void getWorldBounds(float &min_x_all, float &min_y_all, float &max_x_all, float &max_y_all);
 };
