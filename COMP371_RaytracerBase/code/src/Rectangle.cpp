@@ -8,7 +8,6 @@ using namespace std;
 
 Rectangle::Rectangle(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4) : triangle1(new Triangle(p1, p2, p3)),  triangle2(new Triangle(p1,p3, p4)), Surface(Vector3f(0,0,0), new BoundingBox()) {
     bbox = new BoundingBox(this);
-    cout << " BBOX: " << *bbox << endl;
 };
 /**
 Rectangle::Rectangle(std::vector<Eigen::Vector3f> pointList) {

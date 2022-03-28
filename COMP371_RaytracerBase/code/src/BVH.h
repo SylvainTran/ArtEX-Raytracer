@@ -27,18 +27,16 @@ struct BVHNode : public Surface {
     Surface* left;
     Surface* right;
 
-    BVHNode(Surface* s) : bbox(s->bbox), left(nullptr), right(nullptr) { // leaf node
+    BVHNode(std::vector<Surface*>& list) {
+        make(list);
     };
 
-    BVHNode(std::vector<Surface*> s) : left(nullptr), right(nullptr) {
+    BVHNode(Surface* s) : bbox(s->bbox), left(nullptr), right(nullptr) { // leaf node
+
     };
 
     BVHNode(BoundingBox* bbox, BVHNode* left, BVHNode*right) : bbox(bbox), left(left), right(right) { // node with subtree
 
-    };
-
-    void setBBox(BoundingBox* bbox) {
-        this->bbox = bbox;
     };
 
     BVHNode(BVHNode& b) {
@@ -54,48 +52,93 @@ struct BVHNode : public Surface {
         return *this;
     };
 
-    void make(std::vector<Surface*>& list) {
+    struct {
+        bool operator()(Surface* a, Surface* b) const { return a->bbox->x_min < b->bbox->x_min && a->bbox->x_max < b->bbox->x_max; }
+    } sortLesserBySurfaceXAxis;
+
+    BVHNode& make(std::vector<Surface*>& list) {
         int sz = list.size();
         if(sz == 1) {
+            cout << " sz/1 " << endl;
             left = new BVHNode(list[0]);
             right = nullptr;
             bbox = left->bbox;
             cout << " case sz == 1" << endl;
-            return;
+            return *this;
         } else if(sz == 2) {
             cout << " case sz == 2" << endl;
-            left = new BVHNode(list[0]); right = new BVHNode(list[1]);
+            left = new BVHNode(list[0]);
+            right = new BVHNode(list[1]);
             // Combine
-            bbox = combine(left->bbox, right->bbox);
-            return;
-        } else {
+            cout << " reading list[0] and [1]'s bboxes" << endl;
+            cout << *list[0]->bbox << *list[1]->bbox << endl;
+            cout << "COMBINE " << endl;
 
-            Vector3f midpoint = this->midpoint(list);
-            cout << " CC" << endl;
+            bbox = this->combine(list[0]->bbox, list[1]->bbox);
+            cout << " / COMBINE " << endl;
+            return *this;
+        } else if(sz > 2) {
+
+            cout << " sz > 2 ?//" << endl;
+            for(Surface* s : list) {
+                if(s != nullptr && s->bbox != nullptr)
+                    cout << *s->bbox << endl;
+                else
+                    cout << " SHITT " << endl;
+            }
+
+            cout << " c/ " << endl;
+            if(*list.begin() != *list.end() && !list.empty()) {
+                if(list.size() == 2)
+                    std::sort(list.begin(), list.end(), sortLesserBySurfaceXAxis);
+            } else {
+                cout << "list size == 0" << list.size() << endl;
+                return *this;
+            }
+
+            cout << "Sorted by x-axis" << endl;
+            for(Surface* s : list) {
+                if(s != nullptr && s->bbox != nullptr)
+                    cout << *s->bbox << endl;
+            }
+
+            cout << " hrere" << endl;
+
+            Vector3f midpoint = list[list.size() / 2]->centre;//this->midpoint(list);
+            int midpoint_index = list.size() / 2;
+
             std::vector<Surface*> left_midpoint, right_midpoint;
 
-            // Partition objects to the left and right of global midpoint
-            partitionByMidpoint(midpoint, list, left_midpoint, right_midpoint);
-            cout << " CC2" << endl;
+            auto start = list.begin();
+            auto midpoint_iter = list.begin() + midpoint_index + 1;
+            auto listEnd = list.end();
 
-            cout << " left " << endl;
-//            for(Surface* s : left_midpoint) {
-//                cout << *s->bbox << endl;
-//            }
+            if(start != listEnd) {
+                vector<Surface*> leftSublist(midpoint_index + 1);
+                copy(start, midpoint_iter, leftSublist.begin());
+
+                vector<Surface*> rightSublist(list.size() - midpoint_index + 1);
+                copy(midpoint_iter, listEnd, rightSublist.begin());
+
+                if(leftSublist.size() >= 1)  left = new BVHNode(leftSublist);
+                if(rightSublist.size() >= 1) right = new BVHNode(rightSublist);
+
+                cout <<" // COMBINING " << endl;
+                if(left->bbox != nullptr && right->bbox != nullptr)
+                    bbox = combine(left->bbox, right->bbox);
+                cout << " / combining " << endl;
+            }
+
 //
-//            left = new BVHNode(nullptr, nullptr, nullptr);
-//            left->make(left_midpoint);
-
-//            cout << " right: " << right_midpoint.size() << endl;
-//            for(Surface* s : right_midpoint) {
+//            cout << "Left sublist" << endl;
+//            for(Surface* s : leftSublist) {
 //                cout << *s->bbox << endl;
 //            }
-
-            right = new BVHNode(nullptr, nullptr, nullptr);
-
-            cout <<" COMBINING " << endl;
-            bbox = combine(left->bbox, right->bbox);
-            return;
+//            cout << "Right sublist" << endl;
+//            for(Surface* s : rightSublist) {
+//                cout << *s->bbox << endl;
+//            }
+            return *this;
         }
     };
     void partitionByMidpoint(Vector3f midpoint, std::vector<Surface*>& list, std::vector<Surface*>& left, std::vector<Surface*>& right) {
@@ -113,11 +156,13 @@ struct BVHNode : public Surface {
         cout << "left sz: " << left.size() << ", right sz: " << right.size();
     };
     BoundingBox* combine(BoundingBox* b1, BoundingBox* b2) {
+        cout << " in combine funct " << endl;
         float min_x_combined, min_y_combined, max_x_combined, max_y_combined;
         min_x_combined = std::min(b1->x_min, b2->x_min);
         min_y_combined = std::min(b1->y_min, b2->y_min);
         max_x_combined = std::max(b1->x_max, b2->x_max);
         max_y_combined = std::max(b1->y_max, b2->y_max);
+        cout << " / in combine funct " << endl;
 
         return new BoundingBox(min_x_combined, max_x_combined, min_y_combined, max_y_combined, -10000, 10000);
     };

@@ -12,11 +12,10 @@ class BoundingBox;
 struct Surface {
     Surface();
     Surface(Surface& surface);
-
     Surface(Vector3f centre, BoundingBox *bbox);
-
     Surface& operator=(Surface& surface);
 	~Surface();
+
 	Eigen::Vector3f centre;
 	Material* mat;
     BBox3Df* worldBounds;

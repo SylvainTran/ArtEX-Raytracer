@@ -254,12 +254,12 @@ Vector3f RayTracer::getRandomVector(Ray& ray, Vector3f hitPoint, Vector3f n, Vec
 
     // Change of basis transformation matrix
     // -------------------------------------
-//    Matrix3f matrix_R {
-//        {frame_left(0),frame_left(1),frame_left(2)},
-//        {intersected_point_normal(0),intersected_point_normal(1),intersected_point_normal(2)},
-//        {frame_z(0),frame_z(1),frame_z(2)}
-//    };
-    Matrix3f matrix_R = Utility::transformPointToLocalObject(frame_left, intersected_point_normal, frame_z);
+    Matrix3f matrix_R;
+    matrix_R << frame_left;
+    matrix_R << intersected_point_normal;
+    matrix_R << frame_z;
+
+    //Matrix3f matrix_R = Utility::transformPointToLocalObject(frame_left, intersected_point_normal, frame_z);
     random_dir_vector = intersected_point + (matrix_R.inverse() * rand_point);
 
     return random_dir_vector;
@@ -452,7 +452,7 @@ int RayTracer::save_ppm(ofstream& ofs, const std::vector<float>& buffer, int dim
     }
     cout<<endl;
     cout<<"Three centuries later..."<<endl;
-    ofs.close();
+
     return 0;
 };
 void RayTracer::printUsefulLogs() {
@@ -516,25 +516,25 @@ void RayTracer::printDebugLogs() {
 //    cout<<"DIMX: "<<dimx<<endl;
 //    cout<<"DIMY: "<<dimy<<endl;
 };
-void RayTracer::logSpeedTest(ofstream& speed_test_fs, duration<double> time_span) {
-    cout << endl;
-    cout << "Speed Test Results:" << endl;
-    cout << "\"The RayTracer\": It took me " << time_span.count() << " seconds to run the scene." << endl;
-    cout << "\"The RayTracer\": Your pretty image was outputted to /build/"<<this->activeSceneCamera->filename<<".\nThe speed test results you love so much were outputted to /build/speed_test.txt. Program terminated."<<endl;
-    cout << endl;
-    // Write to file speed test
-    // ------------------------
-    speed_test_fs.open("speed_test.txt", std::ios_base::out | std::ios_base::binary | std::ofstream::app);
-    speed_test_fs << "\ntest file name: " << this->activeSceneCamera->filename << "\nlocal illumination (if 0 => global): " << globalillum << "\nN geometry: " << this->geometryRenderList.size() << "\nN lights: " << this->lights.size() << endl;
-    speed_test_fs << "\nShadows (true = 1): " << shadows << "\nAntialiasing: " << antialiasing << endl;
-    if(globalillum) {
-
-    } else {
-        speed_test_fs << "\nSamples per pixel: " << NB_SAMPLES_PER_PIXEL << "\nMax bounces / ray depth: " << MAX_NB_BOUNCES << "\nP termination threshold: " << p_termination_threshold << "\nstratified sampling: " << antialiasing << "\nCELL_SIZE: " << endl;
-    }
-    speed_test_fs << endl << "\nresult (s): " << time_span.count() << endl << endl << "test end\n" << "------";
-    speed_test_fs.close();
-};
+//void RayTracer::logSpeedTest(ofstream& speed_test_fs, duration<double> time_span) {
+//    cout << endl;
+//    cout << "Speed Test Results:" << endl;
+//    cout << "\"The RayTracer\": It took me " << time_span.count() << " seconds to run the scene." << endl;
+//    cout << "\"The RayTracer\": Your pretty image was outputted to /build/"<<this->activeSceneCamera->filename<<".\nThe speed test results you love so much were outputted to /build/speed_test.txt. Program terminated."<<endl;
+//    cout << endl;
+//    // Write to file speed test
+//    // ------------------------
+//    speed_test_fs.open("speed_test.txt", std::ios_base::out | std::ios_base::binary | std::ofstream::app);
+//    speed_test_fs << "\ntest file name: " << this->activeSceneCamera->filename << "\nlocal illumination (if 0 => global): " << globalillum << "\nN geometry: " << this->geometryRenderList.size() << "\nN lights: " << this->lights.size() << endl;
+//    speed_test_fs << "\nShadows (true = 1): " << shadows << "\nAntialiasing: " << antialiasing << endl;
+//    if(globalillum) {
+//
+//    } else {
+//        speed_test_fs << "\nSamples per pixel: " << NB_SAMPLES_PER_PIXEL << "\nMax bounces / ray depth: " << MAX_NB_BOUNCES << "\nP termination threshold: " << p_termination_threshold << "\nstratified sampling: " << antialiasing << "\nCELL_SIZE: " << endl;
+//    }
+//    speed_test_fs << endl << "\nresult (s): " << time_span.count() << endl << endl << "test end\n" << "------";
+//    speed_test_fs.close();
+//};
 void RayTracer::getWorldBounds(float& min_x_all, float& min_y_all, float& max_x_all, float& max_y_all) {
     // find max bound among all max
   for(Surface* s : this->geometryRenderList) {
@@ -551,97 +551,145 @@ void RayTracer::getWorldBounds(float& min_x_all, float& min_y_all, float& max_x_
   cout << "world bounds: min_x_all= " << min_x_all << " min_y_all= " << min_y_all << " max_x_all= " << max_x_all << "max_y_all= " << max_y_all << endl;
 };
 void RayTracer::run() {
+
     if (!this->validateSceneJSONData()) { cout<<"Invalid scene! Aborting..."<<endl; return; }
     if (this->geometryRenderList.size() == 0) { cout<<"no geometry to render!"<<endl; return; }
 
     // Useless and Useful Logs
     // -----------------------
-    printUselessLogs(0);
-    printUsefulLogs();
+    // printUselessLogs(0);
+    // printUsefulLogs();
     
     // Start timer
     // -----------
-    steady_clock::time_point t1 = steady_clock::now();
+    // steady_clock::time_point t1 = steady_clock::now();
 
-    // Camera setup: Build the view camera's axes and setup its parameters
-    // -------------------------------------------------------------------
-    float dimx = this->activeSceneCamera->size(0);
-    float dimy = this->activeSceneCamera->size(1);
-    float fov = this->activeSceneCamera->fov;
-    aspect_ratio = dimx/dimy;
-    float horizontal_fov = fov;
-    float vertical_fov = Utility::radToDeg(2*atan2(tan(Utility::degToRad(horizontal_fov/2)), aspect_ratio));
-    float scale_v = tan(Utility::degToRad(vertical_fov/2));
-    float scale_h = tan(Utility::degToRad(horizontal_fov/2));
 
-    Vector3f cam_position = this->activeSceneCamera->centre;
-    Vector3f cam_forward = this->activeSceneCamera->lookat; // already neg: -z
-    Vector3f cam_up = this->activeSceneCamera->up;
-    Vector3f cam_left = cam_forward.cross(cam_up);
-    cam_up = cam_left.cross(cam_forward); // Actual up
+//    BoundingBox* worldBounds = new BoundingBox(min_x_all, max_x_all, min_y_all, max_y_all, -MAX_RAY_DISTANCE, MAX_RAY_DISTANCE);
+//    raycast = CB + (dimx*delta+delta/2)*cam_left - (dimy-1*delta+delta/2)*cam_up - cam_position; // Adjusts cam position
+//    currentRay.setRay(cam_position, raycast);
 
-    // Raycasting setup
-    // ----------------
-    float delta = computePixelSizeDeltaHorizontal(horizontal_fov, dimy); // The direct pixel size
-    //float delta2 = computePixelSizeVertical(vertical_fov, dimy);
-    Vector3f A = cam_position + (1)*cam_forward;
-    Vector3f BA = A + (cam_up * (delta*(dimy/2)));
-    Vector3f CB = BA - (cam_left * (delta*(dimx/2)));
-    
-    // Output buffer and output ppm file open
-    // --------------------------------------
-    // File streams
-    std::ofstream ofs;
-    std::ofstream speed_test_fs;
-    std::vector<float> buffer = std::vector<float>(3*dimx*dimy);
+//    if (!worldBounds->hit(currentRay, MIN_RAY_DISTANCE, MAX_RAY_DISTANCE, *closestHit)) { cout << "degenerate ray or scene geometry... returning early" << endl; return; }
 
-    try {
-        ofs.open("test_result.ppm", std::ios_base::out | std::ios_base::binary);
-        ofs << "P6" << endl << dimx << ' ' << dimy << endl << "255" << endl;
-    } catch(std::ofstream::failure e) {
-        std::cerr << "Exception opening/reading/closing file\n";
-    }
-
-    // Raycasting other parameters
-    // ---------------------------
-    Ray currentRay; // the current ray to raycast
-    Vector3f raycast; // the raycasted ray in nds
-    HitRecord* closestHit = new HitRecord(MAX_RAY_DISTANCE); // the ray color to use
-    Vector3f directIllumination = zero, estimated_LR = zero;
-    bool intersected = false; // if the current ray hit a geometry in the scene
-    // Jitter parameters for stratified sampling
-    int jx = 0, jy = 0;
-    float min_x_all = INFINITY, min_y_all = INFINITY, max_x_all = -INFINITY, max_y_all = -INFINITY;
-    getWorldBounds(min_x_all, min_y_all, max_x_all, max_y_all);
-    BoundingBox* worldBounds = new BoundingBox(min_x_all, max_x_all, min_y_all, max_y_all, -MAX_RAY_DISTANCE, MAX_RAY_DISTANCE);
-
-    // BVH and other optimizations
-    raycast = CB + (dimx*delta+delta/2)*cam_left - (dimy-1*delta+delta/2)*cam_up - cam_position; // Adjusts cam position
-    currentRay.setRay(cam_position, raycast);
-
-    // Check if ray misses whole scene
-    if (!worldBounds->hit(currentRay, MIN_RAY_DISTANCE, MAX_RAY_DISTANCE, *closestHit)) { cout << "degenerate ray or scene geometry... returning early" << endl; return; }
-
-    cout << "Raycasted into scene!" << endl;
-
-    // Make bvh tree
+    // TODO: BVH and other optimizations
     //BVHNode* bvh_tree = new BVHNode(nullptr, nullptr, nullptr);
     //bvh_tree->make(geometryRenderList);
     //exit(0);
 
-    // Rendering loop
-    // --------------
-    for(int j = dimy-1; j >= 0; j--) {
-      for(int i = 0; i < dimx; i++) {
+    int filesLen = cameraList.size();
 
-        // Simulate projection through sweeping
-        // ------------------------------------
-        raycast = CB + (i*delta+delta/2)*cam_left - (j*delta+delta/2)*cam_up - cam_position; // Adjusts cam position
-        currentRay.setRay(cam_position, raycast);
+    for (int i = 0; i < filesLen; i++) {
+        try {
 
-        //cout << "path-tracing " << (1-j/dimy) * 100.0f << "% done" << endl;
+            std::ofstream ofs;
+            std::ofstream speed_test_fs;
 
-        intersected = exhaustiveClosestHitSearch(currentRay, *closestHit, MIN_RAY_DISTANCE, MAX_RAY_DISTANCE, nullptr);
+            // Camera setup: Build the view camera's axes and setup its parameters
+            // -------------------------------------------------------------------
+            activeSceneCamera = cameraList[i];
+            float dimx = this->activeSceneCamera->size(0);
+            float dimy = this->activeSceneCamera->size(1);
+            std::vector<float> buffer = std::vector<float>(3*dimx*dimy);
+
+            float fov = this->activeSceneCamera->fov;
+            aspect_ratio = dimx/dimy;
+            float horizontal_fov = fov;
+            float vertical_fov = Utility::radToDeg(2*atan2(tan(Utility::degToRad(horizontal_fov/2)), aspect_ratio));
+            float scale_v = tan(Utility::degToRad(vertical_fov/2));
+            float scale_h = tan(Utility::degToRad(horizontal_fov/2));
+
+            Vector3f cam_position = this->activeSceneCamera->centre;
+            Vector3f cam_forward = this->activeSceneCamera->lookat; // already neg: -z
+            Vector3f cam_up = this->activeSceneCamera->up;
+            Vector3f cam_left = cam_forward.cross(cam_up);
+            cam_up = cam_left.cross(cam_forward); // Actual up
+
+            // Raycasting setup
+            // ----------------
+            float delta = computePixelSizeDeltaHorizontal(horizontal_fov, dimy); // The direct pixel size
+            //float delta2 = computePixelSizeVertical(vertical_fov, dimy);
+            Vector3f A = cam_position + (1)*cam_forward;
+            Vector3f BA = A + (cam_up * (delta*(dimy/2)));
+            Vector3f CB = BA - (cam_left * (delta*(dimx/2)));
+
+            // Raycasting other parameters
+            // ---------------------------
+            Ray currentRay; // the current ray to raycast
+            Vector3f raycast; // the raycasted ray in nds
+            HitRecord* closestHit = new HitRecord(MAX_RAY_DISTANCE); // the ray color to use
+            Vector3f directIllumination = zero, estimated_LR = zero;
+            bool intersected = false; // if the current ray hit a geometry in the scene
+            // Jitter parameters for stratified sampling
+            int jx = 0, jy = 0;
+
+            // Check if ray misses whole scene
+            float min_x_all = INFINITY, min_y_all = INFINITY, max_x_all = -INFINITY, max_y_all = -INFINITY;
+            // getWorldBounds(min_x_all, min_y_all, max_x_all, max_y_all);
+
+            std::string fname = activeSceneCamera->filename;
+
+            cout << "file name: " << fname << endl;
+            ofs.open(fname, std::ios_base::out | std::ios_base::binary);
+            ofs << "P6" << endl << dimx << ' ' << dimy << endl << "255" << endl;
+
+            // Rendering loop
+            // --------------
+            for(int j = dimy-1; j >= 0; j--) {
+                for(int i = 0; i < dimx; i++) {
+
+                    // Simulate projection through sweeping
+                    // ------------------------------------
+                    raycast = CB + (i*delta+delta/2)*cam_left - (j*delta+delta/2)*cam_up - cam_position; // Adjusts cam position
+                    currentRay.setRay(cam_position, raycast);
+
+                    //cout << "path-tracing " << (1-j/dimy) * 100.0f << "% done" << endl;
+
+                    intersected = exhaustiveClosestHitSearch(currentRay, *closestHit, MIN_RAY_DISTANCE, MAX_RAY_DISTANCE, nullptr);
+
+                    if (intersected) {
+                        localIllumination(*closestHit, currentRay, directIllumination);
+                        if(globalillum) {
+                            if(!antialiasing) {
+                                globalIllumination(*closestHit, currentRay, estimated_LR);
+                            } else {
+                                // read raysperpixel
+                            }
+                        } // Global illumination
+                    } else {
+                        directIllumination = this->activeSceneCamera->bkc;
+                    } // Intersected
+
+                    // Output pixel color
+                    setPixelColor(buffer, directIllumination + estimated_LR, dimx, i, j);
+                }
+            } // End render loop
+
+            // Write to ppm
+            // ------------
+            save_ppm(ofs, buffer, dimx, dimy);
+
+            // Clean-up
+            // --------
+            ofs.close();
+
+            delete closestHit;
+
+        } catch(std::ofstream::failure e) {
+            std::cerr << "Exception opening/reading/closing file\n";
+        }
+    }
+
+    // Stop Speed Timer
+    // ----------------
+    //    steady_clock::time_point t2 = steady_clock::now();
+    //    auto time_span = duration_cast<duration<double>>(t2 - t1);
+    
+    // Write to file speed test
+    // ------------------------
+    //    logSpeedTest(speed_test_fs, time_span);
+};
+
+/**
 
 //        if (globalillum && antialiasing) {
 //            // For each pixel (we are the center i,j),
@@ -673,36 +721,4 @@ void RayTracer::run() {
 //            estimated_LR = Utility::clampVectorXf(estimated_LR, 0.0, 1.0);
 //        } // Stratified
 
-        if (intersected) {
-            localIllumination(*closestHit, currentRay, directIllumination);
-            if(globalillum) {
-                if(!antialiasing) {
-                    globalIllumination(*closestHit, currentRay, estimated_LR);
-                }
-            } // Global illumination
-        } else {
-            directIllumination = this->activeSceneCamera->bkc;
-        } // Intersected
-
-        // Output pixel color
-        setPixelColor(buffer, directIllumination + estimated_LR, dimx, i, j);
-      }
-    } // End render loop
-
-    // Write to ppm
-    // ------------
-    save_ppm(ofs, buffer, dimx, dimy);
-
-    // Stop Speed Timer
-    // ----------------
-    steady_clock::time_point t2 = steady_clock::now();
-    auto time_span = duration_cast<duration<double>>(t2 - t1);
-    
-    // Write to file speed test
-    // ------------------------
-    logSpeedTest(speed_test_fs, time_span);
-    
-    // Clean-up
-    // --------
-    delete closestHit;
-};
+*/

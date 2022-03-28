@@ -14,6 +14,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <chrono>
 using std::cout;
 using std::endl;
 
@@ -118,7 +119,7 @@ class RayTracer {
     void printUsefulLogs();
     void printUselessLogs(int dialogueNode);
     void printDebugLogs();
-    void logSpeedTest(std::ofstream& speed_test_fs, std::chrono::duration<double> time_span);
+//    void logSpeedTest(std::ofstream& speed_test_fs, std::chrono::duration<double> time_span);
 
   private:
     nlohmann::json j;

@@ -23,25 +23,15 @@ Vector3f AreaLight::samplePointOverArea(Vector3f intersected_point, Vector3f n, 
 
     Vector3f center(half_extent_x, this->P3.y(), half_extent_z);
 
-//    cout << "P3: " << this->P3.x() << endl;
-//    cout << "half x: " << half_extent_x << endl;
-//    cout << "half y: " << half_extent_z << endl;
-//    cout << "CENTER: " << center << endl;
-//
-//    cout << center.x() + half_extent_x << endl;
-//    cout << center.x() - half_extent_x << endl;
-//    cout << center.z() + half_extent_z << endl;
-//    cout << center.z() - half_extent_z << endl;
-
     bool outsideHorizontal = true, outsideVertical = true;
 
-    while(outsideHorizontal && outsideVertical) {
-        Utility::sampleOverUnitArea(intersected_point, n, rand_point, rand_dir_vec);
-        outsideHorizontal = std::abs(rand_dir_vec.x()) > std::abs(center.x() + half_extent_x) || std::abs(rand_dir_vec.x()) < std::abs(center.x() - half_extent_x);
-        outsideVertical = std::abs(rand_dir_vec.z()) > std::abs(center.z() + half_extent_z) || std::abs(rand_dir_vec.z()) < std::abs(center.z() - half_extent_z);
+//    while(outsideHorizontal && outsideVertical) {
+//        Utility::sampleOverUnitArea(intersected_point, n, rand_point, rand_dir_vec);
+//        outsideHorizontal = std::abs(rand_dir_vec.x()) > std::abs(center.x() + half_extent_x) || std::abs(rand_dir_vec.x()) < std::abs(center.x() - half_extent_x);
+//        outsideVertical = std::abs(rand_dir_vec.z()) > std::abs(center.z() + half_extent_z) || std::abs(rand_dir_vec.z()) < std::abs(center.z() - half_extent_z);
 //        cout << "hor : " << outsideHorizontal << endl;
 //        cout << "ver : " << outsideVertical << endl;
-    }
+//    }
     //cout << "rand_point : " << rand_point << ", rand_dir_vec: " << rand_dir_vec << endl;
 };
 // Compute Light emitted (Le) vectors over the area light' area

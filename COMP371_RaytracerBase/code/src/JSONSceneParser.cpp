@@ -152,7 +152,10 @@ void JSONSceneParser::parse_geometry(RayTracer* gE) {
   }
 };
 void JSONSceneParser::parse_output(RayTracer* gE) {
-  for (auto itr = sceneJSONData["output"].begin(); itr!= sceneJSONData["output"].end(); itr++){      
+//    cout << " parsing output " << endl;
+    int count = 0;
+    std::vector<Camera*> cameraList;
+    for (auto itr = sceneJSONData["output"].begin(); itr!= sceneJSONData["output"].end(); itr++){
     std::string filename;
     Eigen::Vector3f size(0,0,0), lookat(0,0,0), up(0,0,0), centre(0,0,0), ai(0,0,0), bkc(0,0,0);
     vector<float> centreInput, sizeInput, lookAtInput, upInput, aiInput, bkcInput;
@@ -183,6 +186,7 @@ void JSONSceneParser::parse_output(RayTracer* gE) {
     if((*itr)["filename"] != NULL) {
         filename = (*itr)["filename"].get<std::string>();
     }
+    // Sets the first camera as the default active camera in the scene
     // Set parameters in camera
     auto newCamera = new Camera();
     newCamera->fov = fov;
@@ -192,18 +196,20 @@ void JSONSceneParser::parse_output(RayTracer* gE) {
     newCamera->size = size;
     newCamera->bkc = bkc;
     newCamera->filename = filename;
+
     gE->cameraList.push_back(newCamera);
+    //gE->activeSceneCamera = gE->cameraList[count];
     if((*itr)["ai"] != NULL) {
       aiInput = (*itr)["ai"].get<std::vector<float>>();
       copyInputVector3f(3, ai, aiInput);
       gE->ambientIntensity = ai;
     }
+    ++count;
   }
-  // Sets the first camera as the default active camera in the scene
-  gE->activeSceneCamera = gE->cameraList[0];
+  cout << "n outputs: " << count << endl;
 };
 bool JSONSceneParser::test_parse_geometry() {
-//  cout<<"Geometry: "<<endl;
+//  cout<<"Test Geometry: "<<endl;
   int gc = 0;
 
   // use iterators to read-in array types
@@ -218,19 +224,19 @@ bool JSONSceneParser::test_parse_geometry() {
       // Get the ac,dc,sc,ka,kd,ks and pc coefficients
       if(itr->contains("ac")) {
         Eigen::Vector3f ac;
-        vector<float> ac_input = (*itr)["ac"];
+        vector<float> ac_input = (*itr)["ac"].get<std::vector<float>>();
         copyInputVector3f(3, ac, ac_input);
 //        cout<<"ac: "<<ac<<endl;
       }
       if(itr->contains("dc")) {
         Eigen::Vector3f dc;
-        vector<float> dc_input = (*itr)["dc"];
+        vector<float> dc_input = (*itr)["dc"].get<std::vector<float>>();
         copyInputVector3f(3, dc, dc_input);
 //        cout<<"dc: "<<dc<<endl;
       }
       if(itr->contains("sc")) {
         Eigen::Vector3f sc;
-        vector<float> sc_input = (*itr)["sc"];
+        vector<float> sc_input = (*itr)["sc"].get<std::vector<float>>();
         copyInputVector3f(3, sc, sc_input);
 //        cout<<"sc: "<<sc<<endl;
       }
@@ -253,18 +259,16 @@ bool JSONSceneParser::test_parse_geometry() {
       if(type=="sphere") {
 //        cout<<"Sphere: "<<endl;
         Eigen::Vector3f centre(0,0,0);  
-        // TODO: request the engine to allocate for a new geometry (shared_ptr), return it here and then use a copy constructor here or too complicated?
-        auto newSphere = std::make_shared<Sphere>();
 
-        vector<float> input = (*itr)["centre"];
+        vector<float> input = (*itr)["centre"].get<std::vector<float>>();
         copyInputVector3f(3, centre, input);
 //        cout<<"Centre:\n"<<centre<<endl;
-        newSphere->centre = centre;
+
         float radius;
         try {
-          radius = (*itr)["radius"];
+          radius = (*itr)["radius"].get<float>();
 //          cout<<"Radius: "<<radius<<endl;
-          newSphere->radius = radius;
+
         } catch(nlohmann::detail::type_error typeError) {
           std::cerr<<"Type error: Geometry radius must be a number! Aborting..."<<endl;
           return false;
@@ -273,8 +277,8 @@ bool JSONSceneParser::test_parse_geometry() {
           return false;
         }
 //        cout<<"Sphere info:"<<endl;
-        // cout<<newSphere->centre<<endl;
-        // cout<<newSphere->radius<<endl;
+//         cout<<newSphere->centre<<endl;
+//         cout<<newSphere->radius<<endl;
       }
       if(type=="rectangle"){
 //        std::cout<<"testing rectangle: "<<std::endl;

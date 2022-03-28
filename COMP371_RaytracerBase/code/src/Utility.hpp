@@ -109,43 +109,43 @@ public:
         return offsetOrigin;
     };
     // Disk or square
-    static Vector3f sampleOverUnitArea(Vector3f intersected_point, Vector3f n, Vector3f& rand_point, Vector3f& rand_dir_vec) {
-
-        srand((unsigned)time( NULL ));
-        srand48((unsigned)time( NULL ));
-
-        bool outside = true;
-        while(outside) {
-            // Sampling between [-1,1]
-            // -----------------------
-            rand_point(0) = (2 * drand48()) - 1;
-            rand_point(1) = (2 * drand48()) - 1;
-            rand_point(2) = (2 * drand48()) - 1;
-
-            rand_dir_vec(0) = (2 * drand48()) - 1;
-            rand_dir_vec(1) = (2 * drand48()) - 1;
-            rand_dir_vec(2) = (2 * drand48()) - 1;
-
-            outside = std::abs(rand_point.norm()) > 1.0f;
-        }
-
-        if(rand_point.dot(n) < 0) {
-            rand_point *= -1;
-        }
-        Vector3f frame_left = rand_point.cross(n);
-        Vector3f frame_z = n.cross(frame_left);
-        Eigen::Matrix3f matrix_R = Utility::transformPointToLocalObject(frame_left, n, frame_z);
-        rand_dir_vec = (matrix_R.inverse() * rand_point) + intersected_point;
-
-        // cout << " rand dir vec world coord : " << rand_dir_vec << endl;
-        return rand_dir_vec;
-    };
-    static Eigen::Matrix3f transformPointToLocalObject(Vector3f frame_left, Vector3f x_normal, Vector3f frame_z) {
-        Eigen::Matrix3f matrix_R {
-                {frame_left(0),frame_left(1),frame_left(2)},
-                {x_normal(0),x_normal(1),x_normal(2)},
-                {frame_z(0),frame_z(1),frame_z(2)}
-        };
-        return matrix_R;
-    };
+//    static Vector3f sampleOverUnitArea(Vector3f intersected_point, Vector3f n, Vector3f& rand_point, Vector3f& rand_dir_vec) {
+//
+//        srand((unsigned)time( NULL ));
+//        srand48((unsigned)time( NULL ));
+//
+//        bool outside = true;
+//        while(outside) {
+//            // Sampling between [-1,1]
+//            // -----------------------
+//            rand_point(0) = (2 * drand48()) - 1;
+//            rand_point(1) = (2 * drand48()) - 1;
+//            rand_point(2) = (2 * drand48()) - 1;
+//
+//            rand_dir_vec(0) = (2 * drand48()) - 1;
+//            rand_dir_vec(1) = (2 * drand48()) - 1;
+//            rand_dir_vec(2) = (2 * drand48()) - 1;
+//
+//            outside = std::abs(rand_point.norm()) > 1.0f;
+//        }
+//
+//        if(rand_point.dot(n) < 0) {
+//            rand_point *= -1;
+//        }
+//        Vector3f frame_left = rand_point.cross(n);
+//        Vector3f frame_z = n.cross(frame_left);
+//        Eigen::Matrix3f matrix_R = Utility::transformPointToLocalObject(frame_left, n, frame_z);
+//        rand_dir_vec = (matrix_R.inverse() * rand_point) + intersected_point;
+//
+//        // cout << " rand dir vec world coord : " << rand_dir_vec << endl;
+//        return rand_dir_vec;
+//    };
+//    static Eigen::Matrix3f transformPointToLocalObject(Eigen::Vector3f frame_left, Eigen::Vector3f x_normal, Eigen::Vector3f frame_z) {
+//        Eigen::Matrix3f matrix_R {
+//                {frame_left(0),frame_left(1),frame_left(2)},
+//                {x_normal(0),x_normal(1),x_normal(2)},
+//                {frame_z(0),frame_z(1),frame_z(2)}
+//        };
+//        return matrix_R;
+//    };
 };
